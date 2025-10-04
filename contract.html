@@ -1,23 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Warm Up UK · Contract</title>
-<!-- include styles, logo, jsPDF, SignaturePad as before -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Warm Up UK – Contract</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  body{font-family:Arial, sans-serif; background:#111; color:#f5f5f5; padding:16px;}
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+  .brand img{height:48px; width:auto; border-radius:4px}
+  h1{color:#f2c94c; margin:8px 0 16px}
+  .card{background:#1b1b1b; border:1px solid #2a2a2a; border-radius:12px; padding:16px; margin:12px 0}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .row > div{background:#151515; border:1px solid #2a2a2a; border-radius:8px; padding:10px}
+  .label{color:#9aa0a6; font-size:12px}
+  .val{font-size:16px; word-break:break-word}
+  .full{grid-column:1 / -1}
+  canvas{background:#fff; border-radius:8px; width:100%; height:220px}
+  .btns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px}
+  button{background:#2c2c2c; color:#fff; border:none; border-radius:8px; padding:12px 14px; font-size:16px}
+  button.primary{background:#f2c94c; color:#111; font-weight:700}
+  a.inline{color:#f2c94c}
+  small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, monospace; color:#9aa0a6}
+</style>
+
+<!-- libs -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 </head>
 <body>
-  <!-- NAV + LOGO -->
-  <h1>Contract</h1>
-  <div id="details">Details will be filled from calendar link...</div>
 
-  <canvas id="sigCanvas" height="180"></canvas>
-  <button id="clearSig">Clear</button>
-  <button id="btnPdf">Create & Download PDF</button>
-  <button id="btnPreview">Preview PDF</button>
+<div class="brand">
+  <!-- use your uploaded logo name; you have WUUK.JPG in the repo root -->
+  <img src="./WUUK.JPG" alt="Warm Up UK logo" />
+  <div>
+    <div style="font-weight:800;">WARM UP UK</div>
+    <small class="mono">Contract</small>
+  </div>
+</div>
+
+<h1>Contract</h1>
+
+<div id="warn" class="card" style="display:none">
+  Opened without booking details. Return to the
+  <a class="inline" href="./calendar.html">Calendar</a>
+  and tap “Send to client WhatsApp”.
+</div>
+
+<div id="contractCard" class="card" style="display:none">
+  <div class="row">
+    <div><div class="label">Client name</div><div id="v_name" class="val"></div></div>
+    <div><div class="label">Phone</div><div id="v_phone" class="val"></div></div>
+    <div class="full"><div class="label">Address</div><div id="v_address" class="val"></div></div>
+    <div><div class="label">Date & time</div><div id="v_datetime" class="val"></div></div>
+    <div><div class="label">Duration (hrs)</div><div id="v_duration" class="val"></div></div>
+    <div><div class="label">Product / Service</div><div id="v_product" class="val"></div></div>
+    <div><div class="label">Price (£)</div><div id="v_price" class="val"></div></div>
+    <div class="full"><div class="label">Notes</div><div id="v_notes" class="val"></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="label" style="margin-bottom:6px">Sign below:</div>
+  <canvas id="sig"></canvas>
+  <div class="btns">
+    <button id="clearSig">Clear</button>
+    <button id="previewBtn">Preview PDF</button>
+    <button class="primary" id="downloadBtn">Create & Download PDF</button>
+    <button id="shareBtn">Share PDF (if supported)</button>
+  </div>
+</div>
 
 <script>
-  // (same parsing + PDF code I gave above)
+(function(){
+  // ---- read URL params ----
+  const p = new URLSearchParams(location.search);
+  const data = {
+    name:     p.get('name')    || '',
+    phone:    p.get('phone')   || '',
+    email:    p.get('email')   || '',
+    address:  p.get('address') || '',
+    date:     p.get('date')    || '',
+    duration: p.get('duration')|| '',
+    product:  p.get('product') || '',
+    price:    p.get('price')   || '',
+    notes:    p.get('notes')   || ''
+  };
+
+  const hasCore = data.name || data.date || data.product; // minimal check
+
+  const warn = document.getElementById('warn');
+  const card = document.getElementById('contractCard');
+
+  if(!hasCore){
+    warn.style.display = 'block';
+  }else{
+    // fill UI
+    card.style.display = 'block';
+    const Q = id => document.getElementById(id).textContent =
+      (data[id.replace('v_','')] || '');
+    document.getElementById('v_name').textContent = data.name;
+    document.getElementById('v_phone').textContent = data.phone;
+    document.getElementById('v_address').textContent = data.address;
+    document.getElementById('v_datetime').textContent = data.date;
+    document.getElementById('v_duration').textContent = data.duration;
+    document.getElementById('v_product').textContent = data.product;
+    document.getElementById('v_price').textContent = data.price;
+    document.getElementById('v_notes').textContent = data.notes;
+  }
+
+  // ---- signature pad ----
+  const canvas = document.getElementById('sig');
+  // size canvas to device width
+  function resizeCanvas(){
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const sigPad = new SignaturePad(canvas, {backgroundColor: 'rgb(255,255,255)'});
+  document.getElementById('clearSig').onclick = () => sigPad.clear();
+
+  // ---- PDF helpers ----
+  async function makePdfBlob(preview=false){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt', format:'a4'});
+    const pageW = doc.internal.pageSize.getWidth();
+
+    // logo
+    try {
+      const img = await fetch('./WUUK.JPG').then(r=>r.blob());
+      const imgData = await new Promise(res=>{
+        const reader = new FileReader(); reader.onload = ()=>res(reader.result); reader.readAsDataURL(img);
+      });
+      doc.addImage(imgData, 'JPEG', 40, 32, 120, 60);
+    } catch(e){ /* ignore if not found */ }
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(18);
+    doc.text('Warm Up UK — Contract', 40, 120);
+    doc.setFont('helvetica','normal'); doc.setFontSize(11);
+
+    const lines = [
+      `Client: ${data.name}`,
+      `Phone: ${data.phone}${data.email ? '   Email: '+data.email : ''}`,
+      `Address: ${data.address}`,
+      `Date/Time: ${data.date}     Duration: ${data.duration} hrs`,
+      `Product/Service: ${data.product}     Price: £${data.price}`,
+      `Notes: ${data.notes || '-'}`,
+    ];
+
+    let y = 150;
+    lines.forEach(t=>{ doc.text(t, 40, y); y+=18; });
+
+    // signature
+    doc.setFont('helvetica','bold'); doc.text('Signature:', 40, y+20);
+    doc.setDrawColor(180); doc.rect(40, y+28, pageW-80, 120);
+    if(!sigPad.isEmpty()){
+      const sigData = sigPad.toDataURL('image/png');
+      doc.addImage(sigData, 'PNG', 50, y+38, pageW-100, 100);
+    } else {
+      doc.setFont('helvetica','normal'); doc.text('(not provided)', 120, y+46);
+    }
+
+    // footer
+    doc.setFontSize(9);
+    doc.setTextColor(130);
+    doc.text('Warm Up UK • Generated from booking link', 40, 780);
+
+    const blob = doc.output('blob');
+    if (preview) return blob;
+
+    // download
+    const nameSafe = (data.name || 'client').replace(/\s+/g,'_');
+    const fileName = `WarmUpUK_Contract_${nameSafe}.pdf`;
+    doc.save(fileName);
+    return null;
+  }
+
+  document.getElementById('downloadBtn').onclick = () => { makePdfBlob(false); };
+
+  document.getElementById('previewBtn').onclick = async () => {
+    const blob = await makePdfBlob(true);
+    if(!blob) return;
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  };
+
+  document.getElementById('shareBtn').onclick = async () => {
+    try {
+      const blob = await makePdfBlob(true);
+      const file = new File([blob], 'contract.pdf', {type:'application/pdf'});
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Warm Up UK Contract' });
+      } else {
+        // fallback: open preview
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      }
+    } catch(e){ alert('Share not supported'); }
+  };
+})();
 </script>
 </body>
 </html>
