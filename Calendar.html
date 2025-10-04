@@ -68,8 +68,39 @@ function sendWhatsApp(){
   const msg = `Hello ${name}, here is your Warm Up UK contract:\n${contractUrl}`;
 
   const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  
   window.location.href = waLink;
 }
 </script>
 </body>
 </html>
+<script>
+  // Helper enc
+  const enc = s => encodeURIComponent((s || '').trim());
+
+  // Get values from your fields (adjust selectors if your names differ)
+  function readBooking() {
+    return {
+      name:    document.querySelector('[name="name"]').value,
+      phone:   document.querySelector('[name="phone"]').value,   // WhatsApp phone
+      address: document.querySelector('[name="address"]').value,
+      date:    document.querySelector('[name="date"]').value,
+      time:    document.querySelector('[name="time"]').value,
+      service: document.querySelector('[name="service"]').value,
+      price:   document.querySelector('[name="price"]').value || '0',
+      notes:   document.querySelector('[name="notes"]').value
+    };
+  }
+
+  // Open Contract (prefilled)
+  document.getElementById('btnToContract')?.addEventListener('click', () => {
+    const b = readBooking();
+
+    // Save for fallback
+    localStorage.setItem('wu_latest_client', JSON.stringify(b));
+
+    // Also pass as URL params
+    const url = `./contract.html?name=${enc(b.name)}&phone=${enc(b.phone)}&address=${enc(b.address)}&date=${enc(b.date)}&time=${enc(b.time)}&service=${enc(b.service)}&price=${enc(b.price)}&notes=${enc(b.notes)}&v=2`;
+    window.location.href = url; // or window.open(url, '_blank')
+  });
+</script>
