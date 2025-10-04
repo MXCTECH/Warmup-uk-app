@@ -1,26 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="app.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK — Dashboard</title>
+<style>
+  :root{
+    --bg0:#0b0b0c;
+    --bg1:#121214;
+    --gold:#ffc94d;
+    --gold-bright:#ffd65e;
+    --gold-deep:#cfa83a;
+    --white:#f5f5f7;
+    --muted:#9aa0a6;
+    --accent:#ff4d2e;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background: radial-gradient(1200px 600px at 50% 20%, #1a1a1d 0%, var(--bg0) 40%, var(--bg1) 100%); color:var(--white); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .tablet{
+    max-width: 1200px;
+    margin: 32px auto;
+    padding: 28px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.005));
+    box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .watermark{
+    position:absolute; inset:0;
+    pointer-events:none;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; letter-spacing:.25rem;
+    font-size: clamp(56px, 14vw, 160px);
+    color:#ffffff05;
+    text-transform:uppercase;
+    user-select:none;
+    filter: blur(0.2px);
+  }
+  header{ display:flex; align-items:center; gap:16px; padding: 8px 4px 18px; }
+  .logo{ display:flex; align-items:center; gap:12px; }
+  .flame{ width:32px; height:32px; flex:0 0 32px; filter: drop-shadow(0 0 8px rgba(255,77,46,.35)); }
+  .brand{ line-height:1; }
+  .brand h1{ margin:0; font-size:28px; font-weight:900; letter-spacing: .06em; }
+  .brand small{ color: var(--muted); letter-spacing:.08em}
+  .tabs{ display:flex; flex-wrap:wrap; gap:14px; margin-top: 12px; }
+  .tab-btn{
+    position:relative; padding:14px 18px; border-radius:14px;
+    background: rgba(0,0,0,.35); border: 1px solid rgba(255, 214, 94, .35);
+    color: var(--white); font-weight:700; letter-spacing:.02em; cursor:pointer; transition: all .2s ease;
+    text-shadow: 0 0 10px rgba(255, 214, 94, .15), 0 0 22px rgba(255, 214, 94, .10);
+    box-shadow: 0 0 0 0 rgba(255, 214, 94, .0), inset 0 0 12px rgba(255, 214, 94, .12);
+  }
+  .tab-btn::before{
+    content:""; position:absolute; inset:-2px; border-radius:16px;
+    background: radial-gradient(120% 220% at 50% 0%, rgba(255, 214, 94, .25), rgba(0,0,0,0) 60%);
+    opacity:.35; z-index:-1; filter: blur(6px); transition:opacity .2s ease;
+  }
+  .tab-btn:hover{
+    transform: translateY(-1px);
+    border-color: rgba(255, 214, 94, .65);
+    box-shadow: 0 0 18px 2px rgba(255, 214, 94, .25), inset 0 0 18px rgba(255, 214, 94, .16);
+    text-shadow: 0 0 12px rgba(255, 214, 94, .35), 0 0 30px rgba(255, 214, 94, .22);
+  }
+  .tab-btn.active{
+    background: rgba(255, 214, 94, .06);
+    border-color: var(--gold);
+    box-shadow: 0 0 26px 4px rgba(255, 214, 94, .35), inset 0 0 22px rgba(255, 214, 94, .22);
+    text-shadow: 0 0 14px rgba(255, 214, 94, .55), 0 0 36px rgba(255, 214, 94, .28);
+  }
+  .panel{
+    display:none; margin-top:22px; padding:18px; border-radius:16px;
+    background: rgba(18,18,20,.55); border:1px solid rgba(255,255,255,.06);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+  }
+  .panel.active{ display:block; }
+  h2{ margin: 6px 0 14px; font-size:20px; letter-spacing:.02em }
+  .row{ display:flex; gap:14px; flex-wrap:wrap }
+  .col{ flex:1 1 260px; min-width: 240px }
+  label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; letter-spacing:.06em; text-transform:uppercase }
+  input, textarea, select{
+    width:100%; padding:12px 12px; border-radius:12px;
+    background:#0f0f12; color:var(--white);
+    border:1px solid rgba(255,255,255,.08);
+    outline:none;
+  }
+  textarea{ min-height:120px }
+  .btn{
+    appearance:none; border:0; border-radius:12px; padding:12px 16px; font-weight:800; letter-spacing:.02em;
+    cursor:pointer; color:#1a1200; background:linear-gradient(180deg, var(--gold-bright), var(--gold-deep));
+    box-shadow: 0 10px 28px rgba(255, 214, 94, .25), 0 0 26px rgba(255, 214, 94, .35);
+    text-shadow: 0 0 10px rgba(0,0,0,.35);
+  }
+  .btn.secondary{ background: #1b1b1e; color:var(--white); box-shadow:none; border:1px solid rgba(255,255,255,.12) }
+  .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+  table{ width:100%; border-collapse:collapse; }
+  th, td{ padding:12px; border-bottom:1px solid rgba(255,255,255,.06) }
+  th{ text-align:left; color:var(--muted); font-weight:700; font-size:12px; letter-spacing:.08em; text-transform:uppercase }
+  tr:hover td{ background:rgba(255,255,255,.02) }
+  .pill{
+    display:inline-block; padding:6px 10px; border-radius:999px;
+    background:rgba(255, 214, 94, .12); border:1px solid rgba(255, 214, 94, .35);
+    color:var(--gold-bright); font-weight:700; font-size:12px;
+    text-shadow: 0 0 8px rgba(255, 214, 94, .25);
+  }
+  @media print{
+    .tabs, .actions, .watermark{ display:none !important }
+    body{ background:white; color:black }
+    .tablet{ box-shadow:none; background:white }
+    .panel{ background:white; border:0 }
+  }
+</style>
 </head>
 <body>
-  <!-- Logo -->
-  <div style="text-align:center; margin-top:20px;">
-    <img src="WUUK.JPG" alt="Warm Up UK Logo" style="max-width:200px;">
+  <div class="tablet" id="app">
+    <div class="watermark">WARM UP UK</div>
+
+    <header>
+      <div class="logo" aria-label="Warm Up UK">
+        <svg class="flame" viewBox="0 0 64 64" aria-hidden="true">
+          <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ff6a3a"/><stop offset="100%" stop-color="#ffcf66"/></linearGradient>
+          </defs>
+          <path d="M38 6c2 6-2 9-5 13-3 5 0 9 4 12 5 5 7 9 5 15-2 6-8 10-14 10S14 52 14 44c0-9 5-13 7-19 2-5 1-10-2-15 7 2 13 7 19  -4z" fill="url(#g)"/>
+        </svg>
+        <div class="brand">
+          <h1>WARM UP UK</h1>
+          <small>Operations Dashboard</small>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Primary">
+      <button class="tab-btn active" data-tab="appointments"><span>Appointments</span></button>
+      <button class="tab-btn" data-tab="install"><span>Install Calendar</span></button>
+      <button class="tab-btn" data-tab="leads"><span>Inbound Leads</span></button>
+      <button class="tab-btn" data-tab="stats"><span>Statistics</span></button>
+      <button class="tab-btn" data-tab="commissions"><span>Commissions</span></button>
+    </nav>
+
+    <!-- Appointments -->
+    <section class="panel active" id="panel-appointments" role="tabpanel" aria-labelledby="Appointments">
+      <h2>New Appointment</h2>
+      <div class="row">
+        <div class="col"><label>Client Name</label><input id="a_name" placeholder="Full name" /></div>
+        <div class="col"><label>Phone</label><input id="a_phone" placeholder="+44..." /></div>
+        <div class="col"><label>Date</label><input id="a_date" type="date" /></div>
+        <div class="col"><label>Time</label><input id="a_time" type="time" /></div>
+        <div class="col" style="flex:2 1 420px"><label>Address</label><input id="a_address" placeholder="House, Street, Town, Postcode" /></div>
+        <div class="col" style="flex:1 1 240px"><label>Contract URL</label><input id="a_contract" placeholder="Paste your contract link (PDF or web)" /></div>
+        <div class="col" style="flex:1 1 240px"><label>Team Member</label><input id="a_owner" placeholder="Assignee / Surveyor" /></div>
+        <div class="col" style="flex:1 1 100%"><label>Notes</label><textarea id="a_notes" placeholder="Any access notes, parking, pets, loft hatch details..."></textarea></div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" id="btn_save_appt">Save Appointment</button>
+        <button class="btn" id="btn_whatsapp">Create WhatsApp Message</button>
+        <button class="btn secondary" id="btn_clear_appt">Clear</button>
+        <span class="pill" id="save_status">Not saved</span>
+      </div>
+
+      <h2 style="margin-top:24px">Saved Appointments</h2>
+      <table id="appt_table" aria-label="Saved appointments">
+        <thead><tr><th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Address</th><th>Owner</th><th>Contract</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Install Calendar -->
+    <section class="panel" id="panel-install" role="tabpanel">
+      <h2>Install Calendar</h2>
+      <div class="row">
+        <div class="col" style="flex:2 1 520px"><label>Embed Calendar Link (Google/Outlook)</label><input id="cal_url" placeholder="Paste public embed URL here" /></div>
+        <div class="col" style="flex:0 0 200px; align-self:flex-end"><button class="btn" id="btn_set_calendar">Set Calendar</button></div>
+      </div>
+      <div style="margin-top:12px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.08)">
+        <iframe id="calendar_frame" style="width:100%; height:600px; background:#0d0d10" title="Install Calendar"></iframe>
+      </div>
+      <p style="color:var(--muted); margin-top:10px">
+        Tip: In Google Calendar, use <em>Settings → Settings for my calendar → Integrate calendar → Public URL</em> (or "Embed code") and paste it above.
+      </p>
+    </section>
+
+    <!-- Inbound Leads -->
+    <section class="panel" id="panel-leads" role="tabpanel">
+      <h2>Inbound Leads</h2>
+      <div class="row">
+        <div class="col"><label>Source</label>
+          <select id="l_source">
+            <option>Facebook</option><option>TikTok</option><option>Website</option><option>Referral</option><option>Other</option>
+          </select>
+        </div>
+        <div class="col"><label>Name</label><input id="l_name" placeholder="Lead name" /></div>
+        <div class="col"><label>Phone</label><input id="l_phone" placeholder="+44..." /></div>
+        <div class="col" style="flex:2 1 420px"><label>Message</label><input id="l_msg" placeholder="What did they ask about?" /></div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" id="btn_add_lead">Add Lead</button>
+        <button class="btn secondary" id="btn_export_leads">Export CSV</button>
+      </div>
+      <table id="leads_table" style="margin-top:14px">
+        <thead><tr><th>Date</th><th>Source</th><th>Name</th><th>Phone</th><th>Message</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Statistics -->
+    <section class="panel" id="panel-stats" role="tabpanel">
+      <h2>Statistics</h2>
+      <div class="row">
+        <div class="col"><label>Conversion Rate</label><div id="kpi_conv" class="pill">—</div></div>
+        <div class="col"><label>Avg. Job Value</label><div id="kpi_avg" class="pill">—</div></div>
+        <div class="col"><label>Leads This Month</label><div id="kpi_leads" class="pill">—</div></div>
+      </div>
+      <div style="margin-top:20px">
+        <div id="bar_wrap" style="display:flex; gap:8px; align-items:flex-end; height:220px; padding:12px; background:rgba(255,255,255,.02); border-radius:14px; border:1px solid rgba(255,255,255,.06)"></div>
+        <div id="bar_labels" style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px; margin-top:6px"></div>
+      </div>
+      <p style="color:var(--muted)">These stats are calculated from your saved appointments and leads.</p>
+    </section>
+
+    <!-- Commissions -->
+    <section class="panel" id="panel-commissions" role="tabpanel">
+      <h2>Commissions</h2>
+      <div class="row">
+        <div class="col"><label>Team Member</label><input id="c_owner" placeholder="Name" /></div>
+        <div class="col"><label>Job Value (£)</label><input id="c_value" type="number" placeholder="e.g. 2500" /></div>
+        <div class="col"><label>Rate (%)</label><input id="c_rate" type="number" placeholder="e.g. 10" /></div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" id="btn_add_comm">Add Commission</button>
+        <button class="btn secondary" id="btn_export_comm">Export CSV</button>
+      </div>
+      <table id="comm_table" style="margin-top:14px">
+        <thead><tr><th>Date</th><th>Owner</th><th>Job Value (£)</th><th>Rate (%)</th><th>Commission (£)</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
   </div>
 
-  <h1>🔥 Warm Up UK Dashboard</h1>
-  <p>Welcome to your dashboard. From here you can access everything:</p>
+<script>
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.dataset.tab;
+    document.getElementById('panel-'+id).classList.add('active');
+    localStorage.setItem('wuuk.activeTab', id);
+  });
+});
+const lastTab = localStorage.getItem('wuuk.activeTab');
+if(lastTab && document.getElementById('panel-'+lastTab)){
+  document.querySelector(`.tab-btn[data-tab="${lastTab}"]`).click();
+}
 
-  <ul>
-    <li><a href="contract.html">📄 Open Contract</a></li>
-    <li><a href="Calendar">📅 View Calendar</a></li>
-    <li><a href="Teams">👥 Teams</a></li>
-    <li><a href="orderform.html">📝 Order Form</a></li>
-    <li><a href="index.html">⬅ Back to Home</a></li>
-  </ul>
+// LocalStorage helpers
+const S = {
+  read(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback }catch(e){ return fallback } },
+  write(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+};
+
+// Appointments
+const apptKey = 'wuuk.appointments.v1';
+const apptTable = document.querySelector('#appt_table tbody');
+const statusPill = document.getElementById('save_status');
+
+function renderAppointments(){
+  const data = S.read(apptKey, []);
+  apptTable.innerHTML = data.map((a,i)=>`
+    <tr>
+      <td>${a.date||''}</td>
+      <td>${a.time||''}</td>
+      <td>${a.name||''}</td>
+      <td>${a.phone||''}</td>
+      <td>${a.address||''}</td>
+      <td>${a.owner||''}</td>
+      <td>${a.contract?'<a href="'+a.contract+'" target="_blank">Open</a>':''}</td>
+      <td><button class="btn secondary" data-del="${i}">Delete</button></td>
+    </tr>
+  `).join('');
+}
+renderAppointments();
+
+apptTable.addEventListener('click', (e)=>{
+  const i = e.target?.dataset?.del;
+  if(i!==undefined){
+    const data = S.read(apptKey, []);
+    data.splice(Number(i),1);
+    S.write(apptKey, data);
+    renderAppointments();
+  }
+});
+
+document.getElementById('btn_save_appt').addEventListener('click', ()=>{
+  const a = {
+    name: document.getElementById('a_name').value.trim(),
+    phone: document.getElementById('a_phone').value.trim(),
+    date: document.getElementById('a_date').value,
+    time: document.getElementById('a_time').value,
+    address: document.getElementById('a_address').value.trim(),
+    contract: document.getElementById('a_contract').value.trim(),
+    owner: document.getElementById('a_owner').value.trim(),
+    notes: document.getElementById('a_notes').value.trim()
+  };
+  const data = S.read(apptKey, []);
+  data.push(a);
+  S.write(apptKey, data);
+  renderAppointments();
+  statusPill.textContent = 'Saved';
+  statusPill.style.background = 'rgba(84, 214, 94, .14)';
+  statusPill.style.borderColor = 'rgba(84, 214, 94, .5)';
+});
+
+document.getElementById('btn_clear_appt').addEventListener('click', ()=>{
+  ['a_name','a_phone','a_date','a_time','a_address','a_contract','a_owner','a_notes'].forEach(id=>document.getElementById(id).value='');
+  statusPill.textContent = 'Cleared';
+  statusPill.style.background = 'rgba(255,255,255,.08)';
+  statusPill.style.borderColor = 'rgba(255,255,255,.2)';
+});
+
+// WhatsApp composer
+document.getElementById('btn_whatsapp').addEventListener('click', ()=>{
+  const name = document.getElementById('a_name').value.trim();
+  const date = document.getElementById('a_date').value;
+  const time = document.getElementById('a_time').value;
+  const address = document.getElementById('a_address').value.trim();
+  const contract = document.getElementById('a_contract').value.trim();
+  const owner = document.getElementById('a_owner').value.trim();
+  const notes = document.getElementById('a_notes').value.trim();
+  const intro = `Hello ${name || ''} — this is Warm Up UK.\n\nYour appointment: ${date || ''} ${time || ''}\nAddress: ${address || ''}\nTeam: ${owner || ''}`;
+  const linkLine = contract ? `\n\nContract: ${contract}` : '';
+  const notesLine = notes ? `\n\nNotes: ${notes}` : '';
+  const msg = encodeURIComponent(intro + linkLine + notesLine + "\n\nReply to confirm. 🔥");
+  const wa = `https://wa.me/?text=${msg}`;
+  window.open(wa, '_blank');
+});
+
+// Calendar
+const calKey = 'wuuk.calendar.url';
+const calURL = S.read(calKey, '');
+if(calURL){ document.getElementById('calendar_frame').src = calURL; document.getElementById('cal_url').value = calURL; }
+document.getElementById('btn_set_calendar').addEventListener('click', ()=>{
+  const u = document.getElementById('cal_url').value.trim();
+  if(u){ S.write(calKey, u); document.getElementById('calendar_frame').src = u; }
+});
+
+// Leads
+const leadsKey = 'wuuk.leads.v1';
+const leadsTable = document.querySelector('#leads_table tbody');
+function renderLeads(){
+  const data = S.read(leadsKey, []);
+  leadsTable.innerHTML = data.map((l,i)=>`
+    <tr>
+      <td>${l.date}</td><td>${l.source}</td><td>${l.name}</td><td>${l.phone}</td><td>${l.msg}</td>
+      <td><button class="btn secondary" data-del="${i}">Delete</button></td>
+    </tr>
+  `).join('');
+}
+renderLeads();
+document.getElementById('btn_add_lead').addEventListener('click', ()=>{
+  const l = {
+    date: new Date().toISOString().slice(0,10),
+    source: document.getElementById('l_source').value,
+    name: document.getElementById('l_name').value.trim(),
+    phone: document.getElementById('l_phone').value.trim(),
+    msg: document.getElementById('l_msg').value.trim()
+  };
+  const data = S.read(leadsKey, []); data.push(l); S.write(leadsKey, data); renderLeads();
+  document.getElementById('l_name').value=''; document.getElementById('l_phone').value=''; document.getElementById('l_msg').value='';
+});
+document.querySelector('#leads_table').addEventListener('click', (e)=>{
+  const i = e.target?.dataset?.del;
+  if(i!==undefined){ const data=S.read(leadsKey,[]); data.splice(Number(i),1); S.write(leadsKey,data); renderLeads(); }
+});
+document.getElementById('btn_export_leads').addEventListener('click', ()=> exportCSV('leads.csv', S.read(leadsKey,[])));
+
+// Statistics
+function refreshStats(){
+  const leads = S.read(leadsKey, []);
+  const appts = S.read(apptKey, []);
+  const month = new Date().toISOString().slice(0,7);
+  const leadsThisMonth = leads.filter(l=>l.date.startsWith(month)).length;
+  const jobs = appts.length;
+  const conversion = leads.length ? (jobs/leads.length*100) : 0;
+  const avgJob = appts.length ? (appts.reduce((s,a)=> s + (parseFloat(a.estimate||0) || 0), 0) / appts.length) : 0;
+  document.getElementById('kpi_conv').textContent = conversion ? conversion.toFixed(1) + '%' : '—';
+  document.getElementById('kpi_avg').textContent = avgJob ? '£'+avgJob.toFixed(0) : '—';
+  document.getElementById('kpi_leads').textContent = leadsThisMonth;
+
+  const labels = []; const values = [];
+  const now = new Date();
+  for(let i=7;i>=0;i--){
+    const d = new Date(now); d.setDate(d.getDate() - i*7);
+    const iso = d.toISOString().slice(0,10);
+    const weekEnd = new Date(d); weekEnd.setDate(weekEnd.getDate()+6);
+    labels.push(iso.slice(5)); // MM-DD
+    const count = leads.filter(l => {
+      const ld=new Date(l.date); return ld>=d && ld<=weekEnd;
+    }).length;
+    values.push(count);
+  }
+  const wrap = document.getElementById('bar_wrap'); wrap.innerHTML='';
+  const lab = document.getElementById('bar_labels'); lab.innerHTML='';
+  const max = Math.max(1, ...values);
+  values.forEach((v,i)=>{
+    const h = Math.round((v/max)*200)+10;
+    const bar = document.createElement('div');
+    bar.style.height = h+'px';
+    bar.style.width = '10%';
+    bar.style.minWidth = '40px';
+    bar.style.borderRadius = '10px';
+    bar.style.background = 'linear-gradient(180deg, rgba(255,214,94,.95), rgba(207,168,58,.85))';
+    bar.style.boxShadow = '0 10px 22px rgba(255,214,94,.25), 0 0 18px rgba(255,214,94,.3)';
+    bar.title = values[i]+' leads';
+    wrap.appendChild(bar);
+    const ll = document.createElement('div'); ll.textContent = labels[i]; lab.appendChild(ll);
+  });
+}
+refreshStats();
+
+// Commissions
+const commKey = 'wuuk.commissions.v1';
+const commTable = document.querySelector('#comm_table tbody');
+function renderCommissions(){
+  const data = S.read(commKey, []);
+  commTable.innerHTML = data.map((c,i)=>`
+    <tr>
+      <td>${c.date}</td><td>${c.owner}</td><td>£${Number(c.value||0).toFixed(2)}</td><td>${Number(c.rate||0).toFixed(1)}</td><td>£${(c.value*c.rate/100).toFixed(2)}</td>
+      <td><button class="btn secondary" data-del="${i}">Delete</button></td>
+    </tr>
+  `).join('');
+}
+renderCommissions();
+document.getElementById('btn_add_comm').addEventListener('click', ()=>{
+  const c = {
+    date: new Date().toISOString().slice(0,10),
+    owner: document.getElementById('c_owner').value.trim(),
+    value: parseFloat(document.getElementById('c_value').value||0),
+    rate: parseFloat(document.getElementById('c_rate').value||0),
+  };
+  const data = S.read(commKey, []); data.push(c); S.write(commKey, data); renderCommissions();
+  document.getElementById('c_owner').value=''; document.getElementById('c_value').value=''; document.getElementById('c_rate').value='';
+});
+document.querySelector('#comm_table').addEventListener('click', (e)=>{
+  const i = e.target?.dataset?.del;
+  if(i!==undefined){ const data=S.read(commKey,[]); data.splice(Number(i),1); S.write(commKey,data); renderCommissions(); }
+});
+document.getElementById('btn_export_comm').addEventListener('click', ()=> exportCSV('commissions.csv', S.read(commKey,[])));
+
+// CSV export
+function exportCSV(filename, rows){
+  if(!rows || !rows.length){ alert('No data to export'); return; }
+  const replacer = (key, value) => (value === null ? '' : value);
+  const header = Object.keys(rows[0]);
+  const csv = [
+    header.join(','),
+    ...rows.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+  ].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.click();
+  URL.revokeObjectURL(url);
+}
+</script>
 </body>
 </html>
