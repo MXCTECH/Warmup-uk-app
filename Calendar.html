@@ -1,117 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warm Up UK Calendar</title>
-  <link rel="stylesheet" href="app.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #f5f5f5;
-      text-align: center;
-    }
-    h1 { color: gold; }
-    .form-container {
-      max-width: 600px;
-      margin: 20px auto;
-      background: #222;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    input, select, textarea {
-      width: 95%;
-      margin: 8px 0;
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-    }
-    button {
-      margin: 8px;
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      background: gold;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button.whatsapp {
-      background: #25D366;
-      color: white;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Warm Up UK Calendar</title>
+<link rel="stylesheet" href="app.css"/>
+<style>
+  body { font-family: Arial, sans-serif; background:#111; color:#f5f5f5; margin:0; }
+  .container { max-width: 700px; margin: 20px auto; padding: 20px; background:#1e1e1e; border-radius: 8px; }
+  label { display:block; margin:10px 0 5px; font-weight:bold; }
+  input, select, textarea { width:100%; padding:8px; margin-bottom:12px; border:none; border-radius:5px; }
+  .btn { padding:12px; margin:5px 0; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+  .btn-primary { background:#d4af37; color:#111; }
+  .btn-secondary { background:#333; color:#fff; }
+  h1 { color:#d4af37; }
+</style>
 </head>
 <body>
 
-  <h1>📅 Warm Up UK Calendar & Bookings</h1>
-  <div class="form-container">
-    <form id="bookingForm">
-      <input type="text" id="name" placeholder="Client name" required>
-      <input type="text" id="phone" placeholder="Client phone (WhatsApp)" required>
-      <input type="text" id="addr" placeholder="Address" required>
-      <input type="date" id="date" required>
-      <input type="time" id="time" required>
-      <input type="number" id="dur" placeholder="Duration (hrs)" required>
-      <select id="product">
-        <option value="Loft Insulation">Loft Insulation</option>
-        <option value="Cavity Wall Insulation">Cavity Wall Insulation</option>
-        <option value="Boiler Service">Boiler Service</option>
-      </select>
-      <input type="number" id="price" placeholder="Price (£)" required>
-      <textarea id="notes" placeholder="Notes (optional)"></textarea>
-    </form>
+<div class="container">
+  <h1>📅 Calendar & Bookings</h1>
 
-    <button onclick="sendToWhatsApp()" class="whatsapp">Send to client WhatsApp</button>
-    <button onclick="sendToMyWhatsApp()" class="whatsapp">Send to my WhatsApp</button>
-  </div>
+  <label>Client name</label>
+  <input type="text" id="name"/>
 
-  <script>
-    function getBookingData() {
-      return {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        addr: document.getElementById('addr').value,
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
-        dur: document.getElementById('dur').value,
-        product: document.getElementById('product').value,
-        price: document.getElementById('price').value,
-        notes: document.getElementById('notes').value
-      };
-    }
+  <label>Client phone (WhatsApp)</label>
+  <input type="text" id="phone" placeholder="+447..."/>
 
-    function contractURL(b) {
-      const base = location.origin + location.pathname.replace(/\/[^\/]*$/, '');
-      const q = new URLSearchParams({
-        name: b.name,
-        phone: b.phone,
-        address: b.addr,
-        date: b.date,
-        time: b.time,
-        duration: b.dur,
-        product: b.product,
-        price: b.price,
-        notes: b.notes
-      }).toString();
-      return `${base}/contract.html?${q}`;
-    }
+  <label>Email</label>
+  <input type="email" id="email" placeholder="client@email.com"/>
 
-    function sendToWhatsApp() {
-      const b = getBookingData();
-      const url = contractURL(b);
-      const msg = `Hello ${b.name},\n\nHere are your booking details:\n📍 ${b.addr}\n📅 ${b.date} at ${b.time}\n🛠️ ${b.product} - £${b.price}\n\nView your contract here:\n${url}`;
-      window.open(`https://wa.me/${b.phone.replace(/^0/, '44')}?text=${encodeURIComponent(msg)}`, "_blank");
-    }
+  <label>Address</label>
+  <textarea id="address"></textarea>
 
-    function sendToMyWhatsApp() {
-      const b = getBookingData();
-      const url = contractURL(b);
-      const msg = `Booking saved:\n${b.name}\n${b.addr}\n${b.date} ${b.time}\n${b.product} - £${b.price}\nContract: ${url}`;
-      window.open(`https://wa.me/<YOURNUMBERHERE>?text=${encodeURIComponent(msg)}`, "_blank");
-    }
-  </script>
+  <label>Date</label>
+  <input type="date" id="date"/>
 
+  <label>Start time</label>
+  <input type="time" id="time"/>
+
+  <label>Duration (hrs)</label>
+  <input type="number" id="duration" value="2"/>
+
+  <label>Product/Service</label>
+  <select id="product">
+    <option>Loft Insulation</option>
+    <option>Boiler Service</option>
+    <option>Spray Foam Removal</option>
+    <option>Roof Multifoil</option>
+  </select>
+
+  <label>Price (£)</label>
+  <input type="number" id="price"/>
+
+  <label>Notes (optional)</label>
+  <textarea id="notes"></textarea>
+
+  <button class="btn btn-primary" onclick="sendWhatsApp()">Send to client WhatsApp</button>
+</div>
+
+<script>
+function sendWhatsApp(){
+  const name = encodeURIComponent(document.getElementById('name').value);
+  const phone = encodeURIComponent(document.getElementById('phone').value);
+  const email = encodeURIComponent(document.getElementById('email').value);
+  const address = encodeURIComponent(document.getElementById('address').value);
+  const date = encodeURIComponent(document.getElementById('date').value);
+  const time = encodeURIComponent(document.getElementById('time').value);
+  const duration = encodeURIComponent(document.getElementById('duration').value);
+  const product = encodeURIComponent(document.getElementById('product').value);
+  const price = encodeURIComponent(document.getElementById('price').value);
+  const notes = encodeURIComponent(document.getElementById('notes').value);
+
+  // Build contract link
+  const contractUrl = `https://warmupuk.github.io/Warmup-uk-app/contract.html?name=${name}&phone=${phone}&email=${email}&address=${address}&date=${date} ${time}&product=${product}&price=${price}&notes=${notes}`;
+
+  // WhatsApp message
+  const msg = `Hello ${decodeURIComponent(name)}, here is your contract: ${contractUrl}`;
+  const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+
+  window.open(waLink,'_blank');
+}
+</script>
 </body>
 </html>
