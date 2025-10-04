@@ -1,225 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warm Up UK Calendar</title>
-  <link rel="stylesheet" href="app.css" />
+  <link rel="stylesheet" href="app.css">
   <style>
-    body { background:#111; color:#f5f5f5; font-family:Arial, sans-serif; }
-    .wrap { max-width:960px; margin:0 auto; padding:16px; }
-    h1 { color:gold; margin:18px 0; }
-    .grid { display:grid; gap:12px; }
-    .row  { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
-    label { font-size:14px; opacity:.9; margin-bottom:4px; display:block; }
-    input, select, textarea { width:100%; background:#1a1a1a; color:#f5f5f5; border:1px solid #333; border-radius:10px; padding:14px; }
-    textarea { min-height:120px; }
-    .btns { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; }
-    .btn { padding:16px; border-radius:12px; border:0; font-weight:700; }
-    .primary { background:#ffd200; color:#111; }
-    .dark { background:#222; color:#eee; border:1px solid #333; }
-    .note { font-size:12px; opacity:.8; margin-top:6px; }
-    nav a { color:#f5f5f5; opacity:.85; margin-right:14px; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #f5f5f5;
+      text-align: center;
+    }
+    h1 { color: gold; }
+    .form-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #222;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    input, select, textarea {
+      width: 95%;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 4px;
+      border: none;
+    }
+    button {
+      margin: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      background: gold;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button.whatsapp {
+      background: #25D366;
+      color: white;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <a href="dashboard.html">Dashboard</a> ·
-      <a href="calendar.html"><strong>Calendar</strong></a> ·
-      <a href="contract.html">Contract</a> ·
-      <a href="order-form.html">Order Form</a>
-    </nav>
 
-    <h1>📅 Calendar & Bookings</h1>
+  <h1>📅 Warm Up UK Calendar & Bookings</h1>
+  <div class="form-container">
+    <form id="bookingForm">
+      <input type="text" id="name" placeholder="Client name" required>
+      <input type="text" id="phone" placeholder="Client phone (WhatsApp)" required>
+      <input type="text" id="addr" placeholder="Address" required>
+      <input type="date" id="date" required>
+      <input type="time" id="time" required>
+      <input type="number" id="dur" placeholder="Duration (hrs)" required>
+      <select id="product">
+        <option value="Loft Insulation">Loft Insulation</option>
+        <option value="Cavity Wall Insulation">Cavity Wall Insulation</option>
+        <option value="Boiler Service">Boiler Service</option>
+      </select>
+      <input type="number" id="price" placeholder="Price (£)" required>
+      <textarea id="notes" placeholder="Notes (optional)"></textarea>
+    </form>
 
-    <div class="grid">
-      <div class="row">
-        <div>
-          <label>Client name</label>
-          <input id="name" placeholder="Client name" />
-        </div>
-        <div>
-          <label>Client phone (WhatsApp)</label>
-          <input id="phone" inputmode="tel" placeholder="+447... or 074..." />
-          <div class="note">Any format is fine — we’ll fix it for WhatsApp.</div>
-        </div>
-      </div>
-
-      <div>
-        <label>Address</label>
-        <textarea id="addr" placeholder="Address"></textarea>
-      </div>
-
-      <div class="row-3">
-        <div>
-          <label>Date</label>
-          <input id="date" type="date" />
-        </div>
-        <div>
-          <label>Start time</label>
-          <input id="time" type="time" />
-        </div>
-        <div>
-          <label>Duration (hrs)</label>
-          <input id="dur" type="number" step="0.5" value="2" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Product/Service</label>
-          <select id="product">
-            <option>Loft Insulation</option>
-            <option>Cavity Wall Insulation</option>
-            <option>Underfloor Insulation</option>
-            <option>Room In Roof</option>
-            <option>Boiler Upgrade</option>
-          </select>
-        </div>
-        <div>
-          <label>Price (£)</label>
-          <input id="price" type="number" step="1" placeholder="0" />
-        </div>
-      </div>
-
-      <div>
-        <label>Notes (optional)</label>
-        <textarea id="notes" placeholder="Boiler type / access / special instructions"></textarea>
-      </div>
-
-      <div class="btns">
-        <button class="btn primary" id="saveBtn">Save booking</button>
-        <button class="btn dark" id="sendClientBtn">Send to client WhatsApp</button>
-        <button class="btn dark" id="sendMyBtn">Send to my WhatsApp</button>
-        <button class="btn dark" id="addGoogleBtn">Add to Google Calendar</button>
-      </div>
-    </div>
+    <button onclick="sendToWhatsApp()" class="whatsapp">Send to client WhatsApp</button>
+    <button onclick="sendToMyWhatsApp()" class="whatsapp">Send to my WhatsApp</button>
   </div>
 
-<script>
-  // ---- Helpers -------------------------------------------------------------
-
-  function byId(id){ return document.getElementById(id); }
-
-  function sanitizePhone(input) {
-    // Keep digits only
-    let digits = (input || '').replace(/\D+/g, '');
-    // Strip leading 00 or + already gone
-    if (digits.startsWith('00')) digits = digits.slice(2);
-    // UK normalization
-    if (digits.startsWith('0')) digits = '44' + digits.slice(1);
-    else if (digits.startsWith('7')) digits = '44' + digits;
-    // Else if already 44... leave as is
-    return digits;
-  }
-
-  function getForm() {
-    const name = byId('name').value.trim();
-    const phoneRaw = byId('phone').value.trim();
-    const phone = sanitizePhone(phoneRaw);
-    const addr = byId('addr').value.trim();
-    const date = byId('date').value;
-    const time = byId('time').value;
-    const dur  = byId('dur').value;
-    const product = byId('product').value;
-    const price = byId('price').value;
-    const notes = byId('notes').value.trim();
-
-    if (!name || !phone) { alert('Please enter client name and phone.'); return null; }
-    if (!/^\d{9,15}$/.test(phone)) { alert('Phone format looks wrong. Try +447..., 447..., or 07...'); return null; }
-
-    return { name, phone, addr, date, time, dur, product, price, notes };
-  }
-
-  function contractURL(b) {
-    // Contract page with prefilled details
-    const q = new URLSearchParams({
-      name: b.name,
-      phone: b.phone,
-      address: b.addr,
-      date: b.date,
-      time: b.time,
-      duration: b.dur,
-      product: b.product,
-      price: b.price
-    }).toString();
-    return `${location.origin}/contract.html?${q}`;
-  }
-
-  function waURL(targetPhone, b) {
-    const msg =
-`Hi ${b.name},
-
-Here are your booking details:
-• Service: ${b.product}
-• Price: £${b.price}
-• Date: ${b.date} ${b.time} (${b.dur}h)
-• Address: ${b.addr}
-
-Please review & sign your contract here:
-${contractURL(b)}
-
-Warm Up UK`;
-    const encoded = encodeURIComponent(msg);
-    return `https://wa.me/${targetPhone}?text=${encoded}`;
-  }
-
-  // ---- Buttons -------------------------------------------------------------
-
-  // Save (just caches locally so fields persist)
-  byId('saveBtn').addEventListener('click', () => {
-    const b = getForm(); if (!b) return;
-    localStorage.setItem('wuuk_booking', JSON.stringify(b));
-    alert('Booking saved locally.');
-  });
-
-  // Send to client WhatsApp
-  byId('sendClientBtn').addEventListener('click', () => {
-    const b = getForm(); if (!b) return;
-    // iOS-friendly: use direct navigation rather than popup
-    window.location.href = waURL(b.phone, b);
-  });
-
-  // Send to my WhatsApp (set your own number here if you want)
-  const BUSINESS_WHATSAPP = ''; // e.g. "447000000000"
-  byId('sendMyBtn').addEventListener('click', () => {
-    const b = getForm(); if (!b) return;
-    const myNum = BUSINESS_WHATSAPP || b.phone; // fallback to client if not set
-    window.location.href = waURL(myNum, b);
-  });
-
-  // Google Calendar quick add (opens prefilled event)
-  byId('addGoogleBtn').addEventListener('click', () => {
-    const b = getForm(); if (!b) return;
-    const start = new Date(`${b.date}T${b.time}:00`);
-    const end = new Date(start.getTime() + (Number(b.dur) || 1) * 3600000);
-    function fmt(d){
-      const pad=n=>String(n).padStart(2,'0');
-      return d.getUTCFullYear()
-        + pad(d.getUTCMonth()+1)
-        + pad(d.getUTCDate())
-        + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+  <script>
+    function getBookingData() {
+      return {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        addr: document.getElementById('addr').value,
+        date: document.getElementById('date').value,
+        time: document.getElementById('time').value,
+        dur: document.getElementById('dur').value,
+        product: document.getElementById('product').value,
+        price: document.getElementById('price').value,
+        notes: document.getElementById('notes').value
+      };
     }
-    const text   = encodeURIComponent(`Warm Up UK – ${b.product} for ${b.name}`);
-    const details= encodeURIComponent(`Address: ${b.addr}\nPrice: £${b.price}\nNotes: ${b.notes}\nContract: ${contractURL(b)}`);
-    const loc    = encodeURIComponent(b.addr);
-    const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${loc}`;
-    window.open(url, '_blank');
-  });
 
-  // Restore previous
-  (function restore(){
-    const raw = localStorage.getItem('wuuk_booking'); if (!raw) return;
-    try{
-      const b = JSON.parse(raw);
-      ['name','phone','addr','date','time','dur','price','notes'].forEach(k=>{
-        if (b[k] !== undefined) byId(k).value = b[k];
-      });
-      if (b.product) byId('product').value = b.product;
-    }catch(e){}
-  })();
-</script>
+    function contractURL(b) {
+      const base = location.origin + location.pathname.replace(/\/[^\/]*$/, '');
+      const q = new URLSearchParams({
+        name: b.name,
+        phone: b.phone,
+        address: b.addr,
+        date: b.date,
+        time: b.time,
+        duration: b.dur,
+        product: b.product,
+        price: b.price,
+        notes: b.notes
+      }).toString();
+      return `${base}/contract.html?${q}`;
+    }
+
+    function sendToWhatsApp() {
+      const b = getBookingData();
+      const url = contractURL(b);
+      const msg = `Hello ${b.name},\n\nHere are your booking details:\n📍 ${b.addr}\n📅 ${b.date} at ${b.time}\n🛠️ ${b.product} - £${b.price}\n\nView your contract here:\n${url}`;
+      window.open(`https://wa.me/${b.phone.replace(/^0/, '44')}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function sendToMyWhatsApp() {
+      const b = getBookingData();
+      const url = contractURL(b);
+      const msg = `Booking saved:\n${b.name}\n${b.addr}\n${b.date} ${b.time}\n${b.product} - £${b.price}\nContract: ${url}`;
+      window.open(`https://wa.me/<YOURNUMBERHERE>?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+  </script>
+
 </body>
 </html>
