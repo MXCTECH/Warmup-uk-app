@@ -1,0 +1,5 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Warm Up UK Contract</title></head><body><h1>Contract</h1><p>Sign below:</p>
+<canvas id="sig" width="300" height="150" style="border:1px solid #ccc"></canvas>
+<script>let c=document.getElementById('sig'),ctx=c.getContext('2d');let d=false;function p(e){let r=c.getBoundingClientRect();return{x:e.touches?e.touches[0].clientX-r.left:e.offsetX,y:e.touches?e.touches[0].clientY-r.top:e.offsetY}}c.addEventListener('mousedown',e=>{d=true;let pt=p(e);ctx.moveTo(pt.x,pt.y)});c.addEventListener('mousemove',e=>{if(d){let pt=p(e);ctx.lineTo(pt.x,pt.y);ctx.stroke()}});c.addEventListener('mouseup',()=>d=false);c.addEventListener('touchstart',e=>{d=true;let pt=p(e);ctx.moveTo(pt.x,pt.y)});c.addEventListener('touchmove',e=>{if(d){let pt=p(e);ctx.lineTo(pt.x,pt.y);ctx.stroke()}});c.addEventListener('touchend',()=>d=false);</script>
+</body></html>
