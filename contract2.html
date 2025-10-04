@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK — Contract Dashboard</title>
+<style>
+  :root {
+    --bg0:#0b0b0c; --bg1:#121214; --card:#18181b;
+    --gold:#ffc94d; --gold2:#d7ac3a;
+    --white:#f5f5f7; --muted:#b0b3b8; --line:#2a2a2f;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:0;
+    background: radial-gradient(1200px 600px at 50% 20%, #1a1a1d 0%, var(--bg0) 45%, var(--bg1) 100%);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--white);
+  }
+  .wrap{max-width:860px; margin:24px auto; padding:12px}
+  h1{margin:0 0 16px; color:var(--gold)}
+  .sec{background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; margin:14px 0; overflow:hidden}
+  .sec-hd{display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
+    background:linear-gradient(180deg, rgba(255,201,77,.12), rgba(255,201,77,.04)); border-bottom:1px solid var(--line)}
+  .sec-hd h2{margin:0; font-size:20px; color:var(--gold)}
+  .open-btn{background:#28303a; color:#cfd6df; border:1px solid #3a4450; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer}
+  .sec-bd{display:none; padding:16px; background:var(--card)}
+  .sec.open .sec-bd{display:block}
+  label{display:block; font-size:13px; color:#c8cbd1; margin:10px 0 6px}
+  input,textarea,select{width:100%; padding:12px; border-radius:12px; background:#0f1114; color:var(--white); border:1px solid #272a31}
+  textarea{min-height:110px}
+  table{width:100%; border-collapse:collapse; background:#0f1114; border:1px solid #272a31; border-radius:12px; overflow:hidden}
+  th,td{padding:10px; border-bottom:1px solid #1f2228}
+  th{text-align:left; color:#c8cbd1; font-size:12px; text-transform:uppercase}
+  .btn{border:0; border-radius:12px; padding:11px 14px; font-weight:800; cursor:pointer;
+    color:#0f0f0f; background:linear-gradient(180deg, var(--gold), var(--gold2)); box-shadow:0 8px 20px rgba(255,201,77,.25)}
+  .btn.secondary{background:#22252b; color:#eef; border:1px solid #323741; box-shadow:none}
+  .btn.success{background:linear-gradient(180deg,#44df87,#27b862); color:#062e18}
+  .mini{padding:8px 10px; border-radius:10px}
+  .sum-card{background:#15161a; border:1px solid #2a2f36; border-radius:14px; padding:14px}
+  .sum-line{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #23262d}
+  .sum-line:last-child{border-bottom:0}
+  .sum-strong{font-weight:900; color:var(--gold)}
+  .divider{height:1px; background:linear-gradient(90deg,rgba(255,201,77,0),rgba(255,201,77,.35),rgba(255,201,77,0)); margin:12px 0}
+  small.note{color:#7c818a}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Warm Up UK — Contract & Quote</h1>
+
+  <section class="sec open" id="client">
+    <div class="sec-hd"><h2>Client Information</h2><button class="open-btn" data-toggle="#client">Open</button></div>
+    <div class="sec-bd">
+      <label>Client Name</label><input id="c_name">
+      <label>Email</label><input id="c_email" type="email">
+      <label>Phone</label><input id="c_phone">
+      <label>Address</label><input id="c_address">
+    </div>
+  </section>
+
+  <section class="sec" id="products">
+    <div class="sec-hd"><h2>Products</h2><button class="open-btn" data-toggle="#products">Open</button></div>
+    <div class="sec-bd">
+      <button class="btn mini" id="addLine">Add Product</button>
+      <table id="prodTable">
+        <thead><tr><th>Item</th><th>Unit Price</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="settings">
+    <div class="sec-hd"><h2>Settings</h2><button class="open-btn" data-toggle="#settings">Open</button></div>
+    <div class="sec-bd">
+      <label>VAT %</label><input id="vat" value="20" type="number">
+      <label>Admin Fee (£)</label><input id="admin" value="0" type="number">
+      <label>Discount (£)</label><input id="discount" value="0" type="number">
+      <label>Deposit (£)</label><input id="deposit" value="0" type="number">
+    </div>
+  </section>
+
+  <section class="sec" id="summary">
+    <div class="sec-hd"><h2>Quote Summary</h2><button class="open-btn" data-toggle="#summary">Open</button></div>
+    <div class="sec-bd">
+      <div class="sum-card" id="quoteSummary">No items yet.</div>
+      <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px">
+        <button class="btn secondary" id="previewQuote">Preview Quote</button>
+        <button class="btn" id="previewContract">Preview Contract</button>
+        <button class="btn success" id="copyWA">Copy WhatsApp Summary</button>
+        <button class="btn mini" id="pdfQuote">Download Quote (PDF)</button>
+        <button class="btn mini" id="pdfContract">Download Contract (PDF)</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* === Company Info for PDF Header/Footer === */
+const COMPANY = {
+  name: "WARM UP UK",
+  address: "321-323 High Road, Romford, Essex, RM6 6AX",
+  phone: "+44",
+  email: "admin@warmupuk.com",
+  website: "https://warmupuk.com",
+  logoDataUrl: "https://warmupuk.com/WUUK.JPG"
+};
+
+/* === Basic Accordion Toggle === */
+document.querySelectorAll(".open-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const id = btn.dataset.toggle;
+    const sec = document.querySelector(id);
+    sec.classList.toggle("open");
+  });
+});
+
+/* === Simple Add Product === */
+const products=[{name:"Loft Insulation",price:750},{name:"Cavity Wall Insulation",price:850},{name:"Underfloor Insulation",price:600},{name:"Ventilation System",price:250},{name:"Extractor Fan",price:180},{name:"Loft Hatch",price:200},{name:"Waste Removal",price:150},{name:"Scaffolding",price:300}];
+const tbody=document.querySelector("#prodTable tbody");
+document.getElementById("addLine").onclick=()=>{
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td><select class="item">${products.map(p=>`<option value="${p.price}">${p.name}</option>`).join("")}</select></td>
+  <td><input type="number" class="price" value="750"></td>
+  <td><input type="number" class="qty" value="1"></td>
+  <td class="line">£750.00</td>`;
+  tbody.appendChild(tr);
+  update();
+  tr.querySelectorAll("select,input").forEach(i=>i.addEventListener("input",update));
+};
+function update(){
+  let subtotal=0;
+  tbody.querySelectorAll("tr").forEach(tr=>{
+    const price=+tr.querySelector(".price").value||0;
+    const qty=+tr.querySelector(".qty").value||0;
+    const line=price*qty;
+    tr.querySelector(".line").textContent="£"+line.toFixed(2);
+    subtotal+=line;
+  });
+  const vatRate=+document.getElementById("vat").value||0;
+  const admin=+document.getElementById("admin").value||0;
+  const discount=+document.getElementById("discount").value||0;
+  const deposit=+document.getElementById("deposit").value||0;
+  const after=subtotal-discount+admin;
+  const vat=after*vatRate/100;
+  const total=after+vat;
+  document.getElementById("quoteSummary").innerHTML=
+  `<div class='sum-line'><div>Subtotal:</div><div>£${subtotal.toFixed(2)}</div></div>
+   <div class='sum-line'><div>Admin:</div><div>£${admin.toFixed(2)}</div></div>
+   <div class='sum-line'><div>Discount:</div><div>-£${discount.toFixed(2)}</div></div>
+   <div class='sum-line'><div>VAT (${vatRate}%):</div><div>£${vat.toFixed(2)}</div></div>
+   <div class='sum-line sum-strong'><div>Total:</div><div>£${total.toFixed(2)}</div></div>
+   <div class='sum-line'><div>Deposit:</div><div>£${deposit.toFixed(2)}</div></div>`;
+}
+document.querySelectorAll("#vat,#admin,#discount,#deposit").forEach(i=>i.addEventListener("input",update));
+
+/* === WhatsApp Copy === */
+document.getElementById("copyWA").onclick=()=>{
+  const msg="Warm Up UK Quote\n\n"+document.getElementById("quoteSummary").innerText;
+  navigator.clipboard.writeText(msg);
+  alert("Copied to clipboard for WhatsApp message!");
+};
+
+/* === PDF Print with Header/Footer === */
+function brandedDoc(title,html){
+  const header=`<div style="display:flex;align-items:center;gap:12px;border-bottom:3px solid #d7ac3a;padding:12px 0;margin-bottom:20px">
+  <img src='${COMPANY.logoDataUrl}' style='height:60px'><div><b>${COMPANY.name}</b><br>${COMPANY.address}<br>${COMPANY.email} | ${COMPANY.website}</div></div>`;
+  const footer=`<div style='position:fixed;bottom:0;left:0;right:0;border-top:1px solid #ccc;font-size:12px;padding:4px 8px;display:flex;justify-content:space-between'>
+  <span>${COMPANY.website}</span><span class='page'></span></div>`;
+  const style=`<style>@page{margin:20mm}body{font-family:Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:6px}</style>`;
+  return `<!DOCTYPE html><html><head><meta charset='utf-8'><title>${title}</title>${style}</head><body>${header}${html}${footer}</body></html>`;
+}
+function openPDF(title){
+  const html=document.getElementById("quoteSummary").outerHTML;
+  const w=window.open("","_blank");
+  w.document.open();
+  w.document.write(brandedDoc(title,html));
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+document.getElementById("pdfQuote").onclick=()=>openPDF("Quote");
+document.getElementById("pdfContract").onclick=()=>openPDF("Contract");
+</script>
+</body>
+</html>
