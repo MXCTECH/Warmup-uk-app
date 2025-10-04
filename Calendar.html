@@ -1,72 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warm Up UK Calendar</title>
-  <link rel="stylesheet" href="app.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #111;
-      color: #f5f5f5;
-    }
-    h1 {
-      color: gold;
-    }
-    table {
-      width: 90%;
-      margin: 20px auto;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #555;
-      padding: 15px;
-      text-align: center;
-    }
-    th {
-      background-color: #333;
-    }
-    td {
-      background-color: #222;
-    }
-    .today {
-      background-color: gold;
-      color: black;
-      font-weight: bold;
-    }
-    a {
-      color: #1e90ff;
-      text-decoration: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK – Calendar & Bookings</title>
+<link rel="stylesheet" href="app.css" />
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#111;color:#f5f5f5;margin:0;padding:16px}
+  .wrap{max-width:720px;margin:0 auto}
+  .logo{text-align:center;margin:10px 0 20px}
+  .logo img{max-width:170px;height:auto}
+  h1{color:gold;margin:6px 0 16px;text-align:center}
+  .card{background:#1b1b1b;border:1px solid #2a2a2a;border-radius:12px;padding:14px;margin:12px 0}
+  label{display:block;font-size:14px;margin:10px 0 6px;color:#ddd}
+  input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#0f0f0f;color:#f5f5f5}
+  textarea{min-height:80px}
+  .row{display:flex;gap:10px}
+  .row > div{flex:1}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .btn{flex:1;min-width:150px;text-align:center;padding:12px 14px;border-radius:10px;border:1px solid #333;background:#222;color:#f5f5f5;text-decoration:none;font-weight:600}
+  .btn.gold{background:gold;color:#111}
+  .btn.gray{background:#2a2a2a}
+  .muted{color:#aaa;font-size:13px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:10px;border-bottom:1px solid #2a2a2a;text-align:left;font-size:14px}
+  th{color:#ccc;font-weight:700}
+  .nav{margin:8px 0 16px;text-align:center}
+  .nav a{color:#f0c55a;text-decoration:none;font-weight:700;margin:0 6px}
+  .empty{color:#888;text-align:center;padding:20px}
+</style>
 </head>
 <body>
-  <img src="WUUK.JPG" alt="Warm Up UK Logo" width="180">
-  <h1>📅 Warm Up UK Calendar</h1>
+<div class="wrap">
 
-  <table>
-    <tr>
-      <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-    </tr>
-    <tr>
-      <td></td><td class="today">1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
-    </tr>
-    <tr>
-      <td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td>
-    </tr>
-    <tr>
-      <td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td>
-    </tr>
-    <tr>
-      <td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td>
-    </tr>
-    <tr>
-      <td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td>
-    </tr>
-  </table>
+  <div class="logo"><img src="WUUK.JPG" alt="Warm Up UK Logo" /></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a> ·
+    <a href="calendar.html">Calendar</a> ·
+    <a href="contract.html">Contract</a> ·
+    <a href="order.html">Order Form</a>
+  </nav>
 
-  <p><a href="dashboard.html">⬅️ Back to Dashboard</a></p>
+  <h1>📅 Calendar & Bookings</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label for="clientName">Client name</label>
+        <input id="clientName" placeholder="e.g., Sarah Khan" />
+      </div>
+      <div>
+        <label for="clientPhone">Client phone (WhatsApp)</label>
+        <input id="clientPhone" placeholder="e.g., 447912345678" />
+      </div>
+    </div>
+
+    <label for="clientAddress">Address</label>
+    <textarea id="clientAddress" placeholder="House no, street, town, postcode"></textarea>
+
+    <div class="row">
+      <div>
+        <label for="date">Date</label>
+        <input id="date" type="date" />
+      </div>
+      <div>
+        <label for="time">Start time</label>
+        <input id="time" type="time" />
+      </div>
+      <div>
+        <label for="duration">Duration (hrs)</label>
+        <select id="duration">
+          <option>1</option><option>1.5</option><option selected>2</option>
+          <option>3</option><option>4</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product + price -->
+    <div class="row">
+      <div>
+        <label for="product">Product/Service</label>
+        <select id="product">
+          <option value="Boiler Service">Boiler Service</option>
+          <option value="Radiator Install">Radiator Install</option>
+          <option value="Cavity Wall Insulation">Cavity Wall Insulation</option>
+          <option value="Loft Insulation">Loft Insulation</option>
+          <option value="Heat Pump Service">Heat Pump Service</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div>
+        <label for="price">Price (£)</label>
+        <input id="price" type="number" inputmode="decimal" placeholder="e.g., 149" />
+      </div>
+    </div>
+
+    <label for="notes">Notes (optional)</label>
+    <textarea id="notes" placeholder="Boiler type / access / special instructions"></textarea>
+
+    <div class="btns">
+      <button class="btn gold" id="saveBtn">Save booking</button>
+      <a class="btn gray" id="waClient" target="_blank" rel="noopener">Send to client WhatsApp</a>
+      <a class="btn gray" id="waBiz" target="_blank" rel="noopener">Send to my WhatsApp</a>
+      <a class="btn gray" id="gcal" target="_blank" rel="noopener">Add to Google Calendar</a>
+      <a class="btn gray" id="ics" download="WarmUpUK-Booking.ics">Download .ics</a>
+    </div>
+    <p class="muted">Tip: phone numbers must include country code, e.g. 4479… for UK.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 8px">Upcoming bookings</h3>
+    <div id="noBookings" class="empty" style="display:none">No bookings yet.</div>
+    <table id="bookingsTable" style="display:none">
+      <thead>
+        <tr><th>When</th><th>Client</th><th>Phone</th><th>Address</th><th></th></tr>
+      </thead>
+      <tbody id="bookingsBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  // 👉 set this to YOUR business WhatsApp number (no +, no spaces)
+  const BUSINESS_WHATSAPP = '447000000000';
+
+  const $ = id => document.getElementById(id);
+
+  function getForm() {
+    const name = $('clientName').value.trim();
+    const phone = $('clientPhone').value.replace(/\D/g,'');
+    const address = $('clientAddress').value.trim();
+    const date = $('date').value;
+    const time = $('time').value;
+    const durHrs = parseFloat($('duration').value || '2');
+    const product = $('product').value;
+    const price = parseFloat($('price').value || '0');
+    const notes = $('notes').value.trim();
+
+    if (!name || !date || !time) { alert('Please enter client name, date and time.'); return null; }
+
+    const start = new Date(`${date}T${time}:00`);
+    const end = new Date(start.getTime() + durHrs*60*60*1000);
+
+    return { name, phone, address, start, end, notes, durHrs, product, price };
+  }
+
+  function toICSDate(d) {
+    const z = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+    const pad = n => String(n).padStart(2,'0');
+    return z.getUTCFullYear()+pad(z.getUTCMonth()+1)+pad(z.getUTCDate())+'T'
+         + pad(z.getUTCHours())+pad(z.getUTCMinutes())+pad(z.getUTCSeconds())+'Z';
+  }
+
+  function buildSummary(b) {
+    return `Warm Up UK – ${b.product} for ${b.name}`;
+  }
+  function buildDetails(b) {
+    let s = `Client: ${b.name}%0AAddress: ${b.address || '-'}%0APhone: ${b.phone || '-'}%0AProduct: ${b.product}%0APrice: £${b.price.toFixed(2)}%0ADuration: ${b.durHrs}h`;
+    if (b.notes) s += `%0ANotes: ${b.notes}`;
+    return s;
+  }
+
+  function googleCalURL(b) {
+    const dates = `${toICSDate(b.start)}/${toICSDate(b.end)}`;
+    const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+    const params = [
+      `text=${encodeURIComponent(buildSummary(b))}`,
+      `dates=${dates}`,
+      `details=${buildDetails(b)}`,
+      `location=${encodeURIComponent(b.address || '')}`
+    ].join('&');
+    return `${base}&${params}`;
+  }
+
+  function icsFile(b) {
+    const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Warm Up UK//Bookings//EN
+BEGIN:VEVENT
+UID:${Date.now()}@warmupuk
+DTSTAMP:${toICSDate(new Date())}
+DTSTART:${toICSDate(b.start)}
+DTEND:${toICSDate(b.end)}
+SUMMARY:${buildSummary(b)}
+DESCRIPTION:Client: ${b.name}\\nAddress: ${b.address || ''}\\nPhone: ${b.phone || ''}\\nProduct: ${b.product}\\nPrice: £${b.price.toFixed(2)}\\nNotes: ${b.notes || ''}
+LOCATION:${b.address || ''}
+END:VEVENT
+END:VCALENDAR`;
+    return URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
+  }
+
+  // Build a link to your hosted contract page with details in the URL
+  function contractURL(b) {
+    const base = `${location.origin}${location.pathname.replace(/\\/[^\\/]+$/, '/')}`; // repo root on Pages
+    const params = new URLSearchParams({
+      name:b.name, phone:b.phone, address:b.address,
+      date:b.start.toISOString(), duration:b.durHrs,
+      product:b.product, price:b.price.toFixed(2), notes:b.notes
+    }).toString();
+    return `${base}contract.html?${params}`;
+  }
+
+  function waURL(toNumber, b) {
+    const when = b.start.toLocaleString([], {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short', year:'numeric'});
+    const link = encodeURIComponent(contractURL(b));
+    let msg = `Warm Up UK booking%0A%0A` +
+              `Client: ${encodeURIComponent(b.name)}%0A` +
+              `When: ${encodeURIComponent(when)} (${b.durHrs}h)%0A` +
+              `Address: ${encodeURIComponent(b.address || '-') }%0A` +
+              `Product: ${encodeURIComponent(b.product)}%0A` +
+              `Price: £${encodeURIComponent(b.price.toFixed(2))}%0A` +
+              (b.notes ? `Notes: ${encodeURIComponent(b.notes)}%0A` : '') +
+              `%0APlease review and sign the contract here:%0A${link}`;
+    return `https://wa.me/${toNumber}?text=${msg}`;
+  }
+
+  function saveBooking(b) {
+    const list = JSON.parse(localStorage.getItem('wuuk_bookings') || '[]');
+    list.push({
+      name:b.name, phone:b.phone, address:b.address,
+      start:b.start.toISOString(), end:b.end.toISOString(),
+      durHrs:b.durHrs, notes:b.notes, product:b.product, price:b.price
+    });
+    localStorage.setItem('wuuk_bookings', JSON.stringify(list));
+    renderBookings();
+  }
+
+  function renderBookings() {
+    const body = document.getElementById('bookingsBody');
+    const table = document.getElementById('bookingsTable');
+    const empty = document.getElementById('noBookings');
+    body.innerHTML = '';
+    const list = JSON.parse(localStorage.getItem('wuuk_bookings') || '[]')
+      .map(x => ({...x, start: new Date(x.start), end: new Date(x.end)}))
+      .sort((a,b) => a.start-b.start);
+    if (!list.length) { table.style.display='none'; empty.style.display='block'; return; }
+    empty.style.display='none'; table.style.display='table';
+    for (const b of list) {
+      const tr = document.createElement('tr');
+      const when = b.start.toLocaleString([], {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short'});
+      tr.innerHTML = `<td>${when}</td>
+        <td>${b.name} (${b.product})</td>
+        <td>${b.phone||''}</td>
+        <td>${(b.address||'').replace(/\n/g,' ')}</td>
+        <td><a href="contract.html?${new URLSearchParams({
+            name:b.name, phone:b.phone, address:b.address,
+            date:b.start.toISOString(), duration:b.durHrs,
+            product:b.product, price:(+b.price).toFixed(2), notes:b.notes
+          }).toString()}" target="_blank">Open contract</a></td>`;
+      body.appendChild(tr);
+    }
+  }
+
+  document.getElementById('saveBtn').onclick = () => {
+    const b = getForm(); if (!b) return;
+    saveBooking(b);
+    document.getElementById('waClient').href = waURL(b.phone || BUSINESS_WHATSAPP, b);
+    document.getElementById('waBiz').href    = waURL(BUSINESS_WHATSAPP, b);
+    document.getElementById('gcal').href     = googleCalURL(b);
+    document.getElementById('ics').href      = icsFile(b);
+    alert('Saved. Buttons updated for this booking.');
+  };
+
+  renderBookings();
+</script>
 </body>
 </html>
