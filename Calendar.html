@@ -137,3 +137,39 @@ Open Contract: https://warmupuk.github.io/Warmup-uk-app/contract.html?client=${e
   </script>
 </body>
 </html>
+
+<!-- WhatsApp Send Button -->
+<div style="text-align:center; margin:24px 0 40px;">
+  <button id="btn_send_whatsapp"
+          style="background:linear-gradient(180deg,#ffc94d,#d7ac3a); color:#121212; 
+                 font-weight:800; border:0; border-radius:12px; padding:12px 18px;
+                 box-shadow:0 10px 22px rgba(255,201,77,.25); cursor:pointer;">
+    Send Contract via WhatsApp
+  </button>
+</div>
+
+<script>
+  document.getElementById('btn_send_whatsapp').addEventListener('click', () => {
+    const name   = document.getElementById('c_name')?.value || 'Client';
+    const phone  = document.getElementById('c_phone1')?.value || '';
+    const notes  = document.getElementById('notes')?.value  || '';
+    const total  = document.getElementById('q_total')?.textContent || '';
+    const svcRow = document.querySelector('#prod_table tbody tr:first-child .p_sel');
+    const service = svcRow ? svcRow.options[svcRow.selectedIndex].text : (new URLSearchParams(location.search).get('service') || 'Service');
+
+    const intl = formatUK(phone);
+    if (!intl) { alert('No valid phone number found. Please enter the client phone in the form.'); return; }
+
+    const msg = [
+      `Warm Up UK – Contract`,
+      `Name: ${name}`,
+      `Service: ${service}`,
+      total ? `Total: ${total}` : null,
+      notes ? `Notes: ${notes}` : null,
+      `Thank you!`
+    ].filter(Boolean).join('\n');
+
+    const url = `https://wa.me/${intl}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  });
+</script>
