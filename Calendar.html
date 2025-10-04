@@ -1,106 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Warm Up UK Calendar</title>
-<style>
-  body { font-family: Arial, sans-serif; background:#111; color:#f5f5f5; margin:0; padding:20px;}
-  .container { max-width: 600px; margin:auto; background:#1e1e1e; padding:20px; border-radius:10px;}
-  label {display:block; margin:8px 0 4px;}
-  input, textarea, select {width:100%; padding:8px; border-radius:6px; border:none; margin-bottom:10px;}
-  button {padding:12px; width:100%; border:none; border-radius:6px; background:#d4af37; color:#111; font-weight:bold; cursor:pointer;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar Booking | Warm Up UK</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #f5c542;
+      font-size: 26px;
+    }
+    form {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 20px auto;
+      box-shadow: 0 0 10px #f5c54255;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      color: #f5c542;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      background-color: #f5c542;
+      color: #000;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #ffd966;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>📅 Calendar Booking</h1>
+  <img src="WUUK.JPG" alt="Warm Up UK Logo" style="width:80px; margin-bottom:10px;">
+  <h1>Calendar Booking</h1>
 
-  <label>Name</label>
-  <input id="name" type="text">
+  <form id="bookingForm">
+    <label>Name</label>
+    <input type="text" id="name" placeholder="Client name" required>
 
-  <label>Phone (WhatsApp)</label>
-  <input id="phone" type="text" placeholder="+447...">
+    <label>Phone (WhatsApp)</label>
+    <input type="tel" id="phone" placeholder="+447..." required>
 
-  <label>Address</label>
-  <textarea id="address"></textarea>
+    <label>Address</label>
+    <input type="text" id="address" placeholder="Client address" required>
 
-  <label>Date</label>
-  <input id="date" type="date">
+    <label>Date</label>
+    <input type="date" id="date" required>
 
-  <label>Time</label>
-  <input id="time" type="time">
+    <label>Time</label>
+    <input type="time" id="time" required>
 
-  <label>Service</label>
-  <select id="service">
-    <option>Loft Insulation</option>
-    <option>Spray Foam Removal</option>
-    <option>Boiler Service</option>
-    <option>Multifoil Installation</option>
-  </select>
+    <label>Service</label>
+    <select id="service">
+      <option value="Loft Insulation">Loft Insulation</option>
+      <option value="Spray Foam Removal">Spray Foam Removal</option>
+      <option value="Multifoil Insulation">Multifoil Insulation</option>
+      <option value="Other">Other</option>
+    </select>
 
-  <label>Price (£)</label>
-  <input id="price" type="number">
+    <label>Booking Agent</label>
+    <input type="text" id="agent" placeholder="Booking agent name">
 
-  <label>Notes</label>
-  <textarea id="notes"></textarea>
+    <label>Confirmer</label>
+    <input type="text" id="confirmer" placeholder="Confirmer name">
 
-  <button onclick="sendWhatsApp()">Send to WhatsApp</button>
-</div>
+    <label>Sales Rep</label>
+    <input type="text" id="salesrep" placeholder="Sales rep name">
 
-<script>
-function sendWhatsApp(){
-  const name = document.getElementById('name').value.trim();
-  const phoneRaw = document.getElementById('phone').value.trim();
-  const phone = phoneRaw.replace(/\D/g,''); // WhatsApp needs digits only
-  const address = document.getElementById('address').value.trim();
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('time').value;
-  const service = document.getElementById('service').value;
-  const price = document.getElementById('price').value;
-  const notes = document.getElementById('notes').value;
+    <label>Notes</label>
+    <textarea id="notes" rows="3" placeholder="Add any notes..."></textarea>
 
-  if(!phone || !name){ alert("Enter at least name and WhatsApp number"); return; }
+    <button type="button" onclick="sendToWhatsApp()">Send to WhatsApp</button>
+  </form>
 
-  // Contract link with query params
-  const contractUrl = `https://warmupuk.github.io/contract.html?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}&date=${encodeURIComponent(date+' '+time)}&product=${encodeURIComponent(service)}&price=${encodeURIComponent(price)}&notes=${encodeURIComponent(notes)}`;
+  <script>
+    function sendToWhatsApp() {
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value.replace(/\s/g, '');
+      const address = document.getElementById("address").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const service = document.getElementById("service").value;
+      const agent = document.getElementById("agent").value;
+      const confirmer = document.getElementById("confirmer").value;
+      const salesrep = document.getElementById("salesrep").value;
+      const notes = document.getElementById("notes").value;
 
-  const msg = `Hello ${name}, here is your Warm Up UK contract:\n${contractUrl}`;
+      if (!phone || !name) {
+        alert("Please enter client name and phone number.");
+        return;
+      }
 
-  const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-  
-  window.location.href = waLink;
-}
-</script>
+      const message = `Warm Up UK Booking:%0A
+Name: ${name}%0A
+Address: ${address}%0A
+Date: ${date}%0A
+Time: ${time}%0A
+Service: ${service}%0A
+Booking Agent: ${agent}%0A
+Confirmer: ${confirmer}%0A
+Sales Rep: ${salesrep}%0A
+Notes: ${notes}%0A
+Open Contract: https://warmupuk.github.io/Warmup-uk-app/contract.html?client=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`;
+
+      const url = `https://wa.me/${phone}?text=${message}`;
+      window.open(url, '_blank');
+    }
+  </script>
 </body>
 </html>
-<script>
-  // Helper enc
-  const enc = s => encodeURIComponent((s || '').trim());
-
-  // Get values from your fields (adjust selectors if your names differ)
-  function readBooking() {
-    return {
-      name:    document.querySelector('[name="name"]').value,
-      phone:   document.querySelector('[name="phone"]').value,   // WhatsApp phone
-      address: document.querySelector('[name="address"]').value,
-      date:    document.querySelector('[name="date"]').value,
-      time:    document.querySelector('[name="time"]').value,
-      service: document.querySelector('[name="service"]').value,
-      price:   document.querySelector('[name="price"]').value || '0',
-      notes:   document.querySelector('[name="notes"]').value
-    };
-  }
-
-  // Open Contract (prefilled)
-  document.getElementById('btnToContract')?.addEventListener('click', () => {
-    const b = readBooking();
-
-    // Save for fallback
-    localStorage.setItem('wu_latest_client', JSON.stringify(b));
-
-    // Also pass as URL params
-    const url = `./contract.html?name=${enc(b.name)}&phone=${enc(b.phone)}&address=${enc(b.address)}&date=${enc(b.date)}&time=${enc(b.time)}&service=${enc(b.service)}&price=${enc(b.price)}&notes=${enc(b.notes)}&v=2`;
-    window.location.href = url; // or window.open(url, '_blank')
-  });
-</script>
