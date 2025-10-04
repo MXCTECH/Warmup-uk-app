@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK · Order Form</title>
+
+<!-- Simple page styles (dark theme to match your app) -->
+<style>
+  :root {
+    --bg: #0f0f10;
+    --card: #1c1c1f;
+    --text: #f5f5f5;
+    --muted: #b9b9b9;
+    --brand: #d4af37; /* gold */
+    --accent: #25d366; /* WhatsApp green, not used for branding */
+  }
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui, Arial, sans-serif}
+  a{color:var(--brand)}
+  header{max-width:900px;margin:20px auto 0;padding:0 16px}
+  .nav{margin:6px 0 14px; font-size:14px}
+  .nav a{margin-right:12px;text-decoration:none}
+  .wrap{max-width:900px;margin:0 auto 60px;padding:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px 16px 8px}
+  h1{margin:10px 0 12px;font-size:28px;color:var(--brand)}
+  h2{margin:24px 0 12px;font-size:18px;color:var(--text)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .grid-1{display:grid;grid-template-columns:1fr;gap:12px}
+  label{font-size:12px;color:var(--muted);display:block;margin:4px 0}
+  input, select, textarea{
+    width:100%;box-sizing:border-box;border:none;border-radius:10px;padding:12px;background:#2a2a2e;color:var(--text);
+    outline:none;
+  }
+  textarea{min-height:90px;resize:vertical}
+  .row{display:flex;gap:12px;align-items:center}
+  .logoBox{display:flex;align-items:center;gap:14px;margin:4px 0 10px}
+  .logoBox img{height:54px;width:auto;border-radius:6px;background:#fff;object-fit:contain}
+  .muted{color:var(--muted);font-size:12px}
+  .total{font-weight:700;color:var(--brand)}
+  .sigWrap{background:#0b0b0d;border-radius:10px;border:1px solid #2d2d31;padding:10px}
+  canvas{background:#fff;border-radius:6px;width:100%;height:180px;touch-action: none;}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .btn{padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+  .btn-primary{background:var(--brand);color:#131313}
+  .btn-ghost{background:#2a2a2e;color:var(--text)}
+  .btn-danger{background:#3a2a2a}
+  .footerNote{margin-top:10px;font-size:12px;color:var(--muted)}
+  .inline{display:flex;align-items:center;gap:8px}
+  @media (max-width:720px){
+    .grid,.grid-3{grid-template-columns:1fr}
+    .btns{grid-template-columns:1fr}
+  }
+</style>
+
+<!-- jsPDF (for PDF) + Signature Pad (for e-sign) -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html">Dashboard</a> ·
+    <a href="calendar.html">Calendar</a> ·
+    <a href="contract.html">Contract</a> ·
+    <strong>Order Form</strong>
+  </div>
+  <div class="logoBox">
+    <!-- Use your uploaded logo file; keep the filename/case exactly as in your repo -->
+    <img id="brandLogo" src="WUUK.JPG" alt="Warm Up UK logo" />
+    <div>
+      <div style="font-weight:800;letter-spacing:.5px">WARM UP UK</div>
+      <div class="muted">Order Form • Quote • Agreement</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Order Form</h1>
+
+    <!-- Customer & Job -->
+    <div class="grid">
+      <div>
+        <label>Client name</label>
+        <input id="name" placeholder="Full name" />
+      </div>
+      <div>
+        <label>Phone (WhatsApp)</label>
+        <input id="phone" placeholder="+447..." />
+      </div>
+      <div>
+        <label>Email</label>
+        <input id="email" placeholder="client@example.com" />
+      </div>
+      <div>
+        <label>Job date</label>
+        <input id="date" type="date" />
+      </div>
+    </div>
+
+    <div class="grid-1" style="margin-top:12px">
+      <div>
+        <label>Address</label>
+        <input id="address" placeholder="House, Street, City, Postcode" />
+      </div>
+    </div>
+
+    <!-- Product line -->
+    <h2>Products / Services</h2>
+    <div class="grid-3">
+      <div>
+        <label>Product / Service</label>
+        <select id="product">
+          <option value="Loft Insulation" data-price="3000">Loft Insulation</option>
+          <option value="Cavity Wall Insulation" data-price="2500">Cavity Wall Insulation</option>
+          <option value="Boiler Service" data-price="120">Boiler Service</option>
+          <option value="Heat Pump Install" data-price="6500">Heat Pump Install</option>
+        </select>
+      </div>
+      <div>
+        <label>Unit price (£)</label>
+        <input id="price" type="number" inputmode="decimal" placeholder="0" />
+      </div>
+      <div>
+        <label>Quantity</label>
+        <input id="qty" type="number" inputmode="numeric" value="1" min="1" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <div class="inline muted">Auto total:</div>
+      <div class="total" id="total">£0.00</div>
+    </div>
+
+    <div class="grid-1" style="margin-top:12px">
+      <div>
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Site access, special instructions, scope, etc."></textarea>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="row" style="margin-top:10px">
+      <input id="agree" type="checkbox" />
+      <label for="agree">I agree to proceed with the above order and accept Warm Up UK’s terms.</label>
+    </div>
+
+    <!-- Signature -->
+    <h2>Client Signature</h2>
+    <div class="sigWrap">
+      <div class="row">
+        <div class="muted">Sign in the white box</div>
+        <div style="flex:1"></div>
+        <button class="btn btn-ghost" id="clearSig" type="button">Clear</button>
+      </div>
+      <canvas id="sigCanvas" height="180"></canvas>
+      <div class="footerNote">Tip: rotate your phone if you want a wider signature area.</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="btns">
+      <button class="btn btn-primary" id="btnPdf">Create & Download PDF</button>
+      <button class="btn btn-ghost" id="btnPreview">Preview PDF</button>
+      <button class="btn btn-ghost" id="btnSave">Save draft (device)</button>
+      <button class="btn btn-ghost" id="btnLoad">Load last draft</button>
+    </div>
+
+    <div class="footerNote">
+      PDF is generated on your device. On iPhone, after preview you can tap the share icon to send by WhatsApp, email, etc.
+    </div>
+  </div>
+</div>
+
+<script>
+  // -------- helpers
+  const $ = (id) => document.getElementById(id);
+  const productSel = $('product'), priceInp = $('price'), qtyInp = $('qty'), totalLbl = $('total');
+
+  // default price from dropdown
+  function syncPriceFromProduct(){
+    const opt = productSel.options[productSel.selectedIndex];
+    const base = opt.getAttribute('data-price');
+    if (base && !priceInp.value) priceInp.value = base;
+    updateTotal();
+  }
+  function updateTotal(){
+    const p = parseFloat(priceInp.value || 0), q = parseInt(qtyInp.value || 1,10);
+    const t = (p*q)||0;
+    totalLbl.textContent = '£' + t.toFixed(2);
+  }
+  productSel.addEventListener('change', syncPriceFromProduct);
+  priceInp.addEventListener('input', updateTotal);
+  qtyInp.addEventListener('input', updateTotal);
+  syncPriceFromProduct();
+
+  // -------- signature pad
+  const canvas = $('sigCanvas');
+  function fitCanvas(){
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    canvas.width = w * ratio;
+    canvas.height = h * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+  fitCanvas();
+  window.addEventListener('resize', fitCanvas);
+
+  const sigPad = new SignaturePad.SignaturePad(canvas, {backgroundColor: 'white', penColor: 'black'});
+  $('clearSig').onclick = () => sigPad.clear();
+
+  // -------- load logo as data URL for embedding in PDF
+  let logoDataUrl = null;
+  (function loadLogo(){
+    const img = $('brandLogo');
+    if (!img) return;
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        const scale = 240 / img.naturalWidth; // scale width ~240px in PDF
+        const w = Math.min(240, img.naturalWidth);
+        const h = img.naturalHeight * (w / img.naturalWidth);
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img, 0, 0, w, h);
+        logoDataUrl = c.toDataURL('image/jpeg', 0.92);
+      } catch(e){ logoDataUrl = null; }
+    };
+  })();
+
+  // -------- collect form data
+  function dataFromForm(){
+    return {
+      name: $('name').value.trim(),
+      phone: $('phone').value.trim(),
+      email: $('email').value.trim(),
+      date: $('date').value,
+      address: $('address').value.trim(),
+      product: productSel.value,
+      unit: Number($('price').value || 0),
+      qty: Number(qtyInp.value || 1),
+      total: (Number($('price').value || 0) * Number(qtyInp.value || 1)),
+      notes: $('notes').value.trim(),
+      agreed: $('agree').checked,
+      signatureDataUrl: sigPad.isEmpty() ? null : sigPad.toDataURL('image/png')
+    };
+  }
+
+  // local draft save/load
+  $('btnSave').onclick = () => {
+    localStorage.setItem('wuuk_order_draft', JSON.stringify(dataFromForm()));
+    alert('Draft saved on this device.');
+  };
+  $('btnLoad').onclick = () => {
+    const raw = localStorage.getItem('wuuk_order_draft');
+    if (!raw) return alert('No draft found.');
+    const d = JSON.parse(raw);
+    $('name').value = d.name || '';
+    $('phone').value = d.phone || '';
+    $('email').value = d.email || '';
+    $('date').value = d.date || '';
+    $('address').value = d.address || '';
+    productSel.value = d.product || productSel.value;
+    $('price').value = d.unit || '';
+    $('qty').value = d.qty || 1;
+    $('notes').value = d.notes || '';
+    $('agree').checked = !!d.agreed;
+    updateTotal();
+    alert('Draft loaded.');
+  };
+
+  // -------- build PDF
+  async function buildPDF(preview=false){
+    const d = dataFromForm();
+    if (!d.name || !d.address || !d.product) return alert('Please fill name, address, and product.');
+    if (!d.agreed) return alert('Please tick the agreement checkbox.');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt', format:'a4'}); // 595x842 pt
+
+    const margin = 40;
+    let y = margin;
+
+    // header
+    if (logoDataUrl){
+      doc.addImage(logoDataUrl, 'JPEG', margin, y, 140, 40);
+    }
+    doc.setFont('helvetica','bold'); doc.setFontSize(18);
+    doc.text('Order Form / Agreement', 595 - margin, y + 20, {align:'right'});
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text('Warm Up UK', 595 - margin, y + 36, {align:'right'});
+    y += 60;
+
+    // customer block
+    doc.setFont('helvetica','bold'); doc.setFontSize(12);
+    doc.text('Customer', margin, y);
+    y += 14; doc.setFont('helvetica','normal'); doc.setFontSize(11);
+    doc.text(`Name: ${d.name}`, margin, y); y+=14;
+    doc.text(`Phone: ${d.phone}`, margin, y); y+=14;
+    doc.text(`Email: ${d.email||'-'}`, margin, y); y+=14;
+    doc.text(`Address: ${d.address}`, margin, y); y+=18;
+
+    // job details
+    doc.setFont('helvetica','bold'); doc.text('Job details', margin, y); y+=14;
+    doc.setFont('helvetica','normal');
+    doc.text(`Date: ${d.date||'-'}`, margin, y); y+=14;
+    doc.text(`Product/Service: ${d.product}`, margin, y); y+=14;
+    doc.text(`Unit price: £${(d.unit||0).toFixed(2)}   Qty: ${d.qty}   Total: £${(d.total||0).toFixed(2)}`, margin, y); y+=18;
+
+    // notes
+    if (d.notes){
+      doc.setFont('helvetica','bold'); doc.text('Notes', margin, y); y+=14;
+      doc.setFont('helvetica','normal');
+      const split = doc.splitTextToSize(d.notes, 595 - margin*2);
+      doc.text(split, margin, y);
+      y += (split.length * 14) + 6;
+    }
+
+    // signature
+    if (d.signatureDataUrl){
+      doc.setFont('helvetica','bold'); doc.text('Client signature', margin, y); y += 10;
+      const sigH = 60, sigW = 240;
+      doc.addImage(d.signatureDataUrl, 'PNG', margin, y, sigW, sigH);
+      y += sigH + 10;
+    }
+
+    // footer
+    doc.setDrawColor(210); doc.line(margin, 820, 595 - margin, 820);
+    doc.setFontSize(9); doc.setTextColor(120);
+    doc.text('Thank you for your business. This PDF was generated electronically by Warm Up UK.', 595/2, 834, {align:'center'});
+
+    const fileName = `WUUK_Order_${(d.name||'Client').replace(/\s+/g,'_')}.pdf`;
+
+    if (preview){
+      // open in a new tab if allowed, else fallback to download
+      const blobUrl = doc.output('bloburl');
+      const opened = window.open(blobUrl, '_blank');
+      if (!opened) doc.save(fileName);
+    } else {
+      doc.save(fileName);
+    }
+  }
+
+  $('btnPdf').onclick = () => buildPDF(false);
+  $('btnPreview').onclick = () => buildPDF(true);
+
+  // set today as default date
+  (function setToday(){
+    const t = new Date();
+    const v = t.toISOString().slice(0,10);
+    $('date').value = v;
+  })();
+
+  // whenever product changes first time, seed price
+  if (!priceInp.value) syncPriceFromProduct();
+</script>
+
+</body>
+</html>
