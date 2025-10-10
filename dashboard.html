@@ -6,123 +6,44 @@
 <title>MXCTECH INSULATION — Dashboard</title>
 <style>
   :root{
-    /* colours closely matching the screenshots */
-    --bg:#0c0f16;            /* page background */
-    --panel:#171b23;         /* card body */
-    --panel-2:#12161e;       /* input background */
-    --line:#2a2f3b;          /* borders */
-    --gold:#E3AD27;          /* headings / CTAs like "Open" */
-    --gold-2:#C29019;        /* borders glow */
-    --text:#E8EDF7;          /* main text */
-    --muted:#A4AEC2;         /* labels/subtext */
-    --danger:#E53935;        /* red note if needed */
-    --ok:#17a56a;            /* green */
-    --chip:#0f131b;          /* pills */
+    --bg:#0c0f16; --panel:#171b23; --panel2:#10141c; --line:#232936;
+    --text:#e9edf7; --muted:#9aa4bd;
+    --blue:#1F6BFF; --red:#E53935; --green:#17a56a; --gold:#E3AD27;
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:var(--text);
-    background:
-      linear-gradient(180deg,#0a0d14 0%, #0b0e15 60%, #0c0f16 100%);
-  }
-
-  /* HEADER */
-  header{
-    position:sticky; top:0; z-index:20;
-    display:flex; align-items:center; gap:12px;
-    padding:14px 16px;
-    background:rgba(20,24,32,.88);
-    border-bottom:1px solid var(--line);
-    backdrop-filter: blur(8px);
-  }
-  header img{height:36px;width:auto;border-radius:6px}
-  header h1{margin:0;font-size:18px;font-weight:900;letter-spacing:.25px}
-  header .sub{color:var(--muted);font-weight:600;font-size:13px}
-
-  main{max-width:960px;margin:0 auto;padding:16px}
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:14px;
-    box-shadow:0 8px 26px rgba(0,0,0,.28);
-  }
-  .card.headed{padding-top:10px}
-  .card.headed .head{
-    display:flex; align-items:center; justify-content:space-between;
-    border:1px solid var(--gold-2);
-    border-radius:12px;
-    padding:12px 14px;
-    background:linear-gradient(180deg,#191d26,#191d26);
-    margin-bottom:12px;
-  }
-  .title{
-    color:var(--gold);
-    font-size:20px;
-    font-weight:900;
-    letter-spacing:.2px;
-  }
-  .btn{
-    border:1px solid var(--line);
-    background:var(--panel-2);
-    color:var(--text);
-    padding:10px 14px;
-    border-radius:10px;
-    font-weight:800;
-    cursor:pointer;
-  }
+  body{margin:0;background:linear-gradient(180deg,#0a0d14,#0b0e15 60%,#0c0f16);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{position:sticky;top:0;z-index:10;display:flex;gap:12px;align-items:center;padding:14px 16px;background:rgba(16,20,28,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  header img{height:36px;border-radius:6px}
+  header h1{margin:0;font-size:18px;font-weight:900}
+  header .sub{color:var(--muted);font-weight:600}
+  main{max-width:1000px;margin:auto;padding:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(0,0,0,.25)}
+  .head{display:flex;align-items:center;justify-content:space-between;border:1px solid #c09018;border-radius:12px;background:#191d26;padding:12px 14px;margin-bottom:12px}
+  .title{color:var(--gold);font-weight:900;font-size:20px}
+  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer}
+  .btn.primary{background:var(--blue);border-color:var(--blue)}
+  .btn.green{background:var(--green);border-color:var(--green)}
+  .btn.red{background:var(--red);border-color:var(--red)}
   .btn.gold{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
-  .btn.ghost{background:transparent}
-  .btn.red{background:var(--danger);border-color:var(--danger)}
-  .btn.green{background:var(--ok);border-color:var(--ok)}
-  .btn.block{width:100%}
-  .pill{
-    display:inline-flex;align-items:center;gap:8px;
-    background:var(--chip);border:1px solid var(--line);color:var(--muted);
-    padding:8px 10px;border-radius:10px;font-weight:700
-  }
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  label{display:block;color:var(--muted);font-size:12px;margin:2px 0 6px}
-  input,select,textarea{
-    width:100%;padding:12px 12px;
-    border:1px solid var(--line);
-    border-radius:12px;
-    background:var(--panel-2);
-    color:var(--text); font-size:15px;
-  }
-  textarea{min-height:120px;resize:vertical}
+  label{color:var(--muted);font-size:12px;margin:2px 0 6px;display:block}
+  input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#0f131b;color:var(--text);font-size:15px}
+  textarea{min-height:100px;resize:vertical}
   .field-prefix{display:flex}
-  .field-prefix span{
-    padding:12px 10px;border:1px solid var(--line);border-right:0;
-    background:var(--panel-2);color:var(--muted);border-radius:12px 0 0 12px;
-    min-width:54px;text-align:center;font-weight:800
-  }
-  .field-prefix input{border-radius:0 12px 12px 0; flex:1}
-  .note{color:var(--muted);font-size:13px}
-  .hr{height:1px;background:var(--line);margin:10px 0}
+  .field-prefix span{padding:12px 10px;border:1px solid var(--line);border-right:0;background:#0f131b;color:var(--muted);border-radius:12px 0 0 12px;min-width:54px;text-align:center;font-weight:800}
+  .field-prefix input{border-radius:0 12px 12px 0}
   table{width:100%;border-collapse:separate;border-spacing:0}
   th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
   th{color:var(--muted);font-size:12px;text-transform:uppercase}
-  .right{margin-left:auto}
-  .summary-line{display:flex;justify-content:space-between;padding:6px 0}
-  .summary-line strong{font-weight:900}
-  .warning{color:var(--danger);font-weight:800}
-  @media (max-width:800px){
-    .grid,.grid-3,.grid-4{grid-template-columns:1fr}
-  }
+  .pill{display:inline-block;background:#0f131b;border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:10px;font-weight:800}
+  .muted{color:var(--muted)}
+  .hide{display:none}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-
 <header>
-  <img src="mxctech-logo.png" alt="MXCTECH INSULATION Logo">
+  <img src="mxctech-logo.png" alt="MXCTECH logo"/>
   <div>
     <h1>MXCTECH INSULATION</h1>
     <div class="sub">Operations Dashboard</div>
@@ -130,346 +51,229 @@
 </header>
 
 <main>
-
   <!-- CLIENT INFO -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Client Information</div>
-    </div>
+  <section class="card">
+    <div class="head"><div class="title">Client Information</div></div>
     <div class="grid">
-      <div>
-        <label>Client Name</label>
-        <input id="c_name" placeholder="Mr Jones">
-      </div>
-      <div>
-        <label>Email</label>
-        <input id="c_email" placeholder="">
-      </div>
-      <div>
-        <label>Address</label>
-        <input id="c_addr" placeholder="8 Fir Tree Way">
-      </div>
-      <div>
-        <label>Town/City</label>
-        <input id="c_town" placeholder="">
-      </div>
-      <div>
-        <label>Postcode</label>
-        <input id="c_pc" placeholder="YO8 9PY">
-      </div>
-      <div>
-        <label>Representative Name</label>
-        <input id="rep_name" placeholder="">
-      </div>
+      <div><label>Client Name</label><input id="custName" placeholder="Mr Jones"/></div>
+      <div><label>Email</label><input id="custEmail" placeholder=""/></div>
+      <div><label>Address</label><input id="addr1" placeholder="8 Fir Tree Way"/></div>
+      <div><label>Town/City</label><input id="town" placeholder=""/></div>
+      <div><label>Postcode</label><input id="postcode" placeholder="YO8 9PY"/></div>
+      <div><label>Representative Name</label><input id="repName" placeholder=""/></div>
     </div>
-
     <div class="grid" style="margin-top:10px">
       <div>
         <label>Primary Phone</label>
-        <div class="field-prefix">
-          <span>+44</span>
-          <input id="c_phone1" inputmode="numeric" placeholder="7581241916">
-        </div>
+        <div class="field-prefix"><span>+44</span><input id="custPhone" inputmode="numeric" placeholder="7581241916"/></div>
       </div>
       <div>
-        <label>Secondary Phone</label>
-        <div class="field-prefix">
-          <span>+44</span>
-          <input id="c_phone2" inputmode="numeric" placeholder="Secondary phone (optional)">
-        </div>
+        <label>Secondary Phone (optional)</label>
+        <div class="field-prefix"><span>+44</span><input id="custPhone2" inputmode="numeric" placeholder=""/></div>
       </div>
+      <div>
+        <label>Appointment Date/Time</label>
+        <input id="apptDate" type="datetime-local"/>
+      </div>
+      <div>
+        <label>Job Type</label>
+        <select id="jobType">
+          <option>Multifoil Insulation</option>
+          <option>Spray Foam Removal</option>
+          <option>Loft Boarding</option>
+          <option>Ventilation</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:10px"><label>Notes</label><textarea id="notes" placeholder="Access, parking, pets, roof details…"></textarea></div>
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+      <button class="btn primary" id="saveAppt">Save Appointment</button>
+      <span class="muted">Saved locally on this device.</span>
     </div>
   </section>
 
-  <!-- ROOF AREA CALC -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Roof Area Calculator</div>
-      <button class="btn gold" id="openRoof">Open</button>
-    </div>
-    <div class="note">Quick helper to work out m² from rafter length and roof length.</div>
-  </section>
-
-  <!-- PRODUCTS -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Products</div>
-      <button class="btn gold" id="openProducts">Open</button>
-    </div>
-
-    <!-- hidden mini-products panel -->
-    <div id="productsPanel" style="display:none">
-      <div class="grid-4">
-        <div>
-          <label>Product</label>
-          <input id="p_name" placeholder="Multifoil Insulation">
-        </div>
-        <div>
-          <label>Qty</label>
-          <input id="p_qty" type="number" min="1" value="1">
-        </div>
-        <div>
-          <label>Unit (£)</label>
-          <input id="p_unit" type="number" step="0.01" placeholder="0.00">
-        </div>
-        <div>
-          <label>&nbsp;</label>
-          <button class="btn gold block" id="addItem">Add Item</button>
-        </div>
+  <!-- PRODUCTS (mini) -->
+  <section class="card">
+    <div class="head"><div class="title">Products</div><button class="btn gold" id="toggleProducts">Open</button></div>
+    <div id="products" class="hide">
+      <div class="grid" style="grid-template-columns:2fr 1fr 1fr 1fr">
+        <div><label>Product</label><input id="p_name" placeholder="Multifoil Insulation"/></div>
+        <div><label>Qty</label><input id="p_qty" type="number" min="1" value="1"/></div>
+        <div><label>Unit (£)</label><input id="p_unit" type="number" step="0.01" placeholder="0.00"/></div>
+        <div><label>&nbsp;</label><button class="btn gold" id="addItem">Add</button></div>
       </div>
-      <div class="hr"></div>
-      <table id="itemsTbl">
+      <table id="itemsTbl" style="margin-top:10px">
         <thead><tr><th>Item</th><th>Qty</th><th>Unit (£)</th><th>Line (£)</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
   </section>
 
-  <!-- CUSTOM PRODUCTS -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Create Custom Products</div>
-      <button class="btn gold" id="toggleCustom">Open</button>
+  <!-- VAT, DEPOSIT & SUMMARY -->
+  <section class="card">
+    <div class="head"><div class="title">Quote Summary</div></div>
+    <div class="pill" style="margin-bottom:8px">
+      <label style="display:flex;gap:8px;align-items:center">
+        <input id="vatOn" type="checkbox" checked style="transform:scale(1.2)"/> Apply VAT 20%
+      </label>
     </div>
-    <div id="customPanel" style="display:none">
-      <div class="note">Add one-off items or adjustments (e.g., disposal fee, discount as negative).</div>
-      <div class="grid-4">
-        <div><label>Name</label><input id="cst_name" placeholder="Loft Boarding"/></div>
-        <div><label>Qty</label><input id="cst_qty" type="number" min="1" value="1"/></div>
-        <div><label>Unit (£)</label><input id="cst_unit" type="number" step="0.01" placeholder="0.00"/></div>
-        <div><label>&nbsp;</label><button class="btn gold block" id="addCustom">Add</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NOTES -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Notes</div>
-    </div>
-    <textarea id="notes" placeholder="Add any additional notes here..."></textarea>
-  </section>
-
-  <!-- DISCOUNT -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Discount Code Calculator</div>
-    </div>
-    <div class="grid-3">
+    <div class="grid">
       <div>
-        <label>Initial Value</label>
-        <input id="disc_initial" type="number" step="0.01" placeholder="Enter initial value">
+        <label>Deposit Amount (£)</label>
+        <div class="field-prefix"><span>£</span><input id="deposit" type="number" step="0.01" value="1000"/></div>
       </div>
-      <div>
-        <label>Final Value</label>
-        <input id="disc_final" type="number" step="0.01" placeholder="Enter final value">
-      </div>
-      <div>
-        <label>Discount Code</label>
-        <input id="disc_code" placeholder="Enter discount code">
-      </div>
+      <div style="display:flex;align-items:end"><div class="muted">💰 Deposit Set: <strong id="s_deposit">1,000.00</strong></div></div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <button class="btn gold" id="calcDisc">Calculate</button>
-      <div class="pill" id="discResult" style="display:none"></div>
+    <div style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between"><span>Products Subtotal:</span><span>£<strong id="s_products">0.00</strong></span></div>
+      <div style="display:flex;justify-content:space-between"><span>Admin Fee:</span><span>£<strong id="s_admin">150.00</strong></span></div>
+      <hr style="border:0;border-top:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between"><span>VAT 20%:</span><span>£<strong id="s_vat">0.00</strong></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:18px"><span><strong>TOTAL:</strong></span><span>£<strong id="s_total">150.00</strong></span></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn" id="previewContract">Preview Contract</button>
+      <button class="btn green" id="sendWA">Send Contract via WhatsApp</button>
     </div>
   </section>
 
-  <!-- VAT + DEPOSIT -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">VAT & Deposit</div>
-    </div>
-    <div class="row">
-      <label class="pill"><input id="vatOn" type="checkbox" checked style="transform:scale(1.2);margin-right:8px"> Apply VAT 20%</label>
-      <div class="pill warning" id="vatMsg" style="display:none">⚠️ VAT Exempt: No VAT will be added to this quote</div>
-    </div>
-
-    <div class="grid" style="margin-top:10px">
-      <div>
-        <label>Deposit Amount</label>
-        <div class="field-prefix">
-          <span>£</span>
-          <input id="deposit" type="number" step="0.01" value="1000">
-        </div>
-      </div>
-      <div style="display:flex;align-items:end">
-        <div class="note"><strong id="depositSet">💰 Deposit Set:</strong> £1000.00 deposit will be required</div>
-      </div>
-    </div>
+  <!-- SAVED CONTRACTS LIST (feed “Install Calendar” style) -->
+  <section class="card">
+    <div class="head"><div class="title">Saved Contracts</div></div>
+    <table id="contractsTbl">
+      <thead><tr><th>Date</th><th>Customer</th><th>Job</th><th>Total</th><th>Open</th></tr></thead>
+      <tbody></tbody>
+    </table>
   </section>
-
-  <!-- QUOTE SUMMARY -->
-  <section class="card headed">
-    <div class="head">
-      <div class="title">Quote Summary</div>
-    </div>
-    <div class="summary">
-      <div class="summary-line"><span>Products Subtotal:</span><span>£<strong id="s_products">0.00</strong></span></div>
-      <div class="summary-line"><span>Admin Fee:</span><span>£<strong id="s_admin">150.00</strong></span></div>
-      <div class="summary-line"><span>Total Subtotal:</span><span>£<strong id="s_sub">0.00</strong></span></div>
-      <div class="summary-line"><span>Subtotal after discount:</span><span>£<strong id="s_afterdisc">0.00</strong></span></div>
-      <div class="hr"></div>
-      <div class="summary-line"><span>Subtotal after discount + admin fee:</span><span>£<strong id="s_after_admin">150.00</strong></span></div>
-      <div class="hr"></div>
-      <div class="summary-line"><span>VAT 20%:</span><span>£<strong id="s_vat">0.00</strong></span></div>
-      <div class="summary-line" style="font-size:18px"><span><strong>TOTAL:</strong></span><span>£<strong id="s_total">150.00</strong></span></div>
-      <div class="summary-line"><span>Deposit:</span><span>£<strong id="s_deposit">1,000.00</strong></span></div>
-    </div>
-
-    <div class="row" style="margin-top:14px">
-      <button class="btn ghost" id="previewQuote">Preview Quote</button>
-      <button class="btn ghost" id="previewContract">Preview Contract</button>
-      <button class="btn green right" id="sendWA">Send Contract via WhatsApp</button>
-    </div>
-  </section>
-
 </main>
 
 <script>
-/* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
 const fmt = n => Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 const load = (k,d=[]) => JSON.parse(localStorage.getItem(k)||JSON.stringify(d));
 const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
 
-/* ---------- products ---------- */
+/* products */
 let items = load('mxc_items',[]);
 function renderItems(){
-  const tb = $('#itemsTbl tbody'); if(!tb) return;
-  tb.innerHTML = '';
+  const tb = $('#itemsTbl tbody'); tb.innerHTML='';
   items.forEach((it,i)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${it.name}</td><td>${it.qty}</td><td>£${fmt(it.unit)}</td><td>£${fmt(it.qty*it.unit)}</td>
-    <td><button class="btn red" onclick="removeItem(${i})">Remove</button></td>`;
+      <td><button class="btn red" onclick="removeItem(${i})">Remove</button></td>`;
     tb.appendChild(tr);
   });
-  save('mxc_items',items);
+  save('mxc_items', items);
   recalc();
 }
 function removeItem(i){ items.splice(i,1); renderItems(); }
 $('#addItem').addEventListener('click',()=>{
-  const name = $('#p_name').value.trim() || 'Item';
-  const qty  = Math.max(1, Number($('#p_qty').value||1));
-  const unit = Number($('#p_unit').value||0);
+  const name=$('#p_name').value.trim()||'Item';
+  const qty=Math.max(1,Number($('#p_qty').value||1));
+  const unit=Number($('#p_unit').value||0);
   items.push({name,qty,unit});
   ['p_name','p_qty','p_unit'].forEach(id=>$('#'+id).value = id==='p_qty'?1:'');
   renderItems();
 });
-$('#addCustom').addEventListener('click', ()=>{
-  const name = $('#cst_name').value.trim() || 'Custom Item';
-  const qty  = Math.max(1, Number($('#cst_qty').value||1));
-  const unit = Number($('#cst_unit').value||0);
-  items.push({name,qty,unit});
-  ['cst_name','cst_qty','cst_unit'].forEach(id=>$('#'+id).value = id==='cst_qty'?1:'');
-  renderItems();
-});
+$('#toggleProducts').addEventListener('click',()=>$('#products').classList.toggle('hide'));
 
-/* ---------- panels open/close ---------- */
-$('#openProducts').addEventListener('click',()=>{
-  const p = $('#productsPanel');
-  p.style.display = p.style.display==='none' ? 'block' : 'none';
-});
-$('#toggleCustom').addEventListener('click',()=>{
-  const p = $('#customPanel');
-  p.style.display = p.style.display==='none' ? 'block' : 'none';
-});
-$('#openRoof').addEventListener('click',()=>{
-  alert('Roof calculator placeholder — add your m² calculator here.');
-});
-
-/* ---------- discount / totals ---------- */
-let discount = 0;    // absolute amount (£)
-const ADMIN_FEE = 150;
-
+/* totals */
+const ADMIN = 150;
 function recalc(){
-  const prodSub = items.reduce((s,it)=> s + it.qty*it.unit, 0);
-  const sub = prodSub;                            // before admin/discount
-  const afterDisc = Math.max(0, sub - discount);
-  const afterAdmin = afterDisc + ADMIN_FEE;
-  const vat = $('#vatOn').checked ? afterAdmin * 0.20 : 0;
-  const total = afterAdmin + vat;
-  const dep = Number($('#deposit').value||0);
-
-  $('#s_products').textContent = fmt(prodSub);
-  $('#s_admin').textContent = fmt(ADMIN_FEE);
-  $('#s_sub').textContent = fmt(sub);
-  $('#s_afterdisc').textContent = fmt(afterDisc);
-  $('#s_after_admin').textContent = fmt(afterAdmin);
+  const sub = items.reduce((s,it)=> s+it.qty*it.unit, 0);
+  const vat = $('#vatOn').checked ? (sub+ADMIN)*0.2 : 0;
+  const total = sub + ADMIN + vat;
+  $('#s_products').textContent = fmt(sub);
+  $('#s_admin').textContent = fmt(ADMIN);
   $('#s_vat').textContent = fmt(vat);
   $('#s_total').textContent = fmt(total);
-  $('#s_deposit').textContent = fmt(dep);
-}
-$('#vatOn').addEventListener('change',()=>{
-  const ex = !$('#vatOn').checked;
-  $('#vatMsg').style.display = ex ? 'inline-flex' : 'none';
-  recalc();
-});
-$('#deposit').addEventListener('input',()=>{
-  $('#depositSet').innerHTML = '💰 <strong>Deposit Set:</strong>';
-  $('#depositSet').nextSibling && ($('#depositSet').nextSibling.textContent = '');
-  $('#depositSet').parentElement.nextElementSibling;
-  $('#depositSet').parentElement.parentElement.querySelector('.note').innerHTML = `<strong>💰 Deposit Set:</strong> £${fmt($('#deposit').value||0)} deposit will be required`;
   $('#s_deposit').textContent = fmt($('#deposit').value||0);
-});
-
-$('#calcDisc').addEventListener('click',()=>{
-  const init = Number($('#disc_initial').value||0);
-  const fin  = Number($('#disc_final').value||0);
-  discount = Math.max(0, init - fin);
-  $('#discResult').style.display='inline-flex';
-  $('#discResult').textContent = `Discount applied: £${fmt(discount)} ${$('#disc_code').value?('('+$('#disc_code').value+')'):''}`;
-  recalc();
-});
-
-/* ---------- preview & WhatsApp ---------- */
-function normPhone(){
-  let p = $('#c_phone1').value.trim();
-  if(!p) return '';
-  if(p.startsWith('0')) p = '+44' + p.slice(1);
-  if(p.startsWith('+44 ')) p = p.replace('+44 ','+44');
-  return p.replace(/\D/g,'');        // digits only for wa.me
 }
+$('#vatOn').addEventListener('change',recalc);
+$('#deposit').addEventListener('input',recalc);
+
+/* save appointment (local, used for prefill) */
+$('#saveAppt').addEventListener('click',()=>{
+  const appts = load('mxc_appts');
+  appts.push({
+    custName:$('#custName').value,custEmail:$('#custEmail').value,custPhone:prefixedPhone(),
+    addr1:$('#addr1').value,town:$('#town').value,postcode:$('#postcode').value,
+    apptDate:$('#apptDate').value,repName:$('#repName').value,jobType:$('#jobType').value,notes:$('#notes').value
+  });
+  save('mxc_appts',appts);
+  alert('Saved.');
+});
+
+/* dynamic link builder (no hard-coded repo) */
+function contractURLFromHere(){
+  const u = new URL(window.location.href);
+  const parts = u.pathname.split('/');
+  parts[parts.length-1] = 'contract.html';
+  u.pathname = parts.join('/');
+  return u;
+}
+
+/* prefill params for contract */
 function contractParams(){
   return new URLSearchParams({
-    custName: $('#c_name').value,
-    custPhone: '+'+normPhone(),      // re-add + for contract prefill
-    custEmail: $('#c_email').value,
-    addr1: $('#c_addr').value,
-    postcode: $('#c_pc').value,
-    apptDate: new Date().toISOString().slice(0,16),
-    repName: $('#rep_name').value,
-    jobType: 'Insulation',
-    notes: $('#notes').value
-  });
+    custName:$('#custName').value,
+    custPhone:prefixedPhone(true), // with +
+    custEmail:$('#custEmail').value,
+    addr1:$('#addr1').value,
+    postcode:$('#postcode').value,
+    apptDate:$('#apptDate').value,
+    repName:$('#repName').value,
+    jobType:$('#jobType').value,
+    notes:$('#notes').value
+  }).toString();
 }
 
+/* phone helper */
+function prefixedPhone(withPlus=false){
+  let d = ($('#custPhone').value||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.startsWith('0')) d = '44' + d.slice(1);
+  if(withPlus) return '+'+d;
+  return d;
+}
+
+/* preview & WhatsApp */
 $('#previewContract').addEventListener('click',()=>{
-  window.open(`contract.html?${contractParams().toString()}`,'_blank');
+  const link = contractURLFromHere(); link.search = contractParams();
+  window.open(link.toString(), '_blank');
 });
-
-$('#previewQuote').addEventListener('click',()=>{
-  window.print(); // simple print preview of the summary for now
-});
-
 $('#sendWA').addEventListener('click',()=>{
-  const phoneDigits = normPhone();
-  if(!phoneDigits){ alert('Please enter a primary mobile number.'); return; }
-  const link = new URL(location.origin + location.pathname.replace('dashboard.html','contract.html'));
-  link.search = contractParams().toString();
-  const text = `Hi ${$('#c_name').value}, it’s ${$('#rep_name').value || 'our team'} from MXCTECH INSULATION.
+  const digits = prefixedPhone(false);
+  if(!digits){ alert('Enter a primary mobile first.'); return; }
+  const link = contractURLFromHere(); link.search = contractParams();
+  const msg = `Hi ${$('#custName').value}, it’s ${$('#repName').value||'our team'} from MXCTECH INSULATION.
 Here’s your contract link:
 ${link.toString()}
 
 Quote total: £${$('#s_total').textContent}
 Deposit: £${$('#s_deposit').textContent}`;
-  window.open(`https://wa.me/${phoneDigits}?text=${encodeURIComponent(text)}`,'_blank');
+  window.open(`https://wa.me/${digits}?text=${encodeURIComponent(msg)}`,'_blank');
 });
 
+/* Saved contracts table (from contract.html saves) */
+function renderContracts(){
+  const tb = $('#contractsTbl tbody'); tb.innerHTML='';
+  const list = load('mxc_contracts');
+  list.sort((a,b)=> (a.installDate||'').localeCompare(b.installDate||''));
+  list.forEach(c=>{
+    const tr = document.createElement('tr');
+    const open = contractURLFromHere(); open.search = 'id='+encodeURIComponent(c.id);
+    tr.innerHTML = `<td>${c.installDate ? new Date(c.installDate).toLocaleDateString():''}</td>
+      <td>${c.custName||''}</td><td>${c.jobType||''}</td><td>£${fmt(c.total)}</td>
+      <td><a class="btn" href="${open.toString()}" target="_blank">Open</a></td>`;
+    tb.appendChild(tr);
+  });
+}
+
 /* init */
-renderItems();
-recalc();
+renderItems(); recalc(); renderContracts();
 </script>
 </body>
 </html>
