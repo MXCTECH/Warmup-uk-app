@@ -1,636 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Warm Up UK — Dashboard</title>
-<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>MXCTECH INSULATION — Dashboard</title>
 <style>
-:root{
-  --bg:#0b0d12; --panel:#12151c; --panel2:#0f1218;
-  --gold:#d4af37; --ink:#e7e8ea; --muted:#9aa3ad; --line:#212632; --danger:#c62828;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-a{color:var(--gold);text-decoration:none}
-img{max-width:100%}
-.hidden{display:none !important}
-.goldbar{height:6px;background:var(--gold)}
-header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line)}
-.wrap{max-width:1100px;margin:0 auto;padding:0 14px}
-.head{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
-.brand{display:flex;align-items:center;gap:10px}
-.brand img{height:30px;width:auto;border-radius:3px}
-.brand h1{font-size:18px;margin:0}
-.brand small{display:block;color:var(--muted)}
-.actions{display:flex;flex-wrap:wrap;gap:10px}
-.btn{appearance:none;border:1px solid var(--line);background:#10141b;color:#e7e8ea;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
-.btn-primary{background:var(--gold);color:#000;border-color:transparent}
-.btn-ok{background:#2a2f3a;color:var(--gold);border:1px solid rgba(212,175,55,.35)}
-.btn-danger{background:#c62828;color:#fff;border-color:transparent}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin:18px 0 32px}
-.card{grid-column:span 12;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.card h2{margin:0;padding:12px 14px;color:var(--gold);font-size:16px;border-bottom:1px solid var(--line);background:rgba(212,175,55,.06)}
-.card .body{padding:14px}
-@media(min-width:900px){ .col-6{grid-column:span 6} .col-8{grid-column:span 8} .col-4{grid-column:span 4} }
-.input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#0c1016;color:#e7e8ea}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-@media(max-width:860px){.row,.row3{grid-template-columns:1fr}}
-.list{list-style:none;margin:0;padding:0}
-.item{padding:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center}
-.item small{color:var(--muted)}
-.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.35);color:var(--gold)}
-.toggle{display:inline-flex;background:#0f131a;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-.toggle button{border:0;padding:8px 12px;background:transparent;color:#e7e8ea;cursor:pointer}
-.toggle button.active{background:var(--gold);color:#000}
-.table{width:100%;border-collapse:collapse}
-.table th,.table td{border-top:1px solid var(--line);padding:8px;text-align:left}
-.muted{color:var(--muted);font-size:12px}
-
-/* Footer strip in header */
-.footer-strip{border-top:1px solid var(--line);background:#0f1218;color:#cdd2da;font-size:12px}
-.footer-strip .wrap{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;flex-wrap:wrap}
-.footer-strip .contact{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.footer-strip .contact span::before{content:'•';margin:0 8px;color:#4a4f58}
-.footer-strip .contact span:first-child::before{content:'';margin:0}
-
-/* Contract look */
-.contract-hero{text-align:center;padding:18px 12px 6px}
-.contract-hero img{height:38px;width:auto}
-.contract-hero .uk{font-weight:800;font-size:28px;color:var(--gold)}
-.contract-hero .brandline{margin-top:6px;font-size:16px;letter-spacing:.3em;color:#fff}
-.contract-hero .title{margin-top:14px;font-size:20px;color:var(--gold);font-weight:800;letter-spacing:.1em}
-.contract-hero .ref{margin-top:6px;color:var(--muted);font-size:12px}
-.contract-hero .goldbar-thin{height:6px;background:var(--gold);margin-top:12px;border-radius:3px}
-.terms{border:1px solid var(--line);border-radius:10px;padding:10px;background:#0c1016;max-height:160px;overflow:auto;font-size:12px;color:#d9dee6}
-.sig-wrap{border:1px dashed rgba(212,175,55,.45);border-radius:10px;padding:10px;background:#0c1016}
-.sig-canvas{width:100%;height:180px;border:1px solid var(--line);border-radius:8px;background:#0a0e14;touch-action:none}
-.sig-actions{display:flex;gap:8px;margin-top:8px}
-
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;z-index:9999}
-.modal.show{display:grid}
-.modal .sheet{width:min(620px,92vw);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.modal h3{margin:0;color:var(--gold);font-size:16px;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(212,175,55,.06)}
-.modal .content{padding:14px}
-.badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:#bfc6cf;background:#0b0f15}
+  :root{
+    --black:#0B0B0D;       /* primary background / buttons */
+    --blue:#1F6BFF;        /* accents and tabs */
+    --red:#E53935;         /* destructive */
+    --ink:#111319;         /* deep text */
+    --line:#1d212b;        /* borders on dark */
+    --muted:#8b93a7;       /* subtle text */
+    --soft:#0f121a;        /* cards on dark */
+    --chip:#131826;        /* pills */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#06070a,#0b0d12 120%);color:#e9edf7}
+  header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,7,10,.75);backdrop-filter:blur(8px);z-index:10}
+  header img{height:40px;width:auto;border-radius:6px}
+  header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px}
+  header .sub{color:var(--muted);font-weight:600}
+  nav{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:68px;background:rgba(8,10,14,.7);backdrop-filter:blur(6px);z-index:9}
+  .tab{border:1px solid var(--line);background:var(--soft);padding:8px 12px;border-radius:10px;font-weight:800;cursor:pointer;color:#e9edf7}
+  .tab.active{outline:2px solid var(--blue)}
+  main{padding:16px;max-width:1200px;margin:auto}
+  .card{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  label{font-size:12px;color:#aab2c5}
+  input,select,textarea{
+    width:100%;padding:10px;border:1px solid #22283a;background:#0c101a;color:#e9edf7;border-radius:10px;font-size:14px
+  }
+  textarea{grid-column:span 6;min-height:74px;resize:vertical}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{border:1px solid #22283a;background:#0c101a;padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer;color:#e9edf7}
+  .btn.primary{background:var(--blue);border-color:var(--blue)}
+  .btn.ok{background:#18a46b;border-color:#18a46b}
+  .btn.warn{background:var(--red);border-color:var(--red)}
+  .btn.dark{background:var(--black);border-color:#000}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{padding:12px;border-bottom:1px solid #202538;text-align:left;font-size:14px;vertical-align:top}
+  th{font-size:12px;color:#9aa4bd;text-transform:uppercase;letter-spacing:.3px}
+  .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--chip);font-size:12px;color:#b8c0d9}
+  .muted{color:#9aa4bd}
+  .hide{display:none}
+  a{color:#9ec2ff}
+  @media (max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
 <body>
-<div class="goldbar"></div>
 <header>
-  <div class="head wrap">
-    <div class="brand">
-      <img src="WUUK.JPG" alt="Warm Up UK">
-      <div><h1>Warm Up UK</h1><small id="today"></small></div>
-    </div>
-    <div class="actions">
-      <button class="btn-primary" id="btnNewQuote">+ New Quote</button>
-      <button class="btn" id="btnInstallCal">Install Calendar</button>
-      <button class="btn-ok" id="btnDealBreakdown">Deal Breakdown</button>
-      <button class="btn" id="btnContractView">Open Contract View</button>
-      <button class="btn" id="btnShareSettings">Share Settings</button>
-    </div>
-  </div>
-  <div class="footer-strip">
-    <div class="wrap">
-      <div class="contact">
-        <span>📞 01708 300 670</span>
-        <span>✉️ admin@warmupuk.com</span>
-        <span>🌐 www.warmupuk.com</span>
-        <span>🏢 321–323 High Street, Romford, Essex RM6 6AX</span>
-      </div>
-      <span class="badge">Black &amp; Gold • WUUK</span>
-    </div>
+  <img src="mxctech-logo.png" alt="MXCTECH INSULATION Logo"/>
+  <div>
+    <h1>MXCTECH INSULATION</h1>
+    <div class="sub">Operations Dashboard</div>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="grid">
-    <section class="card col-4">
-      <h2>Pipeline</h2>
-      <div class="body">
-        <div class="toggle" id="viewToggle">
-          <button data-view="quotes" class="active">Quotes</button>
-          <button data-view="signed">Signed</button>
-        </div>
-        <span class="pill" id="kpiCount" style="margin-left:8px">0</span>
-        <p class="muted" style="margin-top:10px">Switch to see how many <b>quotes</b> vs <b>signed deals</b> are saved on this device.</p>
-      </div>
-    </section>
+<nav>
+  <button class="tab active" data-tab="appointments">Appointments</button>
+  <button class="tab" data-tab="install">Install Calendar</button>
+</nav>
 
-    <section class="card col-8" id="quotesCard">
-      <h2>Quotes</h2>
-      <div class="body">
-        <ul class="list" id="quoteList"></ul>
-        <p class="muted">Save quotes and convert to contracts.</p>
+<main>
+  <!-- APPOINTMENTS -->
+  <section id="appointments" class="card">
+    <h2 style="margin:4px 0 14px">Add Appointment</h2>
+    <div class="grid" id="appt-form">
+      <div><label>Customer Name</label><input id="custName" placeholder="Jane Smith"/></div>
+      <div><label>Phone (mobile for WhatsApp)</label><input id="custPhone" placeholder="+447... or 07..."/></div>
+      <div><label>Email</label><input id="custEmail" placeholder="name@email.com"/></div>
+      <div><label>Address Line 1</label><input id="addr1" placeholder="1 High Street"/></div>
+      <div><label>Postcode</label><input id="postcode" placeholder="SS8 9ET"/></div>
+      <div><label>Appointment Date/Time</label><input id="apptDate" type="datetime-local"/></div>
+      <div><label>Rep Name</label><input id="repName" placeholder="Your rep"/></div>
+      <div><label>Rep WhatsApp (optional)</label><input id="repWhatsApp" placeholder="+447..."/></div>
+      <div><label>Lead Source</label>
+        <select id="leadSource">
+          <option>Facebook</option><option>Google</option><option>Referral</option>
+          <option>Website</option><option>Door</option><option>Other</option>
+        </select>
       </div>
-    </section>
-
-    <section class="card col-8 hidden" id="signedCard">
-      <h2>Signed Contracts</h2>
-      <div class="body">
-        <ul class="list" id="contractList"></ul>
-        <p class="muted">Open, add to Install Calendar, or download as PDF.</p>
+      <div><label>Job Type</label>
+        <select id="jobType">
+          <option>Multifoil Insulation</option>
+          <option>Spray Foam Removal</option>
+          <option>Loft Boarding</option>
+          <option>Ventilation</option>
+          <option>Other</option>
+        </select>
       </div>
-    </section>
-
-    <section class="card col-12 hidden" id="installCard">
-      <h2>Install Calendar <span id="repViewBadge" class="badge hidden"></span></h2>
-      <div class="body">
-        <div class="row">
-          <div><label>Filter by date</label><input type="date" class="input" id="installFilter"></div>
-          <div style="align-self:end;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn" id="clearInstallFilter">Clear</button>
-            <button class="btn" id="openShareFromCalendar">Share…</button>
-          </div>
-        </div>
-        <table class="table" id="installTable">
-          <thead><tr><th>Date</th><th>Client</th><th>Postcode</th><th>Product</th><th>Rep</th><th>Contract</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card col-12 hidden" id="dealCard">
-      <h2>Deal Breakdown</h2>
-      <div class="body">
-        <div class="row3">
-          <div><label>Sale Value (£)</label><input id="db_sale" class="input" type="number" step="0.01"></div>
-          <div><label>Direct Costs (£)</label><input id="db_costs" class="input" type="number" step="0.01"></div>
-          <div><label>Rep Commission (%)</label><input id="db_comm_pct" class="input" type="number" step="0.1" placeholder="e.g. 10"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label>Marketing Costs (£)</label><input id="db_marketing" class="input" type="number" step="0.01" value="0"></div>
-          <div style="align-self:end"><button class="btn-primary" id="db_calc">Calculate</button></div>
-        </div>
-        <div id="db_results" style="margin-top:12px"></div>
-      </div>
-    </section>
-
-    <!-- Full Contract View -->
-    <section id="contractView" class="card col-12 hidden">
-      <div class="contract-hero">
-        <img src="WUUK.JPG" alt="Warm Up UK Logo">
-        <div class="uk">UK</div>
-        <div class="brandline">W A R M &nbsp; U P &nbsp; U K</div>
-        <div class="title">CONTRACT</div>
-        <div class="ref" id="contractRef">WUK-—</div>
-        <div class="goldbar-thin"></div>
-      </div>
-      <div class="body">
-        <div class="row">
-          <div><label>Client Name</label><input id="c_clientName" class="input"></div>
-          <div><label>Phone</label><input id="c_phone" class="input"></div>
-        </div>
-        <div class="row">
-          <div><label>Email</label><input id="c_email" class="input"></div>
-          <div><label>Postcode</label><input id="c_postcode" class="input"></div>
-        </div>
-        <div><label>Address</label><input id="c_address1" class="input"></div>
-        <div class="row3" style="margin-top:8px">
-          <div><label>Product</label><input id="c_product" class="input"></div>
-          <div><label>Quoted Price (£)</label><input id="c_price" class="input" type="number" step="0.01"></div>
-          <div><label>Appointment</label><input id="c_apptDate" class="input" type="datetime-local"></div>
-        </div>
-        <div class="row3" style="margin-top:8px">
-          <div><label>Rep</label><input id="c_rep" class="input"></div>
-          <div><label>Booking Agent</label><input id="c_bookingAgent" class="input"></div>
-          <div><label>Confirmer</label><input id="c_confirmer" class="input"></div>
-        </div>
-
-        <h3 style="margin-top:16px;color:var(--gold)">Terms & Conditions</h3>
-        <div class="terms">
-          <ol>
-            <li>All works carried out to a professional standard. Materials meet relevant UK standards.</li>
-            <li>Customer provides clear access to working area and discloses known hazards.</li>
-            <li>Quoted price valid for 30 days; changes to scope may require a revised quote.</li>
-            <li>Payment terms: 50% deposit on booking, balance on completion unless agreed in writing.</li>
-            <li>Cancellation within 48 hours of appointment may incur a call-out fee.</li>
-            <li>Guarantees: workmanship 12 months unless stated. Manufacturer warranties apply.</li>
-            <li>By signing you agree to the scope of works and these terms.</li>
-          </ol>
-        </div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="c_agree">
-          <label for="c_agree" style="margin:0">I agree to the Terms & Conditions</label>
-        </div>
-
-        <h3 style="margin-top:16px;color:var(--gold)">Signature</h3>
-        <div class="sig-wrap">
-          <canvas id="sigCanvas" class="sig-canvas"></canvas>
-          <div class="sig-actions">
-            <button class="btn" id="sigClearBtn">Clear</button>
-            <button class="btn" id="sigUndoBtn">Undo</button>
-          </div>
-          <img id="sigImg" class="hidden" alt="Signature Image">
-        </div>
-
-        <div class="actions" style="margin-top:14px">
-          <button class="btn-primary" id="saveContractBtn">Save Contract</button>
-          <button class="btn" id="backToDashBtn">Back to Dashboard</button>
-          <button class="btn" id="copyLinkBtn">Copy Contract Link</button>
-          <button class="btn-ok" id="savePdfBtn">Save (Print)</button>
-          <button class="btn-ok" id="downloadPdfBtn">Download PDF</button>
-        </div>
-
-        <div style="margin-top:18px;text-align:center;color:var(--muted);font-size:12px">
-          <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:8px;opacity:.6"></div>
-          <b style="color:var(--gold)">Warm Up UK Ltd</b> • 321–323 High Street, Romford, Essex RM6 6AX • 01708 300 670 • admin@warmupuk.com • www.warmupuk.com
-          <div>Generated: <span id="printTimestamp"></span></div>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
-
-<!-- New Quote Modal -->
-<div class="modal" id="quoteModal">
-  <div class="sheet">
-    <h3>New Quote</h3>
-    <div class="content">
-      <div class="row">
-        <div><label>Client</label><input id="q_client" class="input" placeholder="e.g. Jane Smith"></div>
-        <div><label>Phone</label><input id="q_phone" class="input" placeholder="07…"></div>
-      </div>
-      <div class="row">
-        <div><label>Email</label><input id="q_email" class="input"></div>
-        <div><label>Postcode</label><input id="q_postcode" class="input" placeholder="RM6 6AX"></div>
-      </div>
-      <div class="row3">
-        <div><label>Product</label>
-          <select id="q_product" class="input">
-            <option value="">— Select —</option>
-            <option>Loft Insulation (Multifoil)</option>
-            <option>Spray-Foam Removal</option>
-            <option>Loft Boarding & Ladder</option>
-            <option>Rafter Insulation (Pitched Roof)</option>
-          </select>
-        </div>
-        <div><label>Quoted Price (£)</label><input id="q_price" class="input" type="number" step="0.01"></div>
-        <div><label>Preferred Install Date</label><input id="q_install" class="input" type="date"></div>
-      </div>
-      <div class="actions" style="margin-top:10px">
-        <button class="btn-primary" id="q_save">Save Quote</button>
-        <button class="btn" id="q_cancel">Cancel</button>
-      </div>
+      <textarea id="notes" placeholder="Access, parking, pets, roof details…"></textarea>
     </div>
-  </div>
-</div>
 
-<!-- Share Settings Modal -->
-<div class="modal" id="shareModal">
-  <div class="sheet">
-    <h3>Share Settings</h3>
-    <div class="content">
-      <div class="row3">
-        <div><label>Recipient Name</label><input id="s_name" class="input" placeholder="e.g. Ray Daniels"></div>
-        <div>
-          <label>Access Type</label>
-          <select id="s_role" class="input">
-            <option value="rep">Rep</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div>
-          <label>Permissions</label>
-          <select id="s_perm" class="input">
-            <option value="view">View Only</option>
-            <option value="edit">Can Edit</option>
-          </select>
-        </div>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <div><label>Passcode (optional)</label><input id="s_pass" class="input" placeholder="Set a passcode for the link"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
-        <button class="btn-primary" id="s_create">+ Create Share Link</button>
-        <span class="muted">Links filter the Install Calendar to that rep and include a token. Add a passcode for extra privacy.</span>
-      </div>
-      <hr style="border-color:#212632;border-width:0 0 1px;margin:12px 0">
-      <div id="shareList"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn primary" id="saveAppt">Save Appointment</button>
+      <span class="muted">Saved locally on this device.</span>
     </div>
-  </div>
-</div>
 
-<!-- PDF libs -->
-<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <h3 style="margin:20px 0 8px">Appointments</h3>
+    <div class="card" style="padding:0">
+      <table id="apptTable">
+        <thead>
+          <tr>
+            <th>Customer</th><th>Contact</th><th>Address</th>
+            <th>When</th><th>Rep</th><th>Type</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody><!-- rows --></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- INSTALL CALENDAR (reads saved contracts) -->
+  <section id="install" class="card hide">
+    <h2 style="margin:4px 0 14px">Install Calendar</h2>
+    <p class="muted">Shows contracts saved with an Install Date.</p>
+    <div class="card" style="padding:0">
+      <table id="installTable">
+        <thead>
+          <tr>
+            <th>Install Date</th><th>Customer</th><th>Address</th>
+            <th>Job</th><th>Total</th><th>Contract</th>
+          </tr>
+        </thead>
+        <tbody><!-- rows --></tbody>
+      </table>
+    </div>
+  </section>
+</main>
 
 <script>
-const $ = id => document.getElementById(id);
-const pad = n => n.toString().padStart(2,'0');
-const genRef = (d=new Date()) => `WUK-${d.getFullYear().toString().slice(-2)}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(Math.random()*1e9).toString().padStart(9,'0')}`;
-const GBP = n => '£'+Number(n||0).toFixed(2);
-function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f }catch{ return f } }
-function save(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-function slugify(s){ return (s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
-function token(){ return Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2); }
-async function hashPass(pass, tokenStr){
-  const enc = new TextEncoder();
-  const data = enc.encode((pass||'') + '|' + (tokenStr||''));
-  const buf = await crypto.subtle.digest('SHA-256', data);
-  const arr = Array.from(new Uint8Array(buf));
-  return arr.map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+const $ = s=>document.querySelector(s);
+const $$ = s=>document.querySelectorAll(s);
 
-const KEY_QUOTES='wuuk_quotes', KEY_CONTRACTS='wuuk_contracts', KEY_SHARES='wuuk_shares';
-let quotes=load(KEY_QUOTES,[]), contracts=load(KEY_CONTRACTS,[]), shares=load(KEY_SHARES,[]);
+// Tabs
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  $('#appointments').classList.toggle('hide', t.dataset.tab!=='appointments');
+  $('#install').classList.toggle('hide', t.dataset.tab!=='install');
+}));
 
-// Today
-$('today').textContent = 'Today: ' + new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+// Storage helpers
+const load = (k,d=[]) => JSON.parse(localStorage.getItem(k)||JSON.stringify(d));
+const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
 
-// KPI toggle
-function setKPI(view){
-  const cnt = view==='signed' ? contracts.length : quotes.length;
-  $('kpiCount').textContent = cnt+' '+(view==='signed'?'signed':'quotes');
-  document.querySelectorAll('#viewToggle button').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
-  $('quotesCard').classList.toggle('hidden', view!=='quotes');
-  $('signedCard').classList.toggle('hidden', view!=='signed');
-}
-document.querySelectorAll('#viewToggle button').forEach(b=>b.addEventListener('click',()=>setKPI(b.dataset.view)));
+function loadAppts(){ return load('mxct_appts'); }
+function saveAppts(list){ save('mxct_appts', list); renderAppts(); }
 
-// Quotes
-function renderQuotes(){
-  const ul=$('quoteList'); ul.innerHTML='';
-  if(quotes.length===0){ ul.innerHTML='<li class="item"><small class="muted">No quotes yet.</small></li>'; return; }
-  quotes.forEach(q=>{
-    const li=document.createElement('li'); li.className='item';
-    li.innerHTML=`
-      <div><strong>${q.client} <span class="muted">· ${q.product||'TBC'}</span></strong>
-      <small>${q.postcode||''} · £${Number(q.price||0).toFixed(2)} ${q.install?'· Inst '+q.install:''}</small></div>
-      <div class="actions">
-        <button class="btn-ok" data-convert="${q.id}">Make Contract</button>
-        <button class="btn-danger" data-del="${q.id}">Delete</button>
-      </div>`;
-    ul.appendChild(li);
+function renderAppts(){
+  const tbody = $('#apptTable tbody'); tbody.innerHTML='';
+  loadAppts().forEach((a,i)=>{
+    const tr = document.createElement('tr');
+    const when = a.apptDate ? new Date(a.apptDate).toLocaleString() : '';
+    tr.innerHTML = `
+      <td><strong>${a.custName||''}</strong><div class="muted">${a.leadSource||''}</div></td>
+      <td>${a.custPhone||''}<br><span class="muted">${a.custEmail||''}</span></td>
+      <td>${a.addr1||''}<br><span class="muted">${a.postcode||''}</span></td>
+      <td><span class="pill">${when}</span></td>
+      <td>${a.repName||''}</td>
+      <td>${a.jobType||''}</td>
+      <td class="row">
+        <button class="btn dark" onclick="editAppt(${i})">Edit</button>
+        <button class="btn warn" onclick="delAppt(${i})">Delete</button>
+        <button class="btn primary" onclick="openContract(${i})">Create Contract</button>
+        <button class="btn ok" onclick="sendWhatsApp(${i})">Send Contract via WhatsApp</button>
+      </td>`;
+    tbody.appendChild(tr);
   });
 }
-$('quoteList').addEventListener('click',(e)=>{
-  const id=e.target.dataset.convert||e.target.dataset.del; if(!id) return;
-  if(e.target.dataset.convert){ convertToContract(id); }
-  if(e.target.dataset.del){ if(confirm('Delete this quote?')){ quotes=quotes.filter(x=>x.id!==id); save(KEY_QUOTES,quotes); renderQuotes(); setKPI('quotes'); } }
-});
-function convertToContract(id){
-  const q=quotes.find(x=>x.id===id); if(!q) return;
-  const ref=genRef();
-  const c={ id:'c_'+Date.now(), ref, ...q, signedAt:new Date().toISOString() };
-  contracts.unshift(c); save(KEY_CONTRACTS,contracts);
-  quotes=quotes.filter(x=>x.id!==id); save(KEY_QUOTES,quotes);
-  openContractView(c);
+
+function editAppt(i){
+  const a = loadAppts()[i]; if(!a) return;
+  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','repWhatsApp','notes']
+    .forEach(id=> $('#'+id).value = a[id] || '');
+  $('#leadSource').value = a.leadSource || 'Facebook';
+  $('#jobType').value = a.jobType || 'Multifoil Insulation';
+  localStorage.setItem('mxct_edit_index', i);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// Contracts
-function renderContracts(){
-  const ul=$('contractList'); ul.innerHTML='';
-  if(contracts.length===0){ ul.innerHTML='<li class="item"><small class="muted">No signed contracts yet.</small></li>'; return; }
-  contracts.forEach(c=>{
-    const li=document.createElement('li'); li.className='item';
-    li.innerHTML=`
-      <div><strong>${c.client} <span class="muted">· ${c.product||'TBC'}</span></strong>
-      <small>Ref <b style="color:#d4af37">${c.ref}</b> · £${Number(c.price||0).toFixed(2)} ${c.install?'· Inst '+c.install:''}</small></div>
-      <div class="actions">
-        <button class="btn" data-open="${c.id}">Open</button>
-        <button class="btn" data-install="${c.id}">Add to Install</button>
-        <button class="btn-danger" data-delc="${c.id}">Delete</button>
-      </div>`;
-    ul.appendChild(li);
+function delAppt(i){
+  const all = loadAppts(); all.splice(i,1); saveAppts(all);
+}
+
+function normPhone(p){
+  if(!p) return '';
+  let s = p.trim();
+  if(s.startsWith('07')) s = '+44' + s.slice(1);
+  return s.replace(/\s+/g,'');
+}
+
+function contractParams(a){
+  return new URLSearchParams({
+    custName:a.custName||'', custPhone:normPhone(a.custPhone||''),
+    custEmail:a.custEmail||'', addr1:a.addr1||'', postcode:a.postcode||'',
+    apptDate:a.apptDate||'', repName:a.repName||'', jobType:a.jobType||'', notes:a.notes||'',
   });
 }
-$('contractList').addEventListener('click',(e)=>{
-  const id=e.target.dataset.open||e.target.dataset.install||e.target.dataset.delc; if(!id) return;
-  const i=contracts.findIndex(x=>x.id===id); if(i<0) return;
-  if(e.target.dataset.open){ openContractView(contracts[i]); }
-  if(e.target.dataset.install){
-    if(viewPerm==='view'){ alert('This shared link is read-only.'); return; }
-    const d=prompt('Install date (YYYY-MM-DD):', new Date().toISOString().slice(0,10));
-    if(d){ contracts[i].install=d; save(KEY_CONTRACTS,contracts); renderContracts(); if(!$('installCard').classList.contains('hidden')) renderInstall(); }
-  }
-  if(e.target.dataset.delc){
-    if(viewPerm==='view'){ alert('This shared link is read-only.'); return; }
-    if(confirm('Delete this contract?')){ contracts.splice(i,1); save(KEY_CONTRACTS,contracts); renderContracts(); setKPI('signed'); }
-  }
+
+function openContract(i){
+  const a = loadAppts()[i]; if(!a) return;
+  const url = `contract.html?${contractParams(a).toString()}`;
+  window.open(url,'_blank');
+}
+
+function sendWhatsApp(i){
+  const a = loadAppts()[i]; if(!a) return;
+  const contractLink = new URL(location.origin + location.pathname.replace('dashboard.html','contract.html'));
+  contractLink.search = contractParams(a).toString();
+
+  const text = `Hi ${a.custName||''}, it’s ${a.repName||'our team'} from MXCTECH INSULATION.
+Here’s your contract link:
+${contractLink.toString()}
+Appointment: ${a.apptDate ? new Date(a.apptDate).toLocaleString() : ''}
+Address: ${a.addr1||''}, ${a.postcode||''}`;
+
+  const phone = normPhone(a.custPhone||'');
+  if(!phone){ alert('No mobile number for WhatsApp.'); return; }
+  const url = `https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(text)}`;
+  window.open(url,'_blank');
+}
+
+$('#saveAppt').addEventListener('click',()=>{
+  const i = localStorage.getItem('mxct_edit_index');
+  const entry = {
+    custName:$('#custName').value.trim(),
+    custPhone:$('#custPhone').value.trim(),
+    custEmail:$('#custEmail').value.trim(),
+    addr1:$('#addr1').value.trim(),
+    postcode:$('#postcode').value.trim(),
+    apptDate:$('#apptDate').value,
+    repName:$('#repName').value.trim(),
+    repWhatsApp:$('#repWhatsApp').value.trim(),
+    leadSource:$('#leadSource').value,
+    jobType:$('#jobType').value,
+    notes:$('#notes').value.trim(),
+  };
+  const all = loadAppts();
+  if(i!==null && i!=='null'){ all[Number(i)] = entry; localStorage.removeItem('mxct_edit_index'); }
+  else { all.push(entry); }
+  saveAppts(all);
+  // clear
+  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','repWhatsApp','notes']
+    .forEach(id=>$('#'+id).value='');
+  $('#leadSource').value='Facebook'; $('#jobType').value='Multifoil Insulation';
 });
 
-// Install calendar
-let repFilter=null, viewPerm='edit';
-function applyCalendarPermissions(){
-  const shareBtn = $('openShareFromCalendar');
-  const topShareBtn = $('btnShareSettings');
-  const installingDisabled = (viewPerm==='view');
-  if(shareBtn){ shareBtn.disabled = installingDisabled; shareBtn.textContent = installingDisabled? 'Share (disabled in shared view)' : 'Share…'; }
-  if(topShareBtn){ topShareBtn.disabled = installingDisabled; }
-}
 function renderInstall(){
-  const tbody=document.querySelector('#installTable tbody'); tbody.innerHTML='';
-  const f=$('installFilter').value;
-  const rows=contracts
-    .filter(c=>c.install && (!f || c.install===f))
-    .filter(c=>!repFilter || (c.rep && slugify(c.rep)===repFilter))
-    .sort((a,b)=>a.install.localeCompare(b.install))
-    .map(c=>`<tr><td>${c.install}</td><td>${c.client}</td><td>${c.postcode||''}</td><td>${c.product||''}</td><td>${c.rep||''}</td><td>${c.ref}</td></tr>`).join('');
-  tbody.innerHTML = rows || `<tr><td colspan="6" class="muted">No installs${f?' on '+f:''}${repFilter?' for this rep':''}.</td></tr>`;
-}
-$('installFilter').addEventListener('change', renderInstall);
-$('clearInstallFilter').addEventListener('click', ()=>{ $('installFilter').value=''; renderInstall(); });
-$('openShareFromCalendar').addEventListener('click', ()=> openShareModal());
-
-// Deal breakdown
-function calcBreakdown(){
-  const sale=parseFloat($('db_sale').value||0);
-  const costs=parseFloat($('db_costs').value||0);
-  const commPct=parseFloat($('db_comm_pct').value||0);
-  const marketing=parseFloat($('db_marketing').value||0);
-  const commission=sale*(commPct/100);
-  const profit=sale-costs-commission-marketing;
-  const margin=sale>0?(profit/sale*100):0;
-  $('db_results').innerHTML=`<table class="table">
-  <tbody>
-    <tr><td>Sale Value</td><td>${GBP(sale)}</td></tr>
-    <tr><td>Direct Costs</td><td>${GBP(costs)}</td></tr>
-    <tr><td>Rep Commission (${commPct.toFixed(1)}%)</td><td>${GBP(commission)}</td></tr>
-    <tr><td>Marketing Costs</td><td>${GBP(marketing)}</td></tr>
-    <tr><th>Profit</th><th>${GBP(profit)}</th></tr>
-  </tbody></table>
-  <div style="display:flex;justify-content:flex-end;margin-top:6px"><span class="pill">Margin ${margin.toFixed(1)}%</span></div>`;
-}
-$('db_calc').addEventListener('click', calcBreakdown);
-
-// Contract view + signature + PDF
-function openContractView(c){
-  $('contractRef').textContent=c.ref||genRef();
-  $('c_clientName').value=c.client||'';
-  $('c_phone').value=c.phone||'';
-  $('c_email').value=c.email||'';
-  $('c_postcode').value=c.postcode||'';
-  $('c_address1').value=c.address1||'';
-  $('c_product').value=c.product||'';
-  $('c_price').value=c.price||'';
-  $('c_apptDate').value=c.apptDate||'';
-  $('c_rep').value=c.rep||'';
-  $('c_bookingAgent').value=c.bookingAgent||'';
-  $('c_confirmer').value=c.confirmer||'';
-  $('contractView').classList.remove('hidden');
-  $('installCard').classList.add('hidden');
-  $('dealCard').classList.add('hidden');
-}
-$('btnContractView').addEventListener('click', ()=> openContractView({ id:'c_'+Date.now(), ref:genRef() }));
-$('backToDashBtn').addEventListener('click', ()=> $('contractView').classList.add('hidden'));
-$('saveContractBtn').addEventListener('click', ()=>{
-  const ref=$('contractRef').textContent;
-  const idx=contracts.findIndex(x=>x.ref===ref);
-  const c={ id: idx>=0?contracts[idx].id:'c_'+Date.now(), ref,
-    client:$('c_clientName').value, phone:$('c_phone').value, email:$('c_email').value,
-    postcode:$('c_postcode').value, address1:$('c_address1').value,
-    product:$('c_product').value, price:$('c_price').value,
-    apptDate:$('c_apptDate').value, rep:$('c_rep').value,
-    bookingAgent:$('c_bookingAgent').value, confirmer:$('c_confirmer').value,
-    signedAt:new Date().toISOString() };
-  if(idx>=0) contracts[idx]=c; else contracts.unshift(c);
-  save(KEY_CONTRACTS,contracts); renderContracts(); setKPI('signed');
-  alert('Contract saved: '+ref);
-});
-$('copyLinkBtn').addEventListener('click', ()=>{
-  const ref=$('contractRef').textContent;
-  const url=location.origin+location.pathname+'?view=contract&ref='+encodeURIComponent(ref);
-  navigator.clipboard.writeText(url).then(()=>alert('Link copied: '+url),()=>prompt('Copy this link:',url));
-});
-
-// Signature
-let sigCanvas=$('sigCanvas'), sigCtx=sigCanvas.getContext('2d'), drawing=false, sigPaths=[];
-function resizeSig(){ const ratio=Math.max(window.devicePixelRatio||1,1);
-  const r=sigCanvas.getBoundingClientRect();
-  sigCanvas.width=r.width*ratio; sigCanvas.height=r.height*ratio;
-  sigCtx.setTransform(1,0,0,1,0,0); sigCtx.scale(ratio,ratio); redrawSig(); }
-function redrawSig(){ sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);
-  sigCtx.lineWidth=2; sigCtx.lineJoin='round'; sigCtx.lineCap='round'; sigCtx.strokeStyle='#eee';
-  sigPaths.forEach(p=>{ if(p.length<2) return; sigCtx.beginPath(); sigCtx.moveTo(p[0].x,p[0].y); for(let i=1;i<p.length;i++) sigCtx.lineTo(p[i].x,p[i].y); sigCtx.stroke(); });
-}
-function point(e){const r=sigCanvas.getBoundingClientRect(); const t=e.touches?.[0]; return {x:(t?t.clientX:e.clientX)-r.left,y:(t?t.clientY:e.clientY)-r.top};}
-function startSig(e){e.preventDefault(); drawing=true; sigPaths.push([point(e)]); redrawSig();}
-function moveSig(e){ if(!drawing) return; e.preventDefault(); sigPaths[sigPaths.length-1].push(point(e)); redrawSig(); }
-function endSig(e){e.preventDefault(); drawing=false;}
-function setSigImg(){ const url=sigCanvas.toDataURL('image/png'); const img=$('sigImg'); img.src=url; img.classList.remove('hidden'); }
-window.addEventListener('resize', resizeSig);
-sigCanvas.addEventListener('mousedown', startSig);
-sigCanvas.addEventListener('mousemove', moveSig);
-window.addEventListener('mouseup', endSig);
-sigCanvas.addEventListener('touchstart', startSig,{passive:false});
-sigCanvas.addEventListener('touchmove', moveSig,{passive:false});
-sigCanvas.addEventListener('touchend', endSig,{passive:false});
-resizeSig();
-
-// Print / PDF
-function saveAsPrint(){ if(!$('c_agree').checked){ alert('Please tick "I agree to the Terms & Conditions" first.'); return; }
-  $('printTimestamp').textContent=new Date().toLocaleString(); setSigImg(); window.print(); }
-$('savePdfBtn').addEventListener('click', saveAsPrint);
-async function downloadPdf(){ if(!$('c_agree').checked){ alert('Please tick "I agree to the Terms & Conditions" first.'); return; }
-  $('printTimestamp').textContent=new Date().toLocaleString(); setSigImg();
-  const node=$('contractView'); const canvas=await html2canvas(node,{scale:2,backgroundColor:'#0b0d12',useCORS:true});
-  const imgData=canvas.toDataURL('image/jpeg',0.95); const { jsPDF }=window.jspdf;
-  const pdf=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
-  const pageW=pdf.internal.pageSize.getWidth(); const pageH=pdf.internal.pageSize.getHeight();
-  const imgW=pageW; const imgH=canvas.height*(imgW/canvas.width);
-  if(imgH>pageH-20){ const scaledW=(pageH-20)*(canvas.width/canvas.height); pdf.addImage(imgData,'JPEG',(pageW-scaledW)/2,10,scaledW,pageH-20); }
-  else{ pdf.addImage(imgData,'JPEG',0,10,imgW,imgH); }
-  const ref=($('contractRef')?.textContent||'WUK-Contract').replace(/\s+/g,''); pdf.save(ref+'.pdf');
-}
-$('downloadPdfBtn').addEventListener('click', downloadPdf);
-
-// Share links (with optional passcode)
-function openShareModal(){ $('shareModal').classList.add('show'); renderShares(); }
-function closeShareModal(){ $('shareModal').classList.remove('show'); }
-$('btnShareSettings').addEventListener('click', openShareModal);
-$('openShareFromCalendar').addEventListener('click', openShareModal);
-$('shareModal').addEventListener('click', (e)=>{ if(e.target.id==='shareModal') closeShareModal(); });
-
-function shareURL(rec){
-  const base=location.origin+location.pathname;
-  const h = rec.hash ? `&h=${encodeURIComponent(rec.hash)}` : '';
-  const q=`?view=install&rep=${encodeURIComponent(rec.repSlug)}&token=${encodeURIComponent(rec.token)}&perm=${rec.perm}${h}`;
-  return base+q;
-}
-function renderShares(){
-  const box=$('shareList'); if(!box) return; box.innerHTML='';
-  if(shares.length===0){ box.innerHTML='<p class="muted">No active share links yet.</p>'; return; }
-  shares.forEach((r,i)=>{
-    const row=document.createElement('div'); row.className='item';
-    row.innerHTML=`
-      <div>
-        <div><strong>${r.name}</strong> <span class="muted">· ${r.role==='admin'?'Admin':'Rep'} · ${r.perm==='edit'?'Can Edit':'View Only'} · Created ${new Date(r.created).toLocaleDateString()}</span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px">
-          <input class="input" style="min-width:260px" value="${shareURL(r)}" readonly>
-          <button class="btn" data-copy="${i}">Copy</button>
-          <button class="btn" data-edit="${i}">Rename</button>
-          <button class="btn-danger" data-del="${i}">Delete</button>
-          <a class="btn" href="${shareURL(r)}" target="_blank">Open</a>
-        </div>
-      </div>`; box.appendChild(row);
+  const tbody = $('#installTable tbody'); tbody.innerHTML='';
+  const contracts = load('mxct_contracts');
+  contracts.sort((a,b)=> (a.installDate||'').localeCompare(b.installDate||''));
+  contracts.forEach(c=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.installDate ? new Date(c.installDate).toLocaleDateString() : ''}</td>
+      <td><strong>${c.custName||''}</strong><div class="muted">${c.custPhone||''}</div></td>
+      <td>${c.addr1||''}<br><span class="muted">${c.postcode||''}</span></td>
+      <td>${c.jobType||''}</td>
+      <td>£${(c.total||0).toFixed(2)}</td>
+      <td><a href="contract.html?id=${encodeURIComponent(c.id)}" target="_blank">Open</a></td>`;
+    tbody.appendChild(tr);
   });
 }
-$('s_create').addEventListener('click', async ()=>{
-  const name=$('s_name').value.trim(); if(!name){ alert('Recipient name required'); return; }
-  const role=$('s_role').value; const perm=$('s_perm').value; const repSlug=slugify(name); const pass=$('s_pass').value.trim();
-  const rec={ id:'share_'+Date.now(), name, role, perm, repSlug, token:token(), created:new Date().toISOString() };
-  if(pass){ rec.hash = await hashPass(pass, rec.token); }
-  shares.unshift(rec); save(KEY_SHARES,shares); renderShares();
-  const link=shareURL(rec); navigator.clipboard.writeText(link).then(()=>alert('Share link copied: '+link),()=>prompt('Copy this link:',link));
-  $('s_name').value=''; $('s_pass').value='';
-});
-$('shareList').addEventListener('click',(e)=>{
-  const i = e.target.dataset.copy ?? e.target.dataset.del ?? e.target.dataset.edit;
-  if(i===undefined) return; const idx=parseInt(i,10); const rec=shares[idx]; if(!rec) return;
-  if(e.target.dataset.copy!==undefined){ const link=shareURL(rec); navigator.clipboard.writeText(link).then(()=>alert('Copied'),()=>prompt('Copy link:',link)); }
-  if(e.target.dataset.del!==undefined){ if(confirm('Delete this share link?')){ shares.splice(idx,1); save(KEY_SHARES,shares); renderShares(); } }
-  if(e.target.dataset.edit!==undefined){ const nm=prompt('New name', rec.name); if(nm){ rec.name=nm; rec.repSlug=slugify(nm); save(KEY_SHARES,shares); renderShares(); } }
-});
 
-// Routing (URL params)
-function show(id){ ['installCard','dealCard','contractView'].forEach(x=>$(x).classList.add('hidden')); $(id).classList.remove('hidden'); }
-function initFromURL(){
-  const p=new URLSearchParams(location.search); const view=p.get('view');
-  if(view==='contract' && p.get('ref')){ const c=contracts.find(x=>x.ref===p.get('ref')); if(c) openContractView(c); }
-  if(view==='install'){
-    repFilter=p.get('rep')||null; const perm=p.get('perm')||'view'; const tokenStr=p.get('token')||''; const h=p.get('h')||'';
-    if(repFilter){ $('repViewBadge').textContent='Shared view • '+repFilter; $('repViewBadge').classList.remove('hidden'); }
-    viewPerm=perm;
-    async function proceed(){ show('installCard'); renderInstall(); applyCalendarPermissions(); }
-    if(h){
-      (async ()=>{
-        const pass = prompt('Enter passcode to view this calendar:');
-        const computed = await hashPass(pass||'', tokenStr||'');
-        if(computed===h){ await proceed(); }
-        else{ alert('Incorrect passcode. Access denied.'); show('installCard'); document.querySelector('#installTable tbody').innerHTML = '<tr><td colspan="6" class="muted">Access denied.</td></tr>'; applyCalendarPermissions(); }
-      })();
-    } else {
-      proceed();
-    }
-  }
-}
-$('btnInstallCal').addEventListener('click', ()=>{ repFilter=null; $('repViewBadge').classList.add('hidden'); show('installCard'); renderInstall(); viewPerm='edit'; applyCalendarPermissions(); });
-$('btnDealBreakdown').addEventListener('click', ()=>{ show('dealCard'); });
-
-// New quote modal open/close
-function openQuote(){ $('quoteModal').classList.add('show'); }
-function closeQuote(){ $('quoteModal').classList.remove('show'); }
-$('btnNewQuote').addEventListener('click', openQuote);
-$('q_cancel').addEventListener('click', closeQuote);
-$('q_save').addEventListener('click', ()=>{
-  const q={ id:'q_'+Date.now(), client:$('q_client').value.trim(), phone:$('q_phone').value.trim(),
-    email:$('q_email').value.trim(), postcode:$('q_postcode').value.trim(),
-    product:$('q_product').value, price:$('q_price').value, install:$('q_install').value };
-  if(!q.client){ alert('Client name required'); return; }
-  quotes.unshift(q); save(KEY_QUOTES,quotes); renderQuotes(); setKPI('quotes'); closeQuote();
-});
-
-// Share modal close on ESC
-document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ closeShareModal(); closeQuote(); }});
-
-// Init
-(function init(){ renderQuotes(); renderContracts(); setKPI('quotes'); initFromURL(); })();
+(function init(){ renderAppts(); renderInstall(); })();
 </script>
 </body>
 </html>
