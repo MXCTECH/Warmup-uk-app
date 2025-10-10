@@ -1,206 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Warm Up UK — Contract Dashboard</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MXCTECH INSULATION — Contract</title>
 <style>
-  :root {
-    --bg0:#0b0b0c; --bg1:#121214; --card:#18181b;
-    --gold:#ffc94d; --gold2:#d7ac3a;
-    --white:#f5f5f7; --muted:#b0b3b8; --line:#2a2a2f;
-  }
+  :root{--bg:#0c0f16;--panel:#171b23;--panel2:#10141c;--line:#232936;--text:#e9edf7;--muted:#9aa4bd;--blue:#1F6BFF;--red:#E53935;--green:#17a56a;}
   *{box-sizing:border-box}
-  body{
-    margin:0; padding:0;
-    background: radial-gradient(1200px 600px at 50% 20%, #1a1a1d 0%, var(--bg0) 45%, var(--bg1) 100%);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    color: var(--white);
-  }
-  .wrap{max-width:860px; margin:24px auto; padding:12px}
-  h1{margin:0 0 16px; color:var(--gold)}
-  .sec{background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; margin:14px 0; overflow:hidden}
-  .sec-hd{display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
-    background:linear-gradient(180deg, rgba(255,201,77,.12), rgba(255,201,77,.04)); border-bottom:1px solid var(--line)}
-  .sec-hd h2{margin:0; font-size:20px; color:var(--gold)}
-  .open-btn{background:#28303a; color:#cfd6df; border:1px solid #3a4450; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer}
-  .sec-bd{display:none; padding:16px; background:var(--card)}
-  .sec.open .sec-bd{display:block}
-  label{display:block; font-size:13px; color:#c8cbd1; margin:10px 0 6px}
-  input,textarea,select{width:100%; padding:12px; border-radius:12px; background:#0f1114; color:var(--white); border:1px solid #272a31}
-  textarea{min-height:110px}
-  table{width:100%; border-collapse:collapse; background:#0f1114; border:1px solid #272a31; border-radius:12px; overflow:hidden}
-  th,td{padding:10px; border-bottom:1px solid #1f2228}
-  th{text-align:left; color:#c8cbd1; font-size:12px; text-transform:uppercase}
-  .btn{border:0; border-radius:12px; padding:11px 14px; font-weight:800; cursor:pointer;
-    color:#0f0f0f; background:linear-gradient(180deg, var(--gold), var(--gold2)); box-shadow:0 8px 20px rgba(255,201,77,.25)}
-  .btn.secondary{background:#22252b; color:#eef; border:1px solid #323741; box-shadow:none}
-  .btn.success{background:linear-gradient(180deg,#44df87,#27b862); color:#062e18}
-  .mini{padding:8px 10px; border-radius:10px}
-  .sum-card{background:#15161a; border:1px solid #2a2f36; border-radius:14px; padding:14px}
-  .sum-line{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #23262d}
-  .sum-line:last-child{border-bottom:0}
-  .sum-strong{font-weight:900; color:var(--gold)}
-  .divider{height:1px; background:linear-gradient(90deg,rgba(255,201,77,0),rgba(255,201,77,.35),rgba(255,201,77,0)); margin:12px 0}
-  small.note{color:#7c818a}
+  body{margin:0;background:linear-gradient(180deg,#0a0d14,#0b0e15 60%,#0c0f16);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{position:sticky;top:0;z-index:10;display:flex;gap:12px;align-items:center;padding:14px 16px;background:rgba(16,20,28,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  header img{height:36px;border-radius:6px}
+  header h1{margin:0;font-size:18px;font-weight:900}
+  main{max-width:1000px;margin:auto;padding:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(0,0,0,.25)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  label{color:var(--muted);font-size:12px;margin:2px 0 6px;display:block}
+  input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-size:15px}
+  textarea{grid-column:1/-1;min-height:80px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer}
+  .btn.primary{background:var(--blue);border-color:var(--blue)}
+  .btn.green{background:var(--green);border-color:var(--green)}
+  .btn.red{background:var(--red);border-color:var(--red)}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase}
+  canvas{border:1px dashed #2b3146;border-radius:10px;background:#0c101a}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Warm Up UK — Contract & Quote</h1>
+<header>
+  <img src="mxctech-logo.png" alt="MXCTECH logo"/>
+  <h1>Customer Contract</h1>
+</header>
 
-  <section class="sec open" id="client">
-    <div class="sec-hd"><h2>Client Information</h2><button class="open-btn" data-toggle="#client">Open</button></div>
-    <div class="sec-bd">
-      <label>Client Name</label><input id="c_name">
-      <label>Email</label><input id="c_email" type="email">
-      <label>Phone</label><input id="c_phone">
-      <label>Address</label><input id="c_address">
+<main id="contractArea">
+  <div class="card">
+    <div class="grid">
+      <div><label>Contract No.</label><input id="contractNo" readonly placeholder="Generated on save"/></div>
+      <div><label>Job Type</label><input id="jobType"/></div>
+      <div><label>Install Date</label><input id="installDate" type="date"/></div>
+
+      <div><label>Customer Name</label><input id="custName"/></div>
+      <div><label>Phone</label><input id="custPhone"/></div>
+      <div><label>Email</label><input id="custEmail"/></div>
+
+      <div><label>Address</label><input id="addr1"/></div>
+      <div><label>Postcode</label><input id="postcode"/></div>
+      <div><label>Appointment Date/Time</label><input id="apptDate" type="datetime-local"/></div>
+
+      <div><label>Rep Name</label><input id="repName"/></div>
+      <div><label>Booking Agent</label><input id="bookingAgent" placeholder="(fill)"/></div>
+      <div><label>Confirmer</label><input id="confirmer" placeholder="(fill)"/></div>
+
+      <textarea id="notes" placeholder="Contract notes…"></textarea>
     </div>
-  </section>
+  </div>
 
-  <section class="sec" id="products">
-    <div class="sec-hd"><h2>Products</h2><button class="open-btn" data-toggle="#products">Open</button></div>
-    <div class="sec-bd">
-      <button class="btn mini" id="addLine">Add Product</button>
-      <table id="prodTable">
-        <thead><tr><th>Item</th><th>Unit Price</th><th>Qty</th><th>Total</th></tr></thead>
-        <tbody></tbody>
-      </table>
+  <div class="card">
+    <h3 style="margin:0 0 10px">Products / Pricing</h3>
+    <div class="row" style="margin-bottom:8px">
+      <select id="itemName">
+        <option>Multifoil Insulation</option><option>Spray Foam Removal</option>
+        <option>Loft Boarding</option><option>Ventilation</option><option>Other</option>
+      </select>
+      <input id="qty" type="number" min="1" value="1" placeholder="Qty"/>
+      <input id="price" type="number" step="0.01" placeholder="Unit Price (£)"/>
+      <button class="btn green" id="addItem">Add Item</button>
+      <label class="row" style="margin-left:auto;gap:8px">
+        <input id="vatOn" type="checkbox" checked style="transform:scale(1.2)"/> Apply VAT (20%)
+      </label>
     </div>
-  </section>
-
-  <section class="sec" id="settings">
-    <div class="sec-hd"><h2>Settings</h2><button class="open-btn" data-toggle="#settings">Open</button></div>
-    <div class="sec-bd">
-      <label>VAT %</label><input id="vat" value="20" type="number">
-      <label>Admin Fee (£)</label><input id="admin" value="0" type="number">
-      <label>Discount (£)</label><input id="discount" value="0" type="number">
-      <label>Deposit (£)</label><input id="deposit" value="0" type="number">
+    <table id="itemsTable">
+      <thead><tr><th>Item</th><th>Qty</th><th>Unit (£)</th><th>Line (£)</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px">
+      <div class="btn">Subtotal: £<span id="subtotal">0.00</span></div>
+      <div class="btn">VAT: £<span id="vat">0.00</span></div>
+      <div class="btn primary">Total: £<span id="total">0.00</span></div>
     </div>
-  </section>
+  </div>
 
-  <section class="sec" id="summary">
-    <div class="sec-hd"><h2>Quote Summary</h2><button class="open-btn" data-toggle="#summary">Open</button></div>
-    <div class="sec-bd">
-      <div class="sum-card" id="quoteSummary">No items yet.</div>
-      <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px">
-        <button class="btn secondary" id="previewQuote">Preview Quote</button>
-        <button class="btn" id="previewContract">Preview Contract</button>
-        <button class="btn success" id="copyWA">Copy WhatsApp Summary</button>
-        <button class="btn mini" id="pdfQuote">Download Quote (PDF)</button>
-        <button class="btn mini" id="pdfContract">Download Contract (PDF)</button>
-      </div>
+  <div class="card">
+    <h3 style="margin:0 0 10px">Signature</h3>
+    <canvas id="sig" width="800" height="220"></canvas>
+    <div class="row" style="margin-top:8px">
+      <button class="btn" id="clearSig">Clear</button>
     </div>
-  </section>
-</div>
+  </div>
 
+  <div class="row" style="justify-content:flex-end">
+    <button class="btn primary" id="saveContract">Save Contract</button>
+    <button class="btn" id="downloadPDF">Download PDF</button>
+    <a class="btn red" id="backDash" href="dashboard.html" style="text-decoration:none">Back to Dashboard</a>
+  </div>
+
+  <p class="card" style="font-size:12px;color:#9aa4bd">
+    By signing, the customer agrees to the specification and total shown above. Cooling-off rights and scheduling are subject to MXCTECH INSULATION terms.
+  </p>
+</main>
+
+<!-- PDF libs -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-/* === Company Info for PDF Header/Footer === */
-const COMPANY = {
-  name: "WARM UP UK",
-  address: "321-323 High Road, Romford, Essex, RM6 6AX",
-  phone: "+44",
-  email: "admin@warmupuk.com",
-  website: "https://warmupuk.com",
-  logoDataUrl: "https://warmupuk.com/WUUK.JPG"
-};
+const $=s=>document.querySelector(s); const load=(k,d=[])=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)); const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const fmt=n=>Number(n||0).toFixed(2);
 
-/* === Basic Accordion Toggle === */
-document.querySelectorAll(".open-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    const id = btn.dataset.toggle;
-    const sec = document.querySelector(id);
-    sec.classList.toggle("open");
+/* Prefill from query or saved id */
+(function(){
+  const q=new URLSearchParams(location.search); const openId=q.get('id');
+  if(openId){
+    const c=load('mxc_contracts').find(x=>x.id===openId);
+    if(c){ fillFromObject(c); items=c.items||[]; renderItems(); if(c.signatureData) loadSignature(c.signatureData); calcTotals(); }
+    return;
+  }
+  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','jobType','notes'].forEach(k=>{ const el=$('#'+k); if(el) el.value=q.get(k)||''; });
+})();
+
+function fillFromObject(c){
+  Object.entries(c).forEach(([k,v])=>{ const el=$('#'+k); if(el) el.value=v; });
+  $('#contractNo').value=c.contractNo||'';
+}
+
+/* Items */
+let items=[];
+function renderItems(){
+  const tb=$('#itemsTable tbody'); tb.innerHTML='';
+  items.forEach((it,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${it.name}</td><td>${it.qty}</td><td>£${fmt(it.price)}</td><td>£${fmt(it.qty*it.price)}</td>
+      <td><button class="btn red" onclick="removeItem(${i})">Remove</button></td>`;
+    tb.appendChild(tr);
   });
+  calcTotals();
+}
+function removeItem(i){ items.splice(i,1); renderItems(); }
+$('#addItem').addEventListener('click',()=>{
+  const name=$('#itemName').value, qty=Number($('#qty').value||1), price=Number($('#price').value||0);
+  if(!name||qty<=0) return; items.push({name,qty,price}); renderItems();
 });
 
-/* === Simple Add Product === */
-const products=[{name:"Loft Insulation",price:750},{name:"Cavity Wall Insulation",price:850},{name:"Underfloor Insulation",price:600},{name:"Ventilation System",price:250},{name:"Extractor Fan",price:180},{name:"Loft Hatch",price:200},{name:"Waste Removal",price:150},{name:"Scaffolding",price:300}];
-const tbody=document.querySelector("#prodTable tbody");
-document.getElementById("addLine").onclick=()=>{
-  const tr=document.createElement("tr");
-  tr.innerHTML=`<td><select class="item">${products.map(p=>`<option value="${p.price}">${p.name}</option>`).join("")}</select></td>
-  <td><input type="number" class="price" value="750"></td>
-  <td><input type="number" class="qty" value="1"></td>
-  <td class="line">£750.00</td>`;
-  tbody.appendChild(tr);
-  update();
-  tr.querySelectorAll("select,input").forEach(i=>i.addEventListener("input",update));
-};
-function update(){
-  let subtotal=0;
-  tbody.querySelectorAll("tr").forEach(tr=>{
-    const price=+tr.querySelector(".price").value||0;
-    const qty=+tr.querySelector(".qty").value||0;
-    const line=price*qty;
-    tr.querySelector(".line").textContent="£"+line.toFixed(2);
-    subtotal+=line;
-  });
-  const vatRate=+document.getElementById("vat").value||0;
-  const admin=+document.getElementById("admin").value||0;
-  const discount=+document.getElementById("discount").value||0;
-  const deposit=+document.getElementById("deposit").value||0;
-  const after=subtotal-discount+admin;
-  const vat=after*vatRate/100;
-  const total=after+vat;
-  document.getElementById("quoteSummary").innerHTML=
-  `<div class='sum-line'><div>Subtotal:</div><div>£${subtotal.toFixed(2)}</div></div>
-   <div class='sum-line'><div>Admin:</div><div>£${admin.toFixed(2)}</div></div>
-   <div class='sum-line'><div>Discount:</div><div>-£${discount.toFixed(2)}</div></div>
-   <div class='sum-line'><div>VAT (${vatRate}%):</div><div>£${vat.toFixed(2)}</div></div>
-   <div class='sum-line sum-strong'><div>Total:</div><div>£${total.toFixed(2)}</div></div>
-   <div class='sum-line'><div>Deposit:</div><div>£${deposit.toFixed(2)}</div></div>`;
+/* Totals */
+function calcTotals(){
+  const sub=items.reduce((s,it)=>s+it.qty*it.price,0);
+  const vat=$('#vatOn').checked? sub*0.2 : 0;
+  const tot=sub+vat;
+  $('#subtotal').textContent=fmt(sub);
+  $('#vat').textContent=fmt(vat);
+  $('#total').textContent=fmt(tot);
 }
-document.querySelectorAll("#vat,#admin,#discount,#deposit").forEach(i=>i.addEventListener("input",update));
+$('#vatOn').addEventListener('change',calcTotals);
 
-/* === WhatsApp Copy === */
-document.getElementById("copyWA").onclick=()=>{
-  const msg="Warm Up UK Quote\n\n"+document.getElementById("quoteSummary").innerText;
-  navigator.clipboard.writeText(msg);
-  alert("Copied to clipboard for WhatsApp message!");
-};
+/* Signature pad */
+const canvas=$('#sig'); const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='#e9edf7';
+let drawing=false,last=null;
+function pos(e){const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top};}
+function down(e){drawing=true; last=pos(e); e.preventDefault();}
+function move(e){if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault();}
+function up(){drawing=false;}
+canvas.addEventListener('mousedown',down); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+canvas.addEventListener('touchstart',down,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',up);
+$('#clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
 
-/* === PDF Print with Header/Footer === */
-function brandedDoc(title,html){
-  const header=`<div style="display:flex;align-items:center;gap:12px;border-bottom:3px solid #d7ac3a;padding:12px 0;margin-bottom:20px">
-  <img src='${COMPANY.logoDataUrl}' style='height:60px'><div><b>${COMPANY.name}</b><br>${COMPANY.address}<br>${COMPANY.email} | ${COMPANY.website}</div></div>`;
-  const footer=`<div style='position:fixed;bottom:0;left:0;right:0;border-top:1px solid #ccc;font-size:12px;padding:4px 8px;display:flex;justify-content:space-between'>
-  <span>${COMPANY.website}</span><span class='page'></span></div>`;
-  const style=`<style>@page{margin:20mm}body{font-family:Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:6px}</style>`;
-  return `<!DOCTYPE html><html><head><meta charset='utf-8'><title>${title}</title>${style}</head><body>${header}${html}${footer}</body></html>`;
-}
-function openPDF(title){
-  const html=document.getElementById("quoteSummary").outerHTML;
-  const w=window.open("","_blank");
-  w.document.open();
-  w.document.write(brandedDoc(title,html));
-  w.document.close();
-  setTimeout(()=>w.print(),400);
-}
-document.getElementById("pdfQuote").onclick=()=>openPDF("Quote");
-document.getElementById("pdfContract").onclick=()=>openPDF("Contract");
-  
+function getSignatureData(){ return canvas.toDataURL('image/png'); }
+function loadSignature(data){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=data; }
+
+/* Save contract (with signature) */
+$('#saveContract').addEventListener('click',()=>{
+  const id = crypto.randomUUID();
+  const data = {
+    id,
+    contractNo: $('#contractNo').value || `MXC-${new Date().toISOString().slice(0,10)}-${Math.floor(Math.random()*9000+1000)}`,
+    jobType:$('#jobType').value, installDate:$('#installDate').value,
+    custName:$('#custName').value, custPhone:$('#custPhone').value, custEmail:$('#custEmail').value,
+    addr1:$('#addr1').value, postcode:$('#postcode').value, apptDate:$('#apptDate').value,
+    repName:$('#repName').value, bookingAgent:$('#bookingAgent').value, confirmer:$('#confirmer').value,
+    notes:$('#notes').value,
+    items,
+    subtotal:Number($('#subtotal').textContent), vat:Number($('#vat').textContent), total:Number($('#total').textContent),
+    signatureData:getSignatureData()
+  };
+  $('#contractNo').value = data.contractNo;
+  const list = load('mxc_contracts'); list.push(data); save('mxc_contracts',list);
+  alert('Contract saved.');
+});
+
+/* PDF (captures signature + all content) */
+$('#downloadPDF').addEventListener('click', async ()=>{
+  const { jsPDF } = window.jspdf;
+  // temporarily ensure a dark background is captured
+  const area=document.querySelector('main');
+  const canvasShot = await html2canvas(area,{scale:2,backgroundColor:'#0c0f16'});
+  const img=canvasShot.toDataURL('image/png');
+  const pdf=new jsPDF('p','pt','a4');
+  const pageW=pdf.internal.pageSize.getWidth(), pageH=pdf.internal.pageSize.getHeight();
+  const ratio=Math.min(pageW/canvasShot.width,pageH/canvasShot.height);
+  const w=canvasShot.width*ratio, h=canvasShot.height*ratio;
+  pdf.addImage(img,'PNG',(pageW-w)/2,20,w,h);
+  pdf.save( ($('#contractNo').value||'contract') + '.pdf');
+});
+
+/* init */
+renderItems(); calcTotals();
 </script>
 </body>
-</html><!-- WhatsApp Send Button -->
-<div class="whatsapp-section" style="text-align:center; margin-top:30px;">
-  <button id="sendToWhatsapp" 
-          style="background:#25D366; border:none; color:white; 
-                 padding:12px 24px; border-radius:6px; font-size:16px; 
-                 box-shadow:0 0 8px #25D366; cursor:pointer;">
-    📲 Send Contract to WhatsApp
-  </button>
-</div>
-
-<script>
-  document.getElementById('sendToWhatsapp').addEventListener('click', function() {
-    const name = document.getElementById('clientName')?.value || "Client";
-    const phone = document.getElementById('clientPhone')?.value || "";
-    const service = document.getElementById('service')?.value || "Warm Up UK Service";
-
-    const msg = `Hi ${name}, this is Warm Up UK. Your contract for ${service} is ready.`;
-    const url = `https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-  });
-</script>
+</html>
