@@ -6,266 +6,470 @@
 <title>MXCTECH INSULATION — Dashboard</title>
 <style>
   :root{
-    --black:#0B0B0D;       /* primary background / buttons */
-    --blue:#1F6BFF;        /* accents and tabs */
-    --red:#E53935;         /* destructive */
-    --ink:#111319;         /* deep text */
-    --line:#1d212b;        /* borders on dark */
-    --muted:#8b93a7;       /* subtle text */
-    --soft:#0f121a;        /* cards on dark */
-    --chip:#131826;        /* pills */
+    /* colours closely matching the screenshots */
+    --bg:#0c0f16;            /* page background */
+    --panel:#171b23;         /* card body */
+    --panel-2:#12161e;       /* input background */
+    --line:#2a2f3b;          /* borders */
+    --gold:#E3AD27;          /* headings / CTAs like "Open" */
+    --gold-2:#C29019;        /* borders glow */
+    --text:#E8EDF7;          /* main text */
+    --muted:#A4AEC2;         /* labels/subtext */
+    --danger:#E53935;        /* red note if needed */
+    --ok:#17a56a;            /* green */
+    --chip:#0f131b;          /* pills */
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#06070a,#0b0d12 120%);color:#e9edf7}
-  header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,7,10,.75);backdrop-filter:blur(8px);z-index:10}
-  header img{height:40px;width:auto;border-radius:6px}
-  header h1{margin:0;font-size:18px;font-weight:800;letter-spacing:.3px}
-  header .sub{color:var(--muted);font-weight:600}
-  nav{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:68px;background:rgba(8,10,14,.7);backdrop-filter:blur(6px);z-index:9}
-  .tab{border:1px solid var(--line);background:var(--soft);padding:8px 12px;border-radius:10px;font-weight:800;cursor:pointer;color:#e9edf7}
-  .tab.active{outline:2px solid var(--blue)}
-  main{padding:16px;max-width:1200px;margin:auto}
-  .card{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
-  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-  label{font-size:12px;color:#aab2c5}
-  input,select,textarea{
-    width:100%;padding:10px;border:1px solid #22283a;background:#0c101a;color:#e9edf7;border-radius:10px;font-size:14px
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--text);
+    background:
+      linear-gradient(180deg,#0a0d14 0%, #0b0e15 60%, #0c0f16 100%);
   }
-  textarea{grid-column:span 6;min-height:74px;resize:vertical}
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .btn{border:1px solid #22283a;background:#0c101a;padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer;color:#e9edf7}
-  .btn.primary{background:var(--blue);border-color:var(--blue)}
-  .btn.ok{background:#18a46b;border-color:#18a46b}
-  .btn.warn{background:var(--red);border-color:var(--red)}
-  .btn.dark{background:var(--black);border-color:#000}
+
+  /* HEADER */
+  header{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px;
+    background:rgba(20,24,32,.88);
+    border-bottom:1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  header img{height:36px;width:auto;border-radius:6px}
+  header h1{margin:0;font-size:18px;font-weight:900;letter-spacing:.25px}
+  header .sub{color:var(--muted);font-weight:600;font-size:13px}
+
+  main{max-width:960px;margin:0 auto;padding:16px}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+    box-shadow:0 8px 26px rgba(0,0,0,.28);
+  }
+  .card.headed{padding-top:10px}
+  .card.headed .head{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1px solid var(--gold-2);
+    border-radius:12px;
+    padding:12px 14px;
+    background:linear-gradient(180deg,#191d26,#191d26);
+    margin-bottom:12px;
+  }
+  .title{
+    color:var(--gold);
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:.2px;
+  }
+  .btn{
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .btn.gold{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
+  .btn.ghost{background:transparent}
+  .btn.red{background:var(--danger);border-color:var(--danger)}
+  .btn.green{background:var(--ok);border-color:var(--ok)}
+  .btn.block{width:100%}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--chip);border:1px solid var(--line);color:var(--muted);
+    padding:8px 10px;border-radius:10px;font-weight:700
+  }
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  label{display:block;color:var(--muted);font-size:12px;margin:2px 0 6px}
+  input,select,textarea{
+    width:100%;padding:12px 12px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--panel-2);
+    color:var(--text); font-size:15px;
+  }
+  textarea{min-height:120px;resize:vertical}
+  .field-prefix{display:flex}
+  .field-prefix span{
+    padding:12px 10px;border:1px solid var(--line);border-right:0;
+    background:var(--panel-2);color:var(--muted);border-radius:12px 0 0 12px;
+    min-width:54px;text-align:center;font-weight:800
+  }
+  .field-prefix input{border-radius:0 12px 12px 0; flex:1}
+  .note{color:var(--muted);font-size:13px}
+  .hr{height:1px;background:var(--line);margin:10px 0}
   table{width:100%;border-collapse:separate;border-spacing:0}
-  th,td{padding:12px;border-bottom:1px solid #202538;text-align:left;font-size:14px;vertical-align:top}
-  th{font-size:12px;color:#9aa4bd;text-transform:uppercase;letter-spacing:.3px}
-  .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--chip);font-size:12px;color:#b8c0d9}
-  .muted{color:#9aa4bd}
-  .hide{display:none}
-  a{color:#9ec2ff}
-  @media (max-width:1000px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase}
+  .right{margin-left:auto}
+  .summary-line{display:flex;justify-content:space-between;padding:6px 0}
+  .summary-line strong{font-weight:900}
+  .warning{color:var(--danger);font-weight:800}
+  @media (max-width:800px){
+    .grid,.grid-3,.grid-4{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
+
 <header>
-  <img src="mxctech-logo.png" alt="MXCTECH INSULATION Logo"/>
+  <img src="mxctech-logo.png" alt="MXCTECH INSULATION Logo">
   <div>
     <h1>MXCTECH INSULATION</h1>
     <div class="sub">Operations Dashboard</div>
   </div>
 </header>
 
-<nav>
-  <button class="tab active" data-tab="appointments">Appointments</button>
-  <button class="tab" data-tab="install">Install Calendar</button>
-</nav>
-
 <main>
-  <!-- APPOINTMENTS -->
-  <section id="appointments" class="card">
-    <h2 style="margin:4px 0 14px">Add Appointment</h2>
-    <div class="grid" id="appt-form">
-      <div><label>Customer Name</label><input id="custName" placeholder="Jane Smith"/></div>
-      <div><label>Phone (mobile for WhatsApp)</label><input id="custPhone" placeholder="+447... or 07..."/></div>
-      <div><label>Email</label><input id="custEmail" placeholder="name@email.com"/></div>
-      <div><label>Address Line 1</label><input id="addr1" placeholder="1 High Street"/></div>
-      <div><label>Postcode</label><input id="postcode" placeholder="SS8 9ET"/></div>
-      <div><label>Appointment Date/Time</label><input id="apptDate" type="datetime-local"/></div>
-      <div><label>Rep Name</label><input id="repName" placeholder="Your rep"/></div>
-      <div><label>Rep WhatsApp (optional)</label><input id="repWhatsApp" placeholder="+447..."/></div>
-      <div><label>Lead Source</label>
-        <select id="leadSource">
-          <option>Facebook</option><option>Google</option><option>Referral</option>
-          <option>Website</option><option>Door</option><option>Other</option>
-        </select>
+
+  <!-- CLIENT INFO -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Client Information</div>
+    </div>
+    <div class="grid">
+      <div>
+        <label>Client Name</label>
+        <input id="c_name" placeholder="Mr Jones">
       </div>
-      <div><label>Job Type</label>
-        <select id="jobType">
-          <option>Multifoil Insulation</option>
-          <option>Spray Foam Removal</option>
-          <option>Loft Boarding</option>
-          <option>Ventilation</option>
-          <option>Other</option>
-        </select>
+      <div>
+        <label>Email</label>
+        <input id="c_email" placeholder="">
       </div>
-      <textarea id="notes" placeholder="Access, parking, pets, roof details…"></textarea>
+      <div>
+        <label>Address</label>
+        <input id="c_addr" placeholder="8 Fir Tree Way">
+      </div>
+      <div>
+        <label>Town/City</label>
+        <input id="c_town" placeholder="">
+      </div>
+      <div>
+        <label>Postcode</label>
+        <input id="c_pc" placeholder="YO8 9PY">
+      </div>
+      <div>
+        <label>Representative Name</label>
+        <input id="rep_name" placeholder="">
+      </div>
     </div>
 
+    <div class="grid" style="margin-top:10px">
+      <div>
+        <label>Primary Phone</label>
+        <div class="field-prefix">
+          <span>+44</span>
+          <input id="c_phone1" inputmode="numeric" placeholder="7581241916">
+        </div>
+      </div>
+      <div>
+        <label>Secondary Phone</label>
+        <div class="field-prefix">
+          <span>+44</span>
+          <input id="c_phone2" inputmode="numeric" placeholder="Secondary phone (optional)">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOF AREA CALC -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Roof Area Calculator</div>
+      <button class="btn gold" id="openRoof">Open</button>
+    </div>
+    <div class="note">Quick helper to work out m² from rafter length and roof length.</div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Products</div>
+      <button class="btn gold" id="openProducts">Open</button>
+    </div>
+
+    <!-- hidden mini-products panel -->
+    <div id="productsPanel" style="display:none">
+      <div class="grid-4">
+        <div>
+          <label>Product</label>
+          <input id="p_name" placeholder="Multifoil Insulation">
+        </div>
+        <div>
+          <label>Qty</label>
+          <input id="p_qty" type="number" min="1" value="1">
+        </div>
+        <div>
+          <label>Unit (£)</label>
+          <input id="p_unit" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn gold block" id="addItem">Add Item</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <table id="itemsTbl">
+        <thead><tr><th>Item</th><th>Qty</th><th>Unit (£)</th><th>Line (£)</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CUSTOM PRODUCTS -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Create Custom Products</div>
+      <button class="btn gold" id="toggleCustom">Open</button>
+    </div>
+    <div id="customPanel" style="display:none">
+      <div class="note">Add one-off items or adjustments (e.g., disposal fee, discount as negative).</div>
+      <div class="grid-4">
+        <div><label>Name</label><input id="cst_name" placeholder="Loft Boarding"/></div>
+        <div><label>Qty</label><input id="cst_qty" type="number" min="1" value="1"/></div>
+        <div><label>Unit (£)</label><input id="cst_unit" type="number" step="0.01" placeholder="0.00"/></div>
+        <div><label>&nbsp;</label><button class="btn gold block" id="addCustom">Add</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Notes</div>
+    </div>
+    <textarea id="notes" placeholder="Add any additional notes here..."></textarea>
+  </section>
+
+  <!-- DISCOUNT -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Discount Code Calculator</div>
+    </div>
+    <div class="grid-3">
+      <div>
+        <label>Initial Value</label>
+        <input id="disc_initial" type="number" step="0.01" placeholder="Enter initial value">
+      </div>
+      <div>
+        <label>Final Value</label>
+        <input id="disc_final" type="number" step="0.01" placeholder="Enter final value">
+      </div>
+      <div>
+        <label>Discount Code</label>
+        <input id="disc_code" placeholder="Enter discount code">
+      </div>
+    </div>
     <div class="row" style="margin-top:10px">
-      <button class="btn primary" id="saveAppt">Save Appointment</button>
-      <span class="muted">Saved locally on this device.</span>
-    </div>
-
-    <h3 style="margin:20px 0 8px">Appointments</h3>
-    <div class="card" style="padding:0">
-      <table id="apptTable">
-        <thead>
-          <tr>
-            <th>Customer</th><th>Contact</th><th>Address</th>
-            <th>When</th><th>Rep</th><th>Type</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody><!-- rows --></tbody>
-      </table>
+      <button class="btn gold" id="calcDisc">Calculate</button>
+      <div class="pill" id="discResult" style="display:none"></div>
     </div>
   </section>
 
-  <!-- INSTALL CALENDAR (reads saved contracts) -->
-  <section id="install" class="card hide">
-    <h2 style="margin:4px 0 14px">Install Calendar</h2>
-    <p class="muted">Shows contracts saved with an Install Date.</p>
-    <div class="card" style="padding:0">
-      <table id="installTable">
-        <thead>
-          <tr>
-            <th>Install Date</th><th>Customer</th><th>Address</th>
-            <th>Job</th><th>Total</th><th>Contract</th>
-          </tr>
-        </thead>
-        <tbody><!-- rows --></tbody>
-      </table>
+  <!-- VAT + DEPOSIT -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">VAT & Deposit</div>
+    </div>
+    <div class="row">
+      <label class="pill"><input id="vatOn" type="checkbox" checked style="transform:scale(1.2);margin-right:8px"> Apply VAT 20%</label>
+      <div class="pill warning" id="vatMsg" style="display:none">⚠️ VAT Exempt: No VAT will be added to this quote</div>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div>
+        <label>Deposit Amount</label>
+        <div class="field-prefix">
+          <span>£</span>
+          <input id="deposit" type="number" step="0.01" value="1000">
+        </div>
+      </div>
+      <div style="display:flex;align-items:end">
+        <div class="note"><strong id="depositSet">💰 Deposit Set:</strong> £1000.00 deposit will be required</div>
+      </div>
     </div>
   </section>
+
+  <!-- QUOTE SUMMARY -->
+  <section class="card headed">
+    <div class="head">
+      <div class="title">Quote Summary</div>
+    </div>
+    <div class="summary">
+      <div class="summary-line"><span>Products Subtotal:</span><span>£<strong id="s_products">0.00</strong></span></div>
+      <div class="summary-line"><span>Admin Fee:</span><span>£<strong id="s_admin">150.00</strong></span></div>
+      <div class="summary-line"><span>Total Subtotal:</span><span>£<strong id="s_sub">0.00</strong></span></div>
+      <div class="summary-line"><span>Subtotal after discount:</span><span>£<strong id="s_afterdisc">0.00</strong></span></div>
+      <div class="hr"></div>
+      <div class="summary-line"><span>Subtotal after discount + admin fee:</span><span>£<strong id="s_after_admin">150.00</strong></span></div>
+      <div class="hr"></div>
+      <div class="summary-line"><span>VAT 20%:</span><span>£<strong id="s_vat">0.00</strong></span></div>
+      <div class="summary-line" style="font-size:18px"><span><strong>TOTAL:</strong></span><span>£<strong id="s_total">150.00</strong></span></div>
+      <div class="summary-line"><span>Deposit:</span><span>£<strong id="s_deposit">1,000.00</strong></span></div>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="previewQuote">Preview Quote</button>
+      <button class="btn ghost" id="previewContract">Preview Contract</button>
+      <button class="btn green right" id="sendWA">Send Contract via WhatsApp</button>
+    </div>
+  </section>
+
 </main>
 
 <script>
-const $ = s=>document.querySelector(s);
-const $$ = s=>document.querySelectorAll(s);
-
-// Tabs
-$$('.tab').forEach(t=>t.addEventListener('click',()=>{
-  $$('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  $('#appointments').classList.toggle('hide', t.dataset.tab!=='appointments');
-  $('#install').classList.toggle('hide', t.dataset.tab!=='install');
-}));
-
-// Storage helpers
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const fmt = n => Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 const load = (k,d=[]) => JSON.parse(localStorage.getItem(k)||JSON.stringify(d));
 const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
 
-function loadAppts(){ return load('mxct_appts'); }
-function saveAppts(list){ save('mxct_appts', list); renderAppts(); }
-
-function renderAppts(){
-  const tbody = $('#apptTable tbody'); tbody.innerHTML='';
-  loadAppts().forEach((a,i)=>{
+/* ---------- products ---------- */
+let items = load('mxc_items',[]);
+function renderItems(){
+  const tb = $('#itemsTbl tbody'); if(!tb) return;
+  tb.innerHTML = '';
+  items.forEach((it,i)=>{
     const tr = document.createElement('tr');
-    const when = a.apptDate ? new Date(a.apptDate).toLocaleString() : '';
-    tr.innerHTML = `
-      <td><strong>${a.custName||''}</strong><div class="muted">${a.leadSource||''}</div></td>
-      <td>${a.custPhone||''}<br><span class="muted">${a.custEmail||''}</span></td>
-      <td>${a.addr1||''}<br><span class="muted">${a.postcode||''}</span></td>
-      <td><span class="pill">${when}</span></td>
-      <td>${a.repName||''}</td>
-      <td>${a.jobType||''}</td>
-      <td class="row">
-        <button class="btn dark" onclick="editAppt(${i})">Edit</button>
-        <button class="btn warn" onclick="delAppt(${i})">Delete</button>
-        <button class="btn primary" onclick="openContract(${i})">Create Contract</button>
-        <button class="btn ok" onclick="sendWhatsApp(${i})">Send Contract via WhatsApp</button>
-      </td>`;
-    tbody.appendChild(tr);
+    tr.innerHTML = `<td>${it.name}</td><td>${it.qty}</td><td>£${fmt(it.unit)}</td><td>£${fmt(it.qty*it.unit)}</td>
+    <td><button class="btn red" onclick="removeItem(${i})">Remove</button></td>`;
+    tb.appendChild(tr);
   });
+  save('mxc_items',items);
+  recalc();
 }
-
-function editAppt(i){
-  const a = loadAppts()[i]; if(!a) return;
-  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','repWhatsApp','notes']
-    .forEach(id=> $('#'+id).value = a[id] || '');
-  $('#leadSource').value = a.leadSource || 'Facebook';
-  $('#jobType').value = a.jobType || 'Multifoil Insulation';
-  localStorage.setItem('mxct_edit_index', i);
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function delAppt(i){
-  const all = loadAppts(); all.splice(i,1); saveAppts(all);
-}
-
-function normPhone(p){
-  if(!p) return '';
-  let s = p.trim();
-  if(s.startsWith('07')) s = '+44' + s.slice(1);
-  return s.replace(/\s+/g,'');
-}
-
-function contractParams(a){
-  return new URLSearchParams({
-    custName:a.custName||'', custPhone:normPhone(a.custPhone||''),
-    custEmail:a.custEmail||'', addr1:a.addr1||'', postcode:a.postcode||'',
-    apptDate:a.apptDate||'', repName:a.repName||'', jobType:a.jobType||'', notes:a.notes||'',
-  });
-}
-
-function openContract(i){
-  const a = loadAppts()[i]; if(!a) return;
-  const url = `contract.html?${contractParams(a).toString()}`;
-  window.open(url,'_blank');
-}
-
-function sendWhatsApp(i){
-  const a = loadAppts()[i]; if(!a) return;
-  const contractLink = new URL(location.origin + location.pathname.replace('dashboard.html','contract.html'));
-  contractLink.search = contractParams(a).toString();
-
-  const text = `Hi ${a.custName||''}, it’s ${a.repName||'our team'} from MXCTECH INSULATION.
-Here’s your contract link:
-${contractLink.toString()}
-Appointment: ${a.apptDate ? new Date(a.apptDate).toLocaleString() : ''}
-Address: ${a.addr1||''}, ${a.postcode||''}`;
-
-  const phone = normPhone(a.custPhone||'');
-  if(!phone){ alert('No mobile number for WhatsApp.'); return; }
-  const url = `https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent(text)}`;
-  window.open(url,'_blank');
-}
-
-$('#saveAppt').addEventListener('click',()=>{
-  const i = localStorage.getItem('mxct_edit_index');
-  const entry = {
-    custName:$('#custName').value.trim(),
-    custPhone:$('#custPhone').value.trim(),
-    custEmail:$('#custEmail').value.trim(),
-    addr1:$('#addr1').value.trim(),
-    postcode:$('#postcode').value.trim(),
-    apptDate:$('#apptDate').value,
-    repName:$('#repName').value.trim(),
-    repWhatsApp:$('#repWhatsApp').value.trim(),
-    leadSource:$('#leadSource').value,
-    jobType:$('#jobType').value,
-    notes:$('#notes').value.trim(),
-  };
-  const all = loadAppts();
-  if(i!==null && i!=='null'){ all[Number(i)] = entry; localStorage.removeItem('mxct_edit_index'); }
-  else { all.push(entry); }
-  saveAppts(all);
-  // clear
-  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','repWhatsApp','notes']
-    .forEach(id=>$('#'+id).value='');
-  $('#leadSource').value='Facebook'; $('#jobType').value='Multifoil Insulation';
+function removeItem(i){ items.splice(i,1); renderItems(); }
+$('#addItem').addEventListener('click',()=>{
+  const name = $('#p_name').value.trim() || 'Item';
+  const qty  = Math.max(1, Number($('#p_qty').value||1));
+  const unit = Number($('#p_unit').value||0);
+  items.push({name,qty,unit});
+  ['p_name','p_qty','p_unit'].forEach(id=>$('#'+id).value = id==='p_qty'?1:'');
+  renderItems();
+});
+$('#addCustom').addEventListener('click', ()=>{
+  const name = $('#cst_name').value.trim() || 'Custom Item';
+  const qty  = Math.max(1, Number($('#cst_qty').value||1));
+  const unit = Number($('#cst_unit').value||0);
+  items.push({name,qty,unit});
+  ['cst_name','cst_qty','cst_unit'].forEach(id=>$('#'+id).value = id==='cst_qty'?1:'');
+  renderItems();
 });
 
-function renderInstall(){
-  const tbody = $('#installTable tbody'); tbody.innerHTML='';
-  const contracts = load('mxct_contracts');
-  contracts.sort((a,b)=> (a.installDate||'').localeCompare(b.installDate||''));
-  contracts.forEach(c=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${c.installDate ? new Date(c.installDate).toLocaleDateString() : ''}</td>
-      <td><strong>${c.custName||''}</strong><div class="muted">${c.custPhone||''}</div></td>
-      <td>${c.addr1||''}<br><span class="muted">${c.postcode||''}</span></td>
-      <td>${c.jobType||''}</td>
-      <td>£${(c.total||0).toFixed(2)}</td>
-      <td><a href="contract.html?id=${encodeURIComponent(c.id)}" target="_blank">Open</a></td>`;
-    tbody.appendChild(tr);
+/* ---------- panels open/close ---------- */
+$('#openProducts').addEventListener('click',()=>{
+  const p = $('#productsPanel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+});
+$('#toggleCustom').addEventListener('click',()=>{
+  const p = $('#customPanel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+});
+$('#openRoof').addEventListener('click',()=>{
+  alert('Roof calculator placeholder — add your m² calculator here.');
+});
+
+/* ---------- discount / totals ---------- */
+let discount = 0;    // absolute amount (£)
+const ADMIN_FEE = 150;
+
+function recalc(){
+  const prodSub = items.reduce((s,it)=> s + it.qty*it.unit, 0);
+  const sub = prodSub;                            // before admin/discount
+  const afterDisc = Math.max(0, sub - discount);
+  const afterAdmin = afterDisc + ADMIN_FEE;
+  const vat = $('#vatOn').checked ? afterAdmin * 0.20 : 0;
+  const total = afterAdmin + vat;
+  const dep = Number($('#deposit').value||0);
+
+  $('#s_products').textContent = fmt(prodSub);
+  $('#s_admin').textContent = fmt(ADMIN_FEE);
+  $('#s_sub').textContent = fmt(sub);
+  $('#s_afterdisc').textContent = fmt(afterDisc);
+  $('#s_after_admin').textContent = fmt(afterAdmin);
+  $('#s_vat').textContent = fmt(vat);
+  $('#s_total').textContent = fmt(total);
+  $('#s_deposit').textContent = fmt(dep);
+}
+$('#vatOn').addEventListener('change',()=>{
+  const ex = !$('#vatOn').checked;
+  $('#vatMsg').style.display = ex ? 'inline-flex' : 'none';
+  recalc();
+});
+$('#deposit').addEventListener('input',()=>{
+  $('#depositSet').innerHTML = '💰 <strong>Deposit Set:</strong>';
+  $('#depositSet').nextSibling && ($('#depositSet').nextSibling.textContent = '');
+  $('#depositSet').parentElement.nextElementSibling;
+  $('#depositSet').parentElement.parentElement.querySelector('.note').innerHTML = `<strong>💰 Deposit Set:</strong> £${fmt($('#deposit').value||0)} deposit will be required`;
+  $('#s_deposit').textContent = fmt($('#deposit').value||0);
+});
+
+$('#calcDisc').addEventListener('click',()=>{
+  const init = Number($('#disc_initial').value||0);
+  const fin  = Number($('#disc_final').value||0);
+  discount = Math.max(0, init - fin);
+  $('#discResult').style.display='inline-flex';
+  $('#discResult').textContent = `Discount applied: £${fmt(discount)} ${$('#disc_code').value?('('+$('#disc_code').value+')'):''}`;
+  recalc();
+});
+
+/* ---------- preview & WhatsApp ---------- */
+function normPhone(){
+  let p = $('#c_phone1').value.trim();
+  if(!p) return '';
+  if(p.startsWith('0')) p = '+44' + p.slice(1);
+  if(p.startsWith('+44 ')) p = p.replace('+44 ','+44');
+  return p.replace(/\D/g,'');        // digits only for wa.me
+}
+function contractParams(){
+  return new URLSearchParams({
+    custName: $('#c_name').value,
+    custPhone: '+'+normPhone(),      // re-add + for contract prefill
+    custEmail: $('#c_email').value,
+    addr1: $('#c_addr').value,
+    postcode: $('#c_pc').value,
+    apptDate: new Date().toISOString().slice(0,16),
+    repName: $('#rep_name').value,
+    jobType: 'Insulation',
+    notes: $('#notes').value
   });
 }
 
-(function init(){ renderAppts(); renderInstall(); })();
+$('#previewContract').addEventListener('click',()=>{
+  window.open(`contract.html?${contractParams().toString()}`,'_blank');
+});
+
+$('#previewQuote').addEventListener('click',()=>{
+  window.print(); // simple print preview of the summary for now
+});
+
+$('#sendWA').addEventListener('click',()=>{
+  const phoneDigits = normPhone();
+  if(!phoneDigits){ alert('Please enter a primary mobile number.'); return; }
+  const link = new URL(location.origin + location.pathname.replace('dashboard.html','contract.html'));
+  link.search = contractParams().toString();
+  const text = `Hi ${$('#c_name').value}, it’s ${$('#rep_name').value || 'our team'} from MXCTECH INSULATION.
+Here’s your contract link:
+${link.toString()}
+
+Quote total: £${$('#s_total').textContent}
+Deposit: £${$('#s_deposit').textContent}`;
+  window.open(`https://wa.me/${phoneDigits}?text=${encodeURIComponent(text)}`,'_blank');
+});
+
+/* init */
+renderItems();
+recalc();
 </script>
 </body>
 </html>
