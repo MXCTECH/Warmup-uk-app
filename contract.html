@@ -3,208 +3,325 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MXCTECH INSULATION — Contract</title>
+<title>WARM UP UK HOMES — Contract</title>
+<meta name="color-scheme" content="dark"/>
 <style>
-  :root{--bg:#0c0f16;--panel:#171b23;--panel2:#10141c;--line:#232936;--text:#e9edf7;--muted:#9aa4bd;--blue:#1F6BFF;--red:#E53935;--green:#17a56a;}
+  :root{
+    /* Black & Gold palette (tighter contrast) */
+    --bg:#0a0a0a;            /* page background */
+    --panel:#121212;         /* cards */
+    --ink:#f7f7f7;           /* main text */
+    --muted:#b6b6b6;         /* helper text */
+    --gold:#d4af37;          /* brand gold */
+    --gold-soft:#ffd766;     /* highlight */
+    --radius:16px;
+    --shadow:0 10px 28px rgba(0,0,0,.55);
+    --sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono','Courier New', monospace;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,#0a0d14,#0b0e15 60%,#0c0f16);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  header{position:sticky;top:0;z-index:10;display:flex;gap:12px;align-items:center;padding:14px 16px;background:rgba(16,20,28,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  header img{height:36px;border-radius:6px}
-  header h1{margin:0;font-size:18px;font-weight:900}
-  main{max-width:1000px;margin:auto;padding:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(0,0,0,.25)}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  label{color:var(--muted);font-size:12px;margin:2px 0 6px;display:block}
-  input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-size:15px}
-  textarea{grid-column:1/-1;min-height:80px}
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer}
-  .btn.primary{background:var(--blue);border-color:var(--blue)}
-  .btn.green{background:var(--green);border-color:var(--green)}
-  .btn.red{background:var(--red);border-color:var(--red)}
-  table{width:100%;border-collapse:separate;border-spacing:0}
-  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
-  th{color:var(--muted);font-size:12px;text-transform:uppercase}
-  canvas{border:1px dashed #2b3146;border-radius:10px;background:#0c101a}
-  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+  html,body{height:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg)}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  header{
+    background:linear-gradient(180deg,rgba(212,175,55,.18),rgba(212,175,55,.03)),#0e0e0e;
+    border:1px solid rgba(212,175,55,.55); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); position:sticky; top:0; z-index:2
+  }
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .title{font-weight:900;letter-spacing:.22em;text-transform:uppercase;font-size:clamp(18px,3.2vw,28px)}
+  .subtitle{color:var(--muted);letter-spacing:.06em}
+  .logo{width:48px;height:48px;border-radius:10px;position:relative;
+        background: radial-gradient(circle at 58% 28%, #fff0b8, var(--gold) 45%, #a17e17 78%);
+        box-shadow: inset 0 0 14px rgba(0,0,0,.45), 0 8px 18px rgba(0,0,0,.55)}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel);
+        border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
+        padding:16px; box-shadow:var(--shadow); margin-top:14px}
+  h2{margin:0 0 10px 0;font-size:16px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+  input,textarea,select{
+    width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+    background:#0c0c0c;color:var(--ink);outline:none
+  }
+  input::placeholder,textarea::placeholder{color:#7a7a7a}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .rows-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;color:var(--muted);font-size:12px;margin-bottom:6px}
+  .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px}
+  .row .num{text-align:right;font-family:var(--mono)}
+  .muted{color:var(--muted)}
+  .btn{
+    padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);
+    background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#101010;
+    font-weight:800;cursor:pointer;text-decoration:none;display:inline-block
+  }
+  .btn.ghost{background:transparent;color:var(--ink);border-color:rgba(212,175,55,.5)}
+  .btn.dark{background:#111;color:var(--ink)}
+  .right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .totals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tot-line{display:flex;justify-content:space-between;padding:8px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:10px}
+  .big{font-size:22px;font-weight:900}
+  .strong{font-weight:900}
+  .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+  .switch input{width:auto}
+  canvas{background:#0c0c0c;border:1px solid rgba(255,255,255,.14);border-radius:12px;width:100%;height:220px;touch-action:none}
+  .terms{font-size:12.5px;line-height:1.55;color:#e5e5e5}
+  footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
+  @media print{
+    body{background:#fff;color:#000}
+    header,.no-print{box-shadow:none}
+    .btn,.right,.no-print{display:none!important}
+    .card{border-color:#000}
+    canvas{border-color:#000}
+  }
 </style>
 </head>
 <body>
-<header>
-  <img src="mxctech-logo.png" alt="MXCTECH logo"/>
-  <h1>Customer Contract</h1>
-</header>
-
-<main id="contractArea">
-  <div class="card">
-    <div class="grid">
-      <div><label>Contract No.</label><input id="contractNo" readonly placeholder="Generated on save"/></div>
-      <div><label>Job Type</label><input id="jobType"/></div>
-      <div><label>Install Date</label><input id="installDate" type="date"/></div>
-
-      <div><label>Customer Name</label><input id="custName"/></div>
-      <div><label>Phone</label><input id="custPhone"/></div>
-      <div><label>Email</label><input id="custEmail"/></div>
-
-      <div><label>Address</label><input id="addr1"/></div>
-      <div><label>Postcode</label><input id="postcode"/></div>
-      <div><label>Appointment Date/Time</label><input id="apptDate" type="datetime-local"/></div>
-
-      <div><label>Rep Name</label><input id="repName"/></div>
-      <div><label>Booking Agent</label><input id="bookingAgent" placeholder="(fill)"/></div>
-      <div><label>Confirmer</label><input id="confirmer" placeholder="(fill)"/></div>
-
-      <textarea id="notes" placeholder="Contract notes…"></textarea>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title">WARM UP UK HOMES</div>
+          <div class="subtitle">Contract Builder · Black & Gold Theme</div>
+        </div>
+      </div>
+      <div class="right no-print">
+        <button class="btn" id="btnPrint">Print / Save PDF</button>
+        <button class="btn ghost" id="btnShare">Share via WhatsApp</button>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <div class="card">
-    <h3 style="margin:0 0 10px">Products / Pricing</h3>
-    <div class="row" style="margin-bottom:8px">
-      <select id="itemName">
-        <option>Multifoil Insulation</option><option>Spray Foam Removal</option>
-        <option>Loft Boarding</option><option>Ventilation</option><option>Other</option>
-      </select>
-      <input id="qty" type="number" min="1" value="1" placeholder="Qty"/>
-      <input id="price" type="number" step="0.01" placeholder="Unit Price (£)"/>
-      <button class="btn green" id="addItem">Add Item</button>
-      <label class="row" style="margin-left:auto;gap:8px">
-        <input id="vatOn" type="checkbox" checked style="transform:scale(1.2)"/> Apply VAT (20%)
-      </label>
-    </div>
-    <table id="itemsTable">
-      <thead><tr><th>Item</th><th>Qty</th><th>Unit (£)</th><th>Line (£)</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px">
-      <div class="btn">Subtotal: £<span id="subtotal">0.00</span></div>
-      <div class="btn">VAT: £<span id="vat">0.00</span></div>
-      <div class="btn primary">Total: £<span id="total">0.00</span></div>
-    </div>
-  </div>
+  <main>
+    <!-- Client + Job -->
+    <section class="card">
+      <h2>Client & Job Details</h2>
+      <div class="grid">
+        <div><label>Client name</label><input id="client" placeholder="Full name"/></div>
+        <div><label>Contact number (WhatsApp)</label><input id="phone" placeholder="+44… or 07…"/></div>
+        <div><label>Property address</label><input id="address" placeholder="Address, Postcode"/></div>
+        <div><label>Rep</label><input id="rep" placeholder="Rep name"/></div>
+      </div>
+      <div class="grid" style="margin-top:8px">
+        <div>
+          <label>Job type</label>
+          <select id="jobType">
+            <option>Loft Insulation</option>
+            <option>Multifoil Insulation</option>
+            <option>Spray Foam Removal</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div><label>Date</label><input id="date" type="date"/></div>
+      </div>
+    </section>
 
-  <div class="card">
-    <h3 style="margin:0 0 10px">Signature</h3>
-    <canvas id="sig" width="800" height="220"></canvas>
-    <div class="row" style="margin-top:8px">
-      <button class="btn" id="clearSig">Clear</button>
-    </div>
-  </div>
+    <!-- Products -->
+    <section class="card">
+      <h2>Products & Pricing</h2>
+      <div class="rows-head">
+        <div>Description</div><div>Qty</div><div>Unit £</div><div>Line £</div><div></div>
+      </div>
+      <div id="items"></div>
+      <div class="right no-print" style="margin-top:6px">
+        <button class="btn dark" id="addRow">+ Add line</button>
+      </div>
 
-  <div class="row" style="justify-content:flex-end">
-    <button class="btn primary" id="saveContract">Save Contract</button>
-    <button class="btn" id="downloadPDF">Download PDF</button>
-    <a class="btn red" id="backDash" href="dashboard.html" style="text-decoration:none">Back to Dashboard</a>
-  </div>
+      <div class="grid" style="margin-top:12px">
+        <div>
+          <label class="switch"><input type="checkbox" id="vatOn" checked/><span>Apply VAT (20%)</span></label>
+          <div class="no-print" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn ghost" id="dep20">Deposit 20%</button>
+            <button class="btn ghost" id="dep25">Deposit 25%</button>
+            <button class="btn ghost" id="depClear">Clear Deposit</button>
+          </div>
+        </div>
+        <div class="totals">
+          <div class="tot-line"><span>Subtotal</span><strong id="sub">£0</strong></div>
+          <div class="tot-line"><span>VAT (20%)</span><strong id="vat">£0</strong></div>
+          <div class="tot-line"><span class="big">Total</span><span class="big" id="total">£0</span></div>
+          <div class="tot-line">
+            <span>Deposit (paid / due now)</span>
+            <span>
+              <input id="deposit" type="number" step="0.01" min="0" value="0" style="width:130px;text-align:right;font-family:var(--mono);background:#0a0a0a;color:var(--ink);border-radius:8px;border:1px solid rgba(255,255,255,.18);padding:6px 8px">
+            </span>
+          </div>
+          <div class="tot-line" style="grid-column:1 / span 2">
+            <span class="big">Balance Due on Completion</span>
+            <span class="big" id="balance">£0</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <p class="card" style="font-size:12px;color:#9aa4bd">
-    By signing, the customer agrees to the specification and total shown above. Cooling-off rights and scheduling are subject to MXCTECH INSULATION terms.
-  </p>
-</main>
+    <!-- Signature -->
+    <section class="card">
+      <h2>Signature</h2>
+      <p class="muted">Client can sign with their finger. Tap **Clear** to redo.</p>
+      <canvas id="sig" width="1000" height="380"></canvas>
+      <div class="right no-print" style="margin-top:8px">
+        <button class="btn dark" id="clearSig">Clear</button>
+      </div>
+    </section>
 
-<!-- PDF libs -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <!-- Terms -->
+    <section class="card">
+      <h2>Terms & Conditions</h2>
+      <div class="terms">
+        <p>1) Works to be completed as described above. 2) Access to loft and electrical isolation where required to be provided by the customer. 3) Cooling-off period per UK consumer law applies. 4) Payment terms: deposit as shown above, balance on completion unless otherwise agreed in writing. 5) Warranty details supplied on completion. 6) By signing, the customer agrees that the above description and totals are correct.</p>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="card no-print" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="muted">Save/restore is local to this device. “Mark as Won” also feeds the dashboard.</div>
+      <div class="right">
+        <button class="btn ghost" id="btnSave">Save draft</button>
+        <button class="btn ghost" id="btnLoad">Load draft</button>
+        <button class="btn" id="btnWon">Mark as Won</button>
+      </div>
+    </section>
+
+    <footer class="no-print">© WARM UP UK HOMES</footer>
+  </main>
+</div>
+
 <script>
-const $=s=>document.querySelector(s); const load=(k,d=[])=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)); const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-const fmt=n=>Number(n||0).toFixed(2);
+/* ---------- Helpers ---------- */
+const itemsEl=document.getElementById('items');
+const fmt=n=>'£'+(Math.round((+n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:0});
+const val=id=>document.getElementById(id).value.trim();
+const set=(id,v)=>{ if(v!==undefined) document.getElementById(id).value=v; };
 
-/* Prefill from query or saved id */
-(function(){
-  const q=new URLSearchParams(location.search); const openId=q.get('id');
-  if(openId){
-    const c=load('mxc_contracts').find(x=>x.id===openId);
-    if(c){ fillFromObject(c); items=c.items||[]; renderItems(); if(c.signatureData) loadSignature(c.signatureData); calcTotals(); }
-    return;
-  }
-  ['custName','custPhone','custEmail','addr1','postcode','apptDate','repName','jobType','notes'].forEach(k=>{ const el=$('#'+k); if(el) el.value=q.get(k)||''; });
-})();
-
-function fillFromObject(c){
-  Object.entries(c).forEach(([k,v])=>{ const el=$('#'+k); if(el) el.value=v; });
-  $('#contractNo').value=c.contractNo||'';
+/* ---------- Rows ---------- */
+function rowTemplate(desc='',qty=1,unit=0){
+  const line=document.createElement('div'); line.className='row';
+  line.innerHTML=`
+    <input placeholder="e.g., Loft insulation 270mm (m²)" value="${desc}">
+    <input class="num qty"  type="number" step="1"   min="0" value="${qty}">
+    <input class="num unit" type="number" step="0.01" min="0" value="${unit}">
+    <input class="num sum"  value="0" readonly>
+    <button class="btn dark remove" title="Remove">×</button>`;
+  itemsEl.appendChild(line);
+  bindRow(line); calc();
 }
+function bindRow(line){
+  const qty=line.querySelector('.qty'), unit=line.querySelector('.unit'), remove=line.querySelector('.remove');
+  [qty,unit].forEach(el=>el.addEventListener('input',calc));
+  remove.addEventListener('click',()=>{ line.remove(); calc(); });
+}
+document.getElementById('addRow').addEventListener('click',()=>rowTemplate());
 
-/* Items */
-let items=[];
-function renderItems(){
-  const tb=$('#itemsTable tbody'); tb.innerHTML='';
-  items.forEach((it,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${it.name}</td><td>${it.qty}</td><td>£${fmt(it.price)}</td><td>£${fmt(it.qty*it.price)}</td>
-      <td><button class="btn red" onclick="removeItem(${i})">Remove</button></td>`;
-    tb.appendChild(tr);
+/* ---------- Totals / VAT / Deposit ---------- */
+const subEl=document.getElementById('sub'), vatEl=document.getElementById('vat'), totalEl=document.getElementById('total');
+const vatOn=document.getElementById('vatOn'), depInput=document.getElementById('deposit'), balanceEl=document.getElementById('balance');
+
+function calc(){
+  let subtotal=0;
+  itemsEl.querySelectorAll('.row').forEach(r=>{
+    const q=+r.querySelector('.qty').value||0;
+    const u=+r.querySelector('.unit').value||0;
+    const s=q*u; r.querySelector('.sum').value=s.toFixed(2);
+    subtotal+=s;
   });
-  calcTotals();
+  const vat = vatOn.checked ? subtotal*0.20 : 0;
+  const total = subtotal + vat;
+  const deposit = Math.min(+depInput.value||0, total);
+  const balance = Math.max(0, total - deposit);
+
+  subEl.textContent = fmt(subtotal);
+  vatEl.textContent = fmt(vat);
+  totalEl.textContent = fmt(total);
+  balanceEl.textContent = fmt(balance);
 }
-function removeItem(i){ items.splice(i,1); renderItems(); }
-$('#addItem').addEventListener('click',()=>{
-  const name=$('#itemName').value, qty=Number($('#qty').value||1), price=Number($('#price').value||0);
-  if(!name||qty<=0) return; items.push({name,qty,price}); renderItems();
+vatOn.addEventListener('change',calc);
+depInput.addEventListener('input',calc);
+document.getElementById('dep20').addEventListener('click',()=>{ // 20% of total
+  const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.2).toFixed(2); calc();
 });
+document.getElementById('dep25').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.25).toFixed(2); calc(); });
+document.getElementById('depClear').addEventListener('click',()=>{ depInput.value=0; calc(); });
 
-/* Totals */
-function calcTotals(){
-  const sub=items.reduce((s,it)=>s+it.qty*it.price,0);
-  const vat=$('#vatOn').checked? sub*0.2 : 0;
-  const tot=sub+vat;
-  $('#subtotal').textContent=fmt(sub);
-  $('#vat').textContent=fmt(vat);
-  $('#total').textContent=fmt(tot);
-}
-$('#vatOn').addEventListener('change',calcTotals);
+/* seed one line */
+rowTemplate('Loft insulation — supply & fit',1,0);
 
-/* Signature pad */
-const canvas=$('#sig'); const ctx=canvas.getContext('2d'); ctx.lineWidth=2; ctx.strokeStyle='#e9edf7';
+/* ---------- Signature pad ---------- */
+const canvas=document.getElementById('sig'), ctx=canvas.getContext('2d');
+ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.strokeStyle='#f5e6b7';
 let drawing=false,last=null;
-function pos(e){const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top};}
-function down(e){drawing=true; last=pos(e); e.preventDefault();}
-function move(e){if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault();}
-function up(){drawing=false;}
-canvas.addEventListener('mousedown',down); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
-canvas.addEventListener('touchstart',down,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',up);
-$('#clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
+function pos(e){ const r=canvas.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:x*(canvas.width/r.width), y:y*(canvas.height/r.height)}; }
+function start(e){drawing=true; last=pos(e); e.preventDefault();}
+function move(e){ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); }
+function end(){drawing=false;}
+canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+document.getElementById('clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
 
-function getSignatureData(){ return canvas.toDataURL('image/png'); }
-function loadSignature(data){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=data; }
-
-/* Save contract (with signature) */
-$('#saveContract').addEventListener('click',()=>{
-  const id = crypto.randomUUID();
-  const data = {
-    id,
-    contractNo: $('#contractNo').value || `MXC-${new Date().toISOString().slice(0,10)}-${Math.floor(Math.random()*9000+1000)}`,
-    jobType:$('#jobType').value, installDate:$('#installDate').value,
-    custName:$('#custName').value, custPhone:$('#custPhone').value, custEmail:$('#custEmail').value,
-    addr1:$('#addr1').value, postcode:$('#postcode').value, apptDate:$('#apptDate').value,
-    repName:$('#repName').value, bookingAgent:$('#bookingAgent').value, confirmer:$('#confirmer').value,
-    notes:$('#notes').value,
-    items,
-    subtotal:Number($('#subtotal').textContent), vat:Number($('#vat').textContent), total:Number($('#total').textContent),
-    signatureData:getSignatureData()
+/* ---------- Save / Load draft ---------- */
+const LSKEY='wuuk_contract_draft';
+function gather(){
+  const rows=[...itemsEl.querySelectorAll('.row')].map(r=>({desc:r.children[0].value, qty:+r.children[1].value||0, unit:+r.children[2].value||0}));
+  return {
+    client:val('client'), phone:val('phone'), address:val('address'),
+    rep:val('rep'), jobType:val('jobType'), date:val('date'),
+    vatOn:document.getElementById('vatOn').checked, deposit:+depInput.value||0,
+    rows, signature:canvas.toDataURL('image/png')
   };
-  $('#contractNo').value = data.contractNo;
-  const list = load('mxc_contracts'); list.push(data); save('mxc_contracts',list);
-  alert('Contract saved.');
+}
+function apply(d){
+  if(!d) return;
+  set('client',d.client); set('phone',d.phone); set('address',d.address);
+  set('rep',d.rep); set('jobType',d.jobType); set('date',d.date);
+  document.getElementById('vatOn').checked=!!d.vatOn;
+  depInput.value=d.deposit||0;
+  itemsEl.innerHTML=''; (d.rows||[]).forEach(r=>rowTemplate(r.desc,r.qty,r.unit));
+  if(d.signature){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=d.signature; }
+  calc();
+}
+document.getElementById('btnSave').addEventListener('click',()=>{ localStorage.setItem(LSKEY, JSON.stringify(gather())); alert('Draft saved.'); });
+document.getElementById('btnLoad').addEventListener('click',()=>apply(JSON.parse(localStorage.getItem(LSKEY)||'null')));
+
+/* ---------- Print / PDF ---------- */
+document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+
+/* ---------- WhatsApp share (includes deposit/balance) ---------- */
+document.getElementById('btnShare').addEventListener('click',()=>{
+  const t = document.getElementById('total').textContent;
+  const d = document.getElementById('deposit').value || 0;
+  const b = document.getElementById('balance').textContent;
+  const summary = `WARM UP UK HOMES – Contract
+Client: ${val('client')}
+Address: ${val('address')}
+Job: ${val('jobType')}
+Total: ${t}
+Deposit: £${Number(d).toLocaleString()}
+Balance due: ${b}
+Date: ${val('date') || new Date().toISOString().slice(0,10)}
+Rep: ${val('rep')}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(summary),'_blank');
 });
 
-/* PDF (captures signature + all content) */
-$('#downloadPDF').addEventListener('click', async ()=>{
-  const { jsPDF } = window.jspdf;
-  // temporarily ensure a dark background is captured
-  const area=document.querySelector('main');
-  const canvasShot = await html2canvas(area,{scale:2,backgroundColor:'#0c0f16'});
-  const img=canvasShot.toDataURL('image/png');
-  const pdf=new jsPDF('p','pt','a4');
-  const pageW=pdf.internal.pageSize.getWidth(), pageH=pdf.internal.pageSize.getHeight();
-  const ratio=Math.min(pageW/canvasShot.width,pageH/canvasShot.height);
-  const w=canvasShot.width*ratio, h=canvasShot.height*ratio;
-  pdf.addImage(img,'PNG',(pageW-w)/2,20,w,h);
-  pdf.save( ($('#contractNo').value||'contract') + '.pdf');
+/* ---------- Mark as Won → feed dashboard ---------- */
+document.getElementById('btnWon').addEventListener('click',()=>{
+  const total = +document.getElementById('total').textContent.replace(/[£,]/g,'')||0;
+  try{
+    window.opener?.logDeal?.({
+      id: crypto.randomUUID(),
+      rep: val('rep') || 'Rep',
+      value: total,
+      status: 'won',
+      date: (val('date') || new Date().toISOString().slice(0,10)),
+      type: val('jobType') || 'Contract'
+    });
+  }catch(e){}
+  alert('Marked as WON (sent to dashboard if open).');
 });
 
-/* init */
-renderItems(); calcTotals();
+/* ---------- Init ---------- */
+document.getElementById('date').value = new Date().toISOString().slice(0,10);
+calc();
 </script>
 </body>
 </html>
