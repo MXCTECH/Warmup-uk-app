@@ -7,49 +7,51 @@
 <meta name="color-scheme" content="dark"/>
 <style>
   :root{
-    /* Black & Gold palette (tighter contrast) */
-    --bg:#0a0a0a;            /* page background */
-    --panel:#121212;         /* cards */
-    --ink:#f7f7f7;           /* main text */
-    --muted:#b6b6b6;         /* helper text */
-    --gold:#d4af37;          /* brand gold */
-    --gold-soft:#ffd766;     /* highlight */
-    --radius:16px;
-    --shadow:0 10px 28px rgba(0,0,0,.55);
-    --sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono','Courier New', monospace;
+    --bg:#0a0a0a; --panel:#121212; --ink:#f7f7f7; --muted:#b6b6b6;
+    --gold:#d4af37; --gold-soft:#ffd766;
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.55);
+    --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg)}
   .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+  /* Header */
   header{
+    position:sticky; top:0; z-index:2; text-align:center;
     background:linear-gradient(180deg,rgba(212,175,55,.18),rgba(212,175,55,.03)),#0e0e0e;
     border:1px solid rgba(212,175,55,.55); border-radius:var(--radius);
-    padding:18px; box-shadow:var(--shadow); position:sticky; top:0; z-index:2
+    padding:14px 18px; box-shadow:var(--shadow); margin-bottom:14px
   }
-  .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .brand img{height:70px;width:auto;margin-bottom:10px}
   .title{font-weight:900;letter-spacing:.22em;text-transform:uppercase;font-size:clamp(18px,3.2vw,28px)}
   .subtitle{color:var(--muted);letter-spacing:.06em}
-  .logo{width:48px;height:48px;border-radius:10px;position:relative;
-        background: radial-gradient(circle at 58% 28%, #fff0b8, var(--gold) 45%, #a17e17 78%);
-        box-shadow: inset 0 0 14px rgba(0,0,0,.45), 0 8px 18px rgba(0,0,0,.55)}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel);
-        border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
-        padding:16px; box-shadow:var(--shadow); margin-top:14px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+
+  /* Cards & form */
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel);
+    border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow); margin-top:14px
+  }
   h2{margin:0 0 10px 0;font-size:16px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
   label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-  input,textarea,select{
+  input,select,textarea{
     width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
     background:#0c0c0c;color:var(--ink);outline:none
   }
-  input::placeholder,textarea::placeholder{color:#7a7a7a}
+  textarea{min-height:120px;resize:vertical}
   .grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
   @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+  /* Items */
   .rows-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;color:var(--muted);font-size:12px;margin-bottom:6px}
   .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px}
   .row .num{text-align:right;font-family:var(--mono)}
-  .muted{color:var(--muted)}
+
+  /* Buttons */
   .btn{
     padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);
     background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#101010;
@@ -58,15 +60,28 @@
   .btn.ghost{background:transparent;color:var(--ink);border-color:rgba(212,175,55,.5)}
   .btn.dark{background:#111;color:var(--ink)}
   .right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  .totals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tot-line{display:flex;justify-content:space-between;padding:8px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:10px}
-  .big{font-size:22px;font-weight:900}
-  .strong{font-weight:900}
   .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-  .switch input{width:auto}
+
+  /* Totals / deposit */
+  .totals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tot-line{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:10px}
+  .big{font-size:22px;font-weight:900}
+  .money-input{
+    width:180px;text-align:right;font-family:var(--mono);
+    background:#0a0a0a;color:var(--ink);border-radius:10px;
+    border:1px solid rgba(212,175,55,.7);padding:10px 12px;font-weight:700;
+  }
+  .highlight{
+    border:2px solid var(--gold); border-radius:12px; padding:10px 14px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+
+  /* Signature */
   canvas{background:#0c0c0c;border:1px solid rgba(255,255,255,.14);border-radius:12px;width:100%;height:220px;touch-action:none}
+
   .terms{font-size:12.5px;line-height:1.55;color:#e5e5e5}
   footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
+
   @media print{
     body{background:#fff;color:#000}
     header,.no-print{box-shadow:none}
@@ -80,17 +95,14 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div class="title">WARM UP UK HOMES</div>
-          <div class="subtitle">Contract Builder · Black & Gold Theme</div>
-        </div>
-      </div>
-      <div class="right no-print">
-        <button class="btn" id="btnPrint">Print / Save PDF</button>
-        <button class="btn ghost" id="btnShare">Share via WhatsApp</button>
-      </div>
+      <!-- If the image doesn't show, ensure this path exists in your repo -->
+      <img src="assets/wuuk-logo.png" alt="Warm Up UK Homes logo">
+      <div class="title">WARM UP UK HOMES</div>
+      <div class="subtitle">Contract Builder · Black & Gold Theme</div>
+    </div>
+    <div class="actions no-print">
+      <button class="btn" id="btnPrint">Print / Save PDF</button>
+      <button class="btn ghost" id="btnShare">Share via WhatsApp</button>
     </div>
   </header>
 
@@ -129,6 +141,7 @@
         <button class="btn dark" id="addRow">+ Add line</button>
       </div>
 
+      <!-- Totals + Deposit + Final to Pay + Balance -->
       <div class="grid" style="margin-top:12px">
         <div>
           <label class="switch"><input type="checkbox" id="vatOn" checked/><span>Apply VAT (20%)</span></label>
@@ -138,16 +151,25 @@
             <button class="btn ghost" id="depClear">Clear Deposit</button>
           </div>
         </div>
+
         <div class="totals">
           <div class="tot-line"><span>Subtotal</span><strong id="sub">£0</strong></div>
           <div class="tot-line"><span>VAT (20%)</span><strong id="vat">£0</strong></div>
-          <div class="tot-line"><span class="big">Total</span><span class="big" id="total">£0</span></div>
-          <div class="tot-line">
-            <span>Deposit (paid / due now)</span>
-            <span>
-              <input id="deposit" type="number" step="0.01" min="0" value="0" style="width:130px;text-align:right;font-family:var(--mono);background:#0a0a0a;color:var(--ink);border-radius:8px;border:1px solid rgba(255,255,255,.18);padding:6px 8px">
-            </span>
+
+          <div class="highlight" style="grid-column:1 / span 2">
+            <span class="big">Grand Total</span><span class="big" id="total">£0</span>
           </div>
+
+          <div class="tot-line" style="grid-column:1 / span 2">
+            <span class="big">Deposit (paid / due now)</span>
+            <input id="deposit" type="number" step="0.01" min="0" value="0" class="money-input" />
+          </div>
+
+          <div class="highlight" style="grid-column:1 / span 2; background:rgba(212,175,55,.06)">
+            <span class="big">Final to Pay Today</span>
+            <span class="big" id="finalToday">£0</span>
+          </div>
+
           <div class="tot-line" style="grid-column:1 / span 2">
             <span class="big">Balance Due on Completion</span>
             <span class="big" id="balance">£0</span>
@@ -156,10 +178,16 @@
       </div>
     </section>
 
+    <!-- Notes / Instructions -->
+    <section class="card">
+      <h2>Notes / Instructions</h2>
+      <textarea id="notes" placeholder="Access notes, special instructions, exclusion items, client requests, etc."></textarea>
+    </section>
+
     <!-- Signature -->
     <section class="card">
       <h2>Signature</h2>
-      <p class="muted">Client can sign with their finger. Tap **Clear** to redo.</p>
+      <p class="muted">Client can sign with their finger. Tap <strong>Clear</strong> to redo.</p>
       <canvas id="sig" width="1000" height="380"></canvas>
       <div class="right no-print" style="margin-top:8px">
         <button class="btn dark" id="clearSig">Clear</button>
@@ -192,8 +220,9 @@
 /* ---------- Helpers ---------- */
 const itemsEl=document.getElementById('items');
 const fmt=n=>'£'+(Math.round((+n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:0});
-const val=id=>document.getElementById(id).value.trim();
-const set=(id,v)=>{ if(v!==undefined) document.getElementById(id).value=v; };
+const get=id=>document.getElementById(id);
+const val=id=>get(id).value.trim();
+const set=(id,v)=>{ if(v!==undefined) get(id).value=v; };
 
 /* ---------- Rows ---------- */
 function rowTemplate(desc='',qty=1,unit=0){
@@ -212,11 +241,11 @@ function bindRow(line){
   [qty,unit].forEach(el=>el.addEventListener('input',calc));
   remove.addEventListener('click',()=>{ line.remove(); calc(); });
 }
-document.getElementById('addRow').addEventListener('click',()=>rowTemplate());
+get('addRow').addEventListener('click',()=>rowTemplate());
 
 /* ---------- Totals / VAT / Deposit ---------- */
-const subEl=document.getElementById('sub'), vatEl=document.getElementById('vat'), totalEl=document.getElementById('total');
-const vatOn=document.getElementById('vatOn'), depInput=document.getElementById('deposit'), balanceEl=document.getElementById('balance');
+const subEl=get('sub'), vatEl=get('vat'), totalEl=get('total');
+const vatOn=get('vatOn'), depInput=get('deposit'), balanceEl=get('balance'), finalTodayEl=get('finalToday');
 
 function calc(){
   let subtotal=0;
@@ -228,27 +257,27 @@ function calc(){
   });
   const vat = vatOn.checked ? subtotal*0.20 : 0;
   const total = subtotal + vat;
-  const deposit = Math.min(+depInput.value||0, total);
+
+  const deposit = Math.max(0, Math.min(+depInput.value||0, total));
   const balance = Math.max(0, total - deposit);
 
   subEl.textContent = fmt(subtotal);
   vatEl.textContent = fmt(vat);
   totalEl.textContent = fmt(total);
+  finalTodayEl.textContent = fmt(deposit); // the amount to collect now
   balanceEl.textContent = fmt(balance);
 }
 vatOn.addEventListener('change',calc);
 depInput.addEventListener('input',calc);
-document.getElementById('dep20').addEventListener('click',()=>{ // 20% of total
-  const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.2).toFixed(2); calc();
-});
-document.getElementById('dep25').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.25).toFixed(2); calc(); });
-document.getElementById('depClear').addEventListener('click',()=>{ depInput.value=0; calc(); });
+get('dep20').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.2).toFixed(2); calc(); });
+get('dep25').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.25).toFixed(2); calc(); });
+get('depClear').addEventListener('click',()=>{ depInput.value=0; calc(); });
 
 /* seed one line */
 rowTemplate('Loft insulation — supply & fit',1,0);
 
 /* ---------- Signature pad ---------- */
-const canvas=document.getElementById('sig'), ctx=canvas.getContext('2d');
+const canvas=get('sig'), ctx=canvas.getContext('2d');
 ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.strokeStyle='#f5e6b7';
 let drawing=false,last=null;
 function pos(e){ const r=canvas.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:x*(canvas.width/r.width), y:y*(canvas.height/r.height)}; }
@@ -257,7 +286,7 @@ function move(e){ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.move
 function end(){drawing=false;}
 canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
 canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
-document.getElementById('clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
+get('clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
 
 /* ---------- Save / Load draft ---------- */
 const LSKEY='wuuk_contract_draft';
@@ -266,7 +295,8 @@ function gather(){
   return {
     client:val('client'), phone:val('phone'), address:val('address'),
     rep:val('rep'), jobType:val('jobType'), date:val('date'),
-    vatOn:document.getElementById('vatOn').checked, deposit:+depInput.value||0,
+    vatOn:vatOn.checked, deposit:+depInput.value||0,
+    notes: get('notes').value,
     rows, signature:canvas.toDataURL('image/png')
   };
 }
@@ -274,38 +304,38 @@ function apply(d){
   if(!d) return;
   set('client',d.client); set('phone',d.phone); set('address',d.address);
   set('rep',d.rep); set('jobType',d.jobType); set('date',d.date);
-  document.getElementById('vatOn').checked=!!d.vatOn;
-  depInput.value=d.deposit||0;
+  vatOn.checked=!!d.vatOn; depInput.value=d.deposit||0; get('notes').value=d.notes||'';
   itemsEl.innerHTML=''; (d.rows||[]).forEach(r=>rowTemplate(r.desc,r.qty,r.unit));
   if(d.signature){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=d.signature; }
   calc();
 }
-document.getElementById('btnSave').addEventListener('click',()=>{ localStorage.setItem(LSKEY, JSON.stringify(gather())); alert('Draft saved.'); });
-document.getElementById('btnLoad').addEventListener('click',()=>apply(JSON.parse(localStorage.getItem(LSKEY)||'null')));
+get('btnSave').addEventListener('click',()=>{ localStorage.setItem(LSKEY, JSON.stringify(gather())); alert('Draft saved.'); });
+get('btnLoad').addEventListener('click',()=>apply(JSON.parse(localStorage.getItem(LSKEY)||'null')));
 
 /* ---------- Print / PDF ---------- */
-document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+get('btnPrint').addEventListener('click',()=>window.print());
 
-/* ---------- WhatsApp share (includes deposit/balance) ---------- */
-document.getElementById('btnShare').addEventListener('click',()=>{
-  const t = document.getElementById('total').textContent;
-  const d = document.getElementById('deposit').value || 0;
-  const b = document.getElementById('balance').textContent;
-  const summary = `WARM UP UK HOMES – Contract
+/* ---------- WhatsApp share ---------- */
+get('btnShare').addEventListener('click',()=>{
+  const total=get('total').textContent;
+  const deposit=get('finalToday').textContent;
+  const balance=get('balance').textContent;
+  const notes=get('notes').value ? `\nNotes: ${get('notes').value}` : '';
+  const summary=`WARM UP UK HOMES – Contract
 Client: ${val('client')}
 Address: ${val('address')}
 Job: ${val('jobType')}
-Total: ${t}
-Deposit: £${Number(d).toLocaleString()}
-Balance due: ${b}
+Grand Total: ${total}
+Deposit (today): ${deposit}
+Balance Due: ${balance}
 Date: ${val('date') || new Date().toISOString().slice(0,10)}
-Rep: ${val('rep')}`;
+Rep: ${val('rep')}${notes}`;
   window.open('https://wa.me/?text='+encodeURIComponent(summary),'_blank');
 });
 
 /* ---------- Mark as Won → feed dashboard ---------- */
-document.getElementById('btnWon').addEventListener('click',()=>{
-  const total = +document.getElementById('total').textContent.replace(/[£,]/g,'')||0;
+get('btnWon').addEventListener('click',()=>{
+  const total=+get('total').textContent.replace(/[£,]/g,'')||0;
   try{
     window.opener?.logDeal?.({
       id: crypto.randomUUID(),
@@ -316,19 +346,11 @@ document.getElementById('btnWon').addEventListener('click',()=>{
       type: val('jobType') || 'Contract'
     });
   }catch(e){}
-  alert('Marked as WON (sent to dashboard if open).');<header>
-  <div class="brand">
-    <img src="assets/wuuk-logo.png" alt="Warm Up UK Homes logo">
-    <div>
-      <div class="title">WARM UP UK HOMES — Appointments</div>
-      <div class="sub subtitle">Book survey visits and share via WhatsApp</div>
-    </div>
-  </div>
-</header>
+  alert('Marked as WON (sent to dashboard if open).');
 });
 
 /* ---------- Init ---------- */
-document.getElementById('date').value = new Date().toISOString().slice(0,10);
+get('date').value=new Date().toISOString().slice(0,10);
 calc();
 </script>
 </body>
