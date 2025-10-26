@@ -1,0 +1,59 @@
+<script>
+/* Signature setup (if your file ended early, paste from here down) */
+(function(){
+  const c = document.getElementById('sig');
+  if(!c) return;
+  const x = c.getContext('2d');
+  let drawing = false, last = null;
+
+  function pt(ev){
+    const r = c.getBoundingClientRect();
+    const t = ev.touches ? ev.touches[0] : ev;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+  function start(ev){ drawing = true; last = pt(ev); ev.preventDefault?.(); }
+  function move(ev){
+    if(!drawing) return;
+    const p = pt(ev);
+    x.beginPath();
+    x.moveTo(last.x, last.y);
+    x.lineTo(p.x, p.y);
+    x.strokeStyle = "#fff";
+    x.lineWidth = 2.5;
+    x.lineCap = "round";
+    x.stroke();
+    last = p;
+    ev.preventDefault?.();
+  }
+  function end(){ drawing = false; }
+
+  c.addEventListener('mousedown', start);
+  c.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', end);
+
+  c.addEventListener('touchstart', start, {passive:false});
+  c.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end);
+  document.getElementById('clearSig').onclick = () => x.clearRect(0,0,c.width,c.height);
+})();
+
+/* Print / PDF */
+document.getElementById('btnPrint').onclick = () => window.print();
+
+/* WhatsApp share */
+document.getElementById('btnWhatsApp').onclick = (e) => {
+  e.preventDefault();
+  (window.calc?.())  // recalc totals if present
+  const msg = `WARM UP UK HOMES%0AContract: ${encodeURIComponent(document.getElementById('contractNo').value)}%0AClient: ${encodeURIComponent(document.getElementById('client').value)}%0AJob: ${encodeURIComponent(document.getElementById('jobType').value)}%0AInstall: ${encodeURIComponent(document.getElementById('install').value)}%0AAddress: ${encodeURIComponent(document.getElementById('address').value)}%0ATotal: ${encodeURIComponent(document.getElementById('tGrand').textContent)}`;
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+};
+
+/* Storebar quick actions */
+const q = id => document.getElementById(id);
+q('gotoPDF')?.addEventListener('click', ()=> q('btnPrint').click());
+q('gotoWhatsApp')?.addEventListener('click', ()=> q('btnWhatsApp').click());
+q('gotoDash')?.addEventListener('click', ()=> location.href = 'dashboard.html');
+
+/* Ensure discount toggle initializes */
+window.updateDiscount?.();
+</script>
