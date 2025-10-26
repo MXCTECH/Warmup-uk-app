@@ -1,357 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>WARM UP UK HOMES — Contract</title>
-<meta name="color-scheme" content="dark"/>
-<style>
-  :root{
-    --bg:#0a0a0a; --panel:#121212; --ink:#f7f7f7; --muted:#b6b6b6;
-    --gold:#d4af37; --gold-soft:#ffd766;
-    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.55);
-    --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg)}
-  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warm Up UK Homes — Contract Builder</title>
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: #f7f7f7;
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Header */
-  header{
-    position:sticky; top:0; z-index:2; text-align:center;
-    background:linear-gradient(180deg,rgba(212,175,55,.18),rgba(212,175,55,.03)),#0e0e0e;
-    border:1px solid rgba(212,175,55,.55); border-radius:var(--radius);
-    padding:14px 18px; box-shadow:var(--shadow); margin-bottom:14px
-  }
-  .brand img{height:70px;width:auto;margin-bottom:10px}
-  .title{font-weight:900;letter-spacing:.22em;text-transform:uppercase;font-size:clamp(18px,3.2vw,28px)}
-  .subtitle{color:var(--muted);letter-spacing:.06em}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .container {
+      max-width: 750px;
+      margin: 40px auto;
+      background-color: #121212;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
 
-  /* Cards & form */
-  .card{
-    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel);
-    border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
-    padding:16px; box-shadow:var(--shadow); margin-top:14px
-  }
-  h2{margin:0 0 10px 0;font-size:16px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
-  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-  input,select,textarea{
-    width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
-    background:#0c0c0c;color:var(--ink);outline:none
-  }
-  textarea{min-height:120px;resize:vertical}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
-  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    h1 {
+      text-align: center;
+      color: #d4af37;
+      letter-spacing: 1px;
+    }
 
-  /* Items */
-  .rows-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;color:var(--muted);font-size:12px;margin-bottom:6px}
-  .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px}
-  .row .num{text-align:right;font-family:var(--mono)}
+    h2 {
+      color: #d4af37;
+      margin-top: 30px;
+      font-size: 1.1em;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+    }
 
-  /* Buttons */
-  .btn{
-    padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);
-    background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#101010;
-    font-weight:800;cursor:pointer;text-decoration:none;display:inline-block
-  }
-  .btn.ghost{background:transparent;color:var(--ink);border-color:rgba(212,175,55,.5)}
-  .btn.dark{background:#111;color:var(--ink)}
-  .right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #f7f7f7;
+      font-weight: 500;
+    }
 
-  /* Totals / deposit */
-  .totals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .tot-line{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:10px}
-  .big{font-size:22px;font-weight:900}
-  .money-input{
-    width:180px;text-align:right;font-family:var(--mono);
-    background:#0a0a0a;color:var(--ink);border-radius:10px;
-    border:1px solid rgba(212,175,55,.7);padding:10px 12px;font-weight:700;
-  }
-  .highlight{
-    border:2px solid var(--gold); border-radius:12px; padding:10px 14px;
-    display:flex; justify-content:space-between; align-items:center;
-  }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1em;
+    }
 
-  /* Signature */
-  canvas{background:#0c0c0c;border:1px solid rgba(255,255,255,.14);border-radius:12px;width:100%;height:220px;touch-action:none}
+    input[type="number"] {
+      text-align: right;
+    }
 
-  .terms{font-size:12.5px;line-height:1.55;color:#e5e5e5}
-  footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
 
-  @media print{
-    body{background:#fff;color:#000}
-    header,.no-print{box-shadow:none}
-    .btn,.right,.no-print{display:none!important}
-    .card{border-color:#000}
-    canvas{border-color:#000}
-  }
-</style>
+    button {
+      background-color: #d4af37;
+      color: #000;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ffda65;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      color: #d4af37;
+    }
+
+    .total-line {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #d4af37;
+    }
+
+    .signature-box {
+      border: 2px dashed #d4af37;
+      border-radius: 6px;
+      height: 180px;
+      background: #1a1a1a;
+    }
+
+    textarea#notes {
+      min-height: 100px;
+    }
+
+    .center {
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <!-- If the image doesn't show, ensure this path exists in your repo -->
-      <img src="assets/wuuk-logo.png" alt="Warm Up UK Homes logo">
-      <div class="title">WARM UP UK HOMES</div>
-      <div class="subtitle">Contract Builder · Black & Gold Theme</div>
+
+  <div class="container">
+    <div class="center">
+      <img src="/Warmup-uk-app/assets/wuuk-logo.png?v=2" alt="Warm Up UK Homes Logo"
+           style="max-width:180px;height:auto;display:inline-block;margin-bottom:10px;">
+      <h1>WARM UP UK HOMES</h1>
+      <p style="color:#d4af37; font-weight:500;">Contract Builder · Black & Gold Theme</p>
+
+      <div class="button-group">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="shareViaWhatsApp()">Share via WhatsApp</button>
+      </div>
     </div>
-    <div class="actions no-print">
-      <button class="btn" id="btnPrint">Print / Save PDF</button>
-      <button class="btn ghost" id="btnShare">Share via WhatsApp</button>
+
+    <h2>Client & Job Details</h2>
+    <label>Client name</label>
+    <input id="clientName" placeholder="Full name" />
+
+    <label>Contact number (WhatsApp)</label>
+    <input id="clientNumber" placeholder="+44... or 07..." />
+
+    <label>Property address</label>
+    <input id="address" placeholder="Address, Postcode" />
+
+    <label>Rep</label>
+    <input id="repName" placeholder="Rep name" />
+
+    <label>Job type</label>
+    <select id="jobType">
+      <option>Loft Insulation</option>
+      <option>Multifoil Insulation</option>
+      <option>Spray Foam Removal</option>
+    </select>
+
+    <label>Date</label>
+    <input type="text" id="jobDate" readonly value="" />
+
+    <h2>Products & Pricing</h2>
+    <table id="productTable">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Unit £</th>
+          <th>Line £</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input id="desc1" value="Loft insulation" /></td>
+          <td><input type="number" id="qty1" value="1" onchange="updateTotals()" /></td>
+          <td><input type="number" id="unit1" value="1000" onchange="updateTotals()" /></td>
+          <td><input type="text" id="line1" readonly /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <label><input type="checkbox" id="vatToggle" onchange="updateTotals()"> Apply VAT (20%)</label>
+
+    <div style="margin-top:15px;">
+      <p>Subtotal: £<span id="subtotal">0</span></p>
+      <p>VAT (20%): £<span id="vat">0</span></p>
+      <p><strong>Total: £<span id="total">0</span></strong></p>
+
+      <label>Deposit £</label>
+      <input type="number" id="deposit" value="0" onchange="updateTotals()" />
+
+      <p class="total-line">Balance Due: £<span id="balance">0</span></p>
     </div>
-  </header>
 
-  <main>
-    <!-- Client + Job -->
-    <section class="card">
-      <h2>Client & Job Details</h2>
-      <div class="grid">
-        <div><label>Client name</label><input id="client" placeholder="Full name"/></div>
-        <div><label>Contact number (WhatsApp)</label><input id="phone" placeholder="+44… or 07…"/></div>
-        <div><label>Property address</label><input id="address" placeholder="Address, Postcode"/></div>
-        <div><label>Rep</label><input id="rep" placeholder="Rep name"/></div>
-      </div>
-      <div class="grid" style="margin-top:8px">
-        <div>
-          <label>Job type</label>
-          <select id="jobType">
-            <option>Loft Insulation</option>
-            <option>Multifoil Insulation</option>
-            <option>Spray Foam Removal</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div><label>Date</label><input id="date" type="date"/></div>
-      </div>
-    </section>
+    <h2>Notes / Instructions</h2>
+    <textarea id="notes" placeholder="Write any installation notes or client instructions here..."></textarea>
 
-    <!-- Products -->
-    <section class="card">
-      <h2>Products & Pricing</h2>
-      <div class="rows-head">
-        <div>Description</div><div>Qty</div><div>Unit £</div><div>Line £</div><div></div>
-      </div>
-      <div id="items"></div>
-      <div class="right no-print" style="margin-top:6px">
-        <button class="btn dark" id="addRow">+ Add line</button>
-      </div>
+    <h2>Signature</h2>
+    <p>Client can sign below with their finger or mouse.</p>
+    <canvas id="signature" class="signature-box"></canvas><br>
+    <button onclick="clearSignature()">Clear</button>
 
-      <!-- Totals + Deposit + Final to Pay + Balance -->
-      <div class="grid" style="margin-top:12px">
-        <div>
-          <label class="switch"><input type="checkbox" id="vatOn" checked/><span>Apply VAT (20%)</span></label>
-          <div class="no-print" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn ghost" id="dep20">Deposit 20%</button>
-            <button class="btn ghost" id="dep25">Deposit 25%</button>
-            <button class="btn ghost" id="depClear">Clear Deposit</button>
-          </div>
-        </div>
+  </div>
 
-        <div class="totals">
-          <div class="tot-line"><span>Subtotal</span><strong id="sub">£0</strong></div>
-          <div class="tot-line"><span>VAT (20%)</span><strong id="vat">£0</strong></div>
+  <script>
+    const today = new Date();
+    document.getElementById("jobDate").value = today.toLocaleDateString("en-GB");
 
-          <div class="highlight" style="grid-column:1 / span 2">
-            <span class="big">Grand Total</span><span class="big" id="total">£0</span>
-          </div>
+    function updateTotals() {
+      const qty = parseFloat(document.getElementById("qty1").value) || 0;
+      const unit = parseFloat(document.getElementById("unit1").value) || 0;
+      const subtotal = qty * unit;
+      const applyVAT = document.getElementById("vatToggle").checked;
+      const vat = applyVAT ? subtotal * 0.2 : 0;
+      const total = subtotal + vat;
+      const deposit = parseFloat(document.getElementById("deposit").value) || 0;
+      const balance = total - deposit;
 
-          <div class="tot-line" style="grid-column:1 / span 2">
-            <span class="big">Deposit (paid / due now)</span>
-            <input id="deposit" type="number" step="0.01" min="0" value="0" class="money-input" />
-          </div>
+      document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+      document.getElementById("vat").innerText = vat.toFixed(2);
+      document.getElementById("total").innerText = total.toFixed(2);
+      document.getElementById("balance").innerText = balance.toFixed(2);
+      document.getElementById("line1").value = subtotal.toFixed(2);
+    }
 
-          <div class="highlight" style="grid-column:1 / span 2; background:rgba(212,175,55,.06)">
-            <span class="big">Final to Pay Today</span>
-            <span class="big" id="finalToday">£0</span>
-          </div>
+    updateTotals();
 
-          <div class="tot-line" style="grid-column:1 / span 2">
-            <span class="big">Balance Due on Completion</span>
-            <span class="big" id="balance">£0</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    function shareViaWhatsApp() {
+      const name = document.getElementById("clientName").value;
+      const total = document.getElementById("total").innerText;
+      const link = `https://wa.me/?text=Warm Up UK Homes Contract for ${name}%0ATotal: £${total}%0AView or sign your contract at https://mxctech.github.io/Warmup-uk-app/contract.html`;
+      window.open(link, "_blank");
+    }
 
-    <!-- Notes / Instructions -->
-    <section class="card">
-      <h2>Notes / Instructions</h2>
-      <textarea id="notes" placeholder="Access notes, special instructions, exclusion items, client requests, etc."></textarea>
-    </section>
+    const canvas = document.getElementById("signature");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
 
-    <!-- Signature -->
-    <section class="card">
-      <h2>Signature</h2>
-      <p class="muted">Client can sign with their finger. Tap <strong>Clear</strong> to redo.</p>
-      <canvas id="sig" width="1000" height="380"></canvas>
-      <div class="right no-print" style="margin-top:8px">
-        <button class="btn dark" id="clearSig">Clear</button>
-      </div>
-    </section>
+    canvas.addEventListener("mousedown", () => drawing = true);
+    canvas.addEventListener("mouseup", () => drawing = false);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchstart", startTouch);
+    canvas.addEventListener("touchend", endTouch);
+    canvas.addEventListener("touchmove", drawTouch);
 
-    <!-- Terms -->
-    <section class="card">
-      <h2>Terms & Conditions</h2>
-      <div class="terms">
-        <p>1) Works to be completed as described above. 2) Access to loft and electrical isolation where required to be provided by the customer. 3) Cooling-off period per UK consumer law applies. 4) Payment terms: deposit as shown above, balance on completion unless otherwise agreed in writing. 5) Warranty details supplied on completion. 6) By signing, the customer agrees that the above description and totals are correct.</p>
-      </div>
-    </section>
+    function draw(e) {
+      if (!drawing) return;
+      ctx.fillStyle = "#d4af37";
+      ctx.beginPath();
+      ctx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    <!-- Actions -->
-    <section class="card no-print" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div class="muted">Save/restore is local to this device. “Mark as Won” also feeds the dashboard.</div>
-      <div class="right">
-        <button class="btn ghost" id="btnSave">Save draft</button>
-        <button class="btn ghost" id="btnLoad">Load draft</button>
-        <button class="btn" id="btnWon">Mark as Won</button>
-      </div>
-    </section>
+    function startTouch(e) {
+      drawing = true;
+    }
 
-    <footer class="no-print">© WARM UP UK HOMES</footer>
-  </main>
-</div>
+    function endTouch(e) {
+      drawing = false;
+    }
 
-<script>
-/* ---------- Helpers ---------- */
-const itemsEl=document.getElementById('items');
-const fmt=n=>'£'+(Math.round((+n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:0});
-const get=id=>document.getElementById(id);
-const val=id=>get(id).value.trim();
-const set=(id,v)=>{ if(v!==undefined) get(id).value=v; };
+    function drawTouch(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      ctx.fillStyle = "#d4af37";
+      ctx.beginPath();
+      ctx.arc(touch.clientX - rect.left, touch.clientY - rect.top, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-/* ---------- Rows ---------- */
-function rowTemplate(desc='',qty=1,unit=0){
-  const line=document.createElement('div'); line.className='row';
-  line.innerHTML=`
-    <input placeholder="e.g., Loft insulation 270mm (m²)" value="${desc}">
-    <input class="num qty"  type="number" step="1"   min="0" value="${qty}">
-    <input class="num unit" type="number" step="0.01" min="0" value="${unit}">
-    <input class="num sum"  value="0" readonly>
-    <button class="btn dark remove" title="Remove">×</button>`;
-  itemsEl.appendChild(line);
-  bindRow(line); calc();
-}
-function bindRow(line){
-  const qty=line.querySelector('.qty'), unit=line.querySelector('.unit'), remove=line.querySelector('.remove');
-  [qty,unit].forEach(el=>el.addEventListener('input',calc));
-  remove.addEventListener('click',()=>{ line.remove(); calc(); });
-}
-get('addRow').addEventListener('click',()=>rowTemplate());
-
-/* ---------- Totals / VAT / Deposit ---------- */
-const subEl=get('sub'), vatEl=get('vat'), totalEl=get('total');
-const vatOn=get('vatOn'), depInput=get('deposit'), balanceEl=get('balance'), finalTodayEl=get('finalToday');
-
-function calc(){
-  let subtotal=0;
-  itemsEl.querySelectorAll('.row').forEach(r=>{
-    const q=+r.querySelector('.qty').value||0;
-    const u=+r.querySelector('.unit').value||0;
-    const s=q*u; r.querySelector('.sum').value=s.toFixed(2);
-    subtotal+=s;
-  });
-  const vat = vatOn.checked ? subtotal*0.20 : 0;
-  const total = subtotal + vat;
-
-  const deposit = Math.max(0, Math.min(+depInput.value||0, total));
-  const balance = Math.max(0, total - deposit);
-
-  subEl.textContent = fmt(subtotal);
-  vatEl.textContent = fmt(vat);
-  totalEl.textContent = fmt(total);
-  finalTodayEl.textContent = fmt(deposit); // the amount to collect now
-  balanceEl.textContent = fmt(balance);
-}
-vatOn.addEventListener('change',calc);
-depInput.addEventListener('input',calc);
-get('dep20').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.2).toFixed(2); calc(); });
-get('dep25').addEventListener('click',()=>{ const t=+totalEl.textContent.replace(/[£,]/g,'')||0; depInput.value=(t*0.25).toFixed(2); calc(); });
-get('depClear').addEventListener('click',()=>{ depInput.value=0; calc(); });
-
-/* seed one line */
-rowTemplate('Loft insulation — supply & fit',1,0);
-
-/* ---------- Signature pad ---------- */
-const canvas=get('sig'), ctx=canvas.getContext('2d');
-ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.strokeStyle='#f5e6b7';
-let drawing=false,last=null;
-function pos(e){ const r=canvas.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:x*(canvas.width/r.width), y:y*(canvas.height/r.height)}; }
-function start(e){drawing=true; last=pos(e); e.preventDefault();}
-function move(e){ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); }
-function end(){drawing=false;}
-canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
-canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
-get('clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
-
-/* ---------- Save / Load draft ---------- */
-const LSKEY='wuuk_contract_draft';
-function gather(){
-  const rows=[...itemsEl.querySelectorAll('.row')].map(r=>({desc:r.children[0].value, qty:+r.children[1].value||0, unit:+r.children[2].value||0}));
-  return {
-    client:val('client'), phone:val('phone'), address:val('address'),
-    rep:val('rep'), jobType:val('jobType'), date:val('date'),
-    vatOn:vatOn.checked, deposit:+depInput.value||0,
-    notes: get('notes').value,
-    rows, signature:canvas.toDataURL('image/png')
-  };
-}
-function apply(d){
-  if(!d) return;
-  set('client',d.client); set('phone',d.phone); set('address',d.address);
-  set('rep',d.rep); set('jobType',d.jobType); set('date',d.date);
-  vatOn.checked=!!d.vatOn; depInput.value=d.deposit||0; get('notes').value=d.notes||'';
-  itemsEl.innerHTML=''; (d.rows||[]).forEach(r=>rowTemplate(r.desc,r.qty,r.unit));
-  if(d.signature){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=d.signature; }
-  calc();
-}
-get('btnSave').addEventListener('click',()=>{ localStorage.setItem(LSKEY, JSON.stringify(gather())); alert('Draft saved.'); });
-get('btnLoad').addEventListener('click',()=>apply(JSON.parse(localStorage.getItem(LSKEY)||'null')));
-
-/* ---------- Print / PDF ---------- */
-get('btnPrint').addEventListener('click',()=>window.print());
-
-/* ---------- WhatsApp share ---------- */
-get('btnShare').addEventListener('click',()=>{
-  const total=get('total').textContent;
-  const deposit=get('finalToday').textContent;
-  const balance=get('balance').textContent;
-  const notes=get('notes').value ? `\nNotes: ${get('notes').value}` : '';
-  const summary=`WARM UP UK HOMES – Contract
-Client: ${val('client')}
-Address: ${val('address')}
-Job: ${val('jobType')}
-Grand Total: ${total}
-Deposit (today): ${deposit}
-Balance Due: ${balance}
-Date: ${val('date') || new Date().toISOString().slice(0,10)}
-Rep: ${val('rep')}${notes}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(summary),'_blank');
-});
-
-/* ---------- Mark as Won → feed dashboard ---------- */
-get('btnWon').addEventListener('click',()=>{
-  const total=+get('total').textContent.replace(/[£,]/g,'')||0;
-  try{
-    window.opener?.logDeal?.({
-      id: crypto.randomUUID(),
-      rep: val('rep') || 'Rep',
-      value: total,
-      status: 'won',
-      date: (val('date') || new Date().toISOString().slice(0,10)),
-      type: val('jobType') || 'Contract'
-    });
-  }catch(e){}
-  alert('Marked as WON (sent to dashboard if open).');
-});
-
-/* ---------- Init ---------- */
-get('date').value=new Date().toISOString().slice(0,10);
-calc();
-</script>
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
 </body>
 </html>
