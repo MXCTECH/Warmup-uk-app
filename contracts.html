@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warm Up UK Homes — Contract Builder</title>
+<style>
+body {
+  background-color: #000;
+  color: #FFD700;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #FFD700;
+}
+label {
+  display: block;
+  margin-top: 10px;
+}
+input, textarea {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+  background: #111;
+  border: 1px solid #FFD700;
+  color: white;
+  border-radius: 5px;
+}
+button {
+  background-color: #FFD700;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+button:hover { background-color: #e6c200; }
+
+.toggle {
+  appearance: none;
+  width: 50px;
+  height: 25px;
+  background: #555;
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+.toggle:checked {
+  background: #00ff40;
+}
+.toggle:before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s;
+}
+.toggle:checked:before {
+  left: 27px;
+}
+.discount-box {
+  border: 1px solid #FFD700;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+.discount-active input {
+  border: 2px solid #00ff40;
+  background-color: rgba(0,255,64,0.1);
+  box-shadow: 0 0 10px #00ff40;
+}
+canvas {
+  border: 2px dashed #FFD700;
+  border-radius: 5px;
+  background-color: white;
+  margin-top: 10px;
+}
+.store-box {
+  margin-top: 30px;
+  padding: 10px;
+  border: 1px solid #FFD700;
+  border-radius: 8px;
+}
+</style>
+</head>
+<body>
+
+<h1>Warm Up UK Homes — Contract Builder</h1>
+
+<label>Contract Number:</label>
+<input id="contractNo" readonly>
+
+<label>Date:</label>
+<input type="text" id="contractDate" readonly>
+
+<label>Client Name:</label>
+<input type="text" id="clientName">
+
+<label>Client Address:</label>
+<textarea id="clientAddress"></textarea>
+
+<label>Deposit (£):</label>
+<input type="number" id="deposit" value="0">
+
+<div class="discount-box">
+  <label>Enable Discount</label>
+  <input type="checkbox" id="discountToggle" class="toggle">
+  
+  <div id="discountFields" style="display:none;">
+    <label>Discount Before (£):</label>
+    <input type="number" id="discountBefore" value="0">
+    <label>Discount After (£):</label>
+    <input type="number" id="discountAfter" value="0">
+  </div>
+</div>
+
+<label>Total Price (£):</label>
+<input type="number" id="totalPrice" value="0">
+
+<label>VAT (20%)</label>
+<input type="checkbox" id="vatToggle" class="toggle">
+
+<label>Final Price (£):</label>
+<input type="text" id="finalPrice" readonly>
+
+<label>Notes / Special Instructions:</label>
+<textarea id="notes"></textarea>
+
+<h3>Signature</h3>
+<canvas id="signature" width="350" height="150"></canvas><br>
+<button onclick="clearSig()">Clear Signature</button>
+
+<div style="margin-top:20px;">
+  <button onclick="calculate()">Calculate Total</button>
+  <button onclick="saveContract()">Save Contract</button>
+  <button onclick="shareWhatsApp()">Send via WhatsApp</button>
+</div>
+
+<div class="store-box">
+  <h3>Store Mode</h3>
+  <button onclick="saveToDevice()">Save to Device</button>
+  <button onclick="loadFromDevice()">Load Saved</button>
+  <button onclick="clearStorage()">Clear All</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const today = new Date();
+  document.getElementById("contractDate").value = today.toLocaleDateString("en-GB");
+  document.getElementById("contractNo").value = "WUUK-" + Math.floor(Math.random() * 90000 + 10000);
+
+  const discountToggle = document.getElementById("discountToggle");
+  const discountFields = document.getElementById("discountFields");
+
+  discountToggle.addEventListener("change", function() {
+    discountFields.style.display = this.checked ? "block" : "none";
+    document.querySelectorAll("#discountFields input").forEach(inp => {
+      inp.classList.toggle("discount-active", this.checked);
+    });
+  });
+});
+
+function calculate() {
+  const total = parseFloat(document.getElementById("totalPrice").value) || 0;
+  const discountBefore = parseFloat(document.getElementById("discountBefore").value) || 0;
+  const discountAfter = parseFloat(document.getElementById("discountAfter").value) || 0;
+  const deposit = parseFloat(document.getElementById("deposit").value) || 0;
+  const vat = document.getElementById("vatToggle").checked ? 0.2 : 0;
+
+  let price = total - discountBefore - discountAfter;
+  price += price * vat;
+  price -= deposit;
+
+  document.getElementById("finalPrice").value = "£" + price.toFixed(2);
+}
+
+// Signature pad
+const canvas = document.getElementById("signature");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseup", stopDraw);
+canvas.addEventListener("touchstart", startDraw);
+canvas.addEventListener("touchmove", draw);
+canvas.addEventListener("touchend", stopDraw);
+
+function startDraw(e) {
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(getX(e), getY(e));
+}
+function draw(e) {
+  if(!drawing) return;
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "black";
+  ctx.lineTo(getX(e), getY(e));
+  ctx.stroke();
+}
+function stopDraw() { drawing = false; }
+function getX(e){return e.clientX ? e.clientX - canvas.offsetLeft : e.touches[0].clientX - canvas.offsetLeft;}
+function getY(e){return e.clientY ? e.clientY - canvas.offsetTop : e.touches[0].clientY - canvas.offsetTop;}
+function clearSig() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+// WhatsApp Share
+function shareWhatsApp() {
+  const contract = document.getElementById("contractNo").value;
+  const client = document.getElementById("clientName").value;
+  const address = document.getElementById("clientAddress").value;
+  const price = document.getElementById("finalPrice").value;
+
+  const message = `Warm Up UK Homes Contract:%0AContract: ${contract}%0AClient: ${client}%0AAddress: ${address}%0AFinal Price: ${price}`;
+  window.open(`https://wa.me/?text=${message}`, "_blank");
+}
+
+// Store Mode
+function saveToDevice() {
+  const data = {
+    contractNo: document.getElementById("contractNo").value,
+    clientName: document.getElementById("clientName").value,
+    address: document.getElementById("clientAddress").value,
+    totalPrice: document.getElementById("totalPrice").value,
+    finalPrice: document.getElementById("finalPrice").value,
+  };
+  localStorage.setItem("contractData", JSON.stringify(data));
+  alert("Saved to device.");
+}
+
+function loadFromDevice() {
+  const data = JSON.parse(localStorage.getItem("contractData") || "{}");
+  for (let key in data) {
+    if (document.getElementById(key)) document.getElementById(key).value = data[key];
+  }
+  alert("Loaded saved contract.");
+}
+
+function clearStorage() {
+  localStorage.removeItem("contractData");
+  alert("Storage cleared.");
+}
+</script>
+
+</body>
+</html>
