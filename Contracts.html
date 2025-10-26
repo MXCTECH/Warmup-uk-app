@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WARM UP UK HOMES — Contract</title>
+<meta name="color-scheme" content="dark"/>
+<style>
+  :root{
+    --bg:#0a0a0a; --panel:#121212; --ink:#f7f7f7; --muted:#b6b6b6;
+    --gold:#d4af37; --gold-soft:#ffd766;
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.55);
+    --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg)}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+  /* Header */
+  header{
+    position:sticky; top:0; z-index:2; text-align:center;
+    background:linear-gradient(180deg,rgba(212,175,55,.18),rgba(212,175,55,.03)),#0e0e0e;
+    border:1px solid rgba(212,175,55,.55); border-radius:var(--radius);
+    padding:14px 18px; box-shadow:var(--shadow); margin-bottom:14px
+  }
+  .brand img{height:72px;width:auto;margin-bottom:10px;display:inline-block}
+  .title{font-weight:900;letter-spacing:.22em;text-transform:uppercase;font-size:clamp(18px,3.2vw,28px)}
+  .subtitle{color:var(--muted);letter-spacing:.06em}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+
+  /* Cards & form */
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--panel);
+    border:1px solid rgba(255,255,255,.08); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow); margin-top:14px
+  }
+  h2{margin:0 0 10px 0;font-size:16px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+  input,select,textarea{
+    width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+    background:#0c0c0c;color:var(--ink);outline:none
+  }
+  textarea{min-height:120px;resize:vertical}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+  /* Items */
+  .rows-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;color:var(--muted);font-size:12px;margin-bottom:6px}
+  .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px}
+  .row .num{text-align:right;font-family:var(--mono)}
+
+  /* Buttons */
+  .btn{
+    padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);
+    background:linear-gradient(180deg,var(--gold),var(--gold-soft));color:#101010;
+    font-weight:800;cursor:pointer;text-decoration:none;display:inline-block
+  }
+  .btn.ghost{background:transparent;color:var(--ink);border-color:rgba(212,175,55,.5)}
+  .btn.dark{background:#111;color:var(--ink)}
+  .right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+
+  /* Totals (reverted deposit layout) */
+  .totals{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tot-line{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px dashed rgba(255,255,255,.14);border-radius:10px}
+  .big{font-size:22px;font-weight:900}
+  .money-input{
+    width:200px;text-align:right;font-family:var(--mono);
+    background:#0a0a0a;color:var(--ink);border-radius:10px;
+    border:1px solid rgba(212,175,55,.7);padding:10px 12px;font-weight:700;
+  }
+
+  /* Signature (fixed + solid border, no dashes, no shifting) */
+  .sig-wrap{width:100%;max-width:100%;margin-top:8px}
+  canvas#sig{
+    display:block; width:100%; height:240px; max-height:240px;
+    background:#0c0c0c; border:1px solid rgba(255,255,255,.18); border-radius:12px;
+    touch-action:none;
+  }
+
+  .terms{font-size:12.5px;line-height:1.55;color:#e5e5e5}
+  footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center}
+
+  @media print{
+    body{background:#fff;color:#000}
+    header,.no-print{box-shadow:none}
+    .btn,.right,.no-print{display:none!important}
+    .card{border-color:#000}
+    canvas#sig{border-color:#000}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <!-- Absolute project path avoids 404s on GitHub Pages project sites -->
+      <img src="/Warmup-uk-app/assets/wuuk-logo.png?v=3" alt="Warm Up UK Homes logo">
+      <div class="title">WARM UP UK HOMES</div>
+      <div class="subtitle">Contract Builder · Black & Gold Theme</div>
+    </div>
+    <div class="actions no-print">
+      <button class="btn" id="btnPrint">Print / Save PDF</button>
+      <button class="btn ghost" id="btnShare">Share via WhatsApp</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Client + Job -->
+    <section class="card">
+      <h2>Client & Job Details</h2>
+      <div class="grid">
+        <div><label>Client name</label><input id="client" placeholder="Full name"/></div>
+        <div><label>Contact number (WhatsApp)</label><input id="phone" placeholder="+44… or 07…"/></div>
+        <div><label>Property address</label><input id="address" placeholder="Address, Postcode"/></div>
+        <div><label>Rep</label><input id="rep" placeholder="Rep name"/></div>
+      </div>
+      <div class="grid" style="margin-top:8px">
+        <div>
+          <label>Job type</label>
+          <select id="jobType">
+            <option>Loft Insulation</option>
+            <option>Multifoil Insulation</option>
+            <option>Spray Foam Removal</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div><label>Date</label><input id="date" type="date"/></div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="card">
+      <h2>Products & Pricing</h2>
+      <div class="rows-head">
+        <div>Description</div><div>Qty</div><div>Unit £</div><div>Line £</div><div></div>
+      </div>
+      <div id="items"></div>
+      <div class="right no-print" style="margin-top:6px">
+        <button class="btn dark" id="addRow">+ Add line</button>
+      </div>
+
+      <!-- Totals + (reverted) Deposit + Balance -->
+      <div class="grid" style="margin-top:12px">
+        <div>
+          <label class="switch"><input type="checkbox" id="vatOn" checked/><span>Apply VAT (20%)</span></label>
+        </div>
+
+        <div class="totals">
+          <div class="tot-line"><span>Subtotal</span><strong id="sub">£0</strong></div>
+          <div class="tot-line"><span>VAT (20%)</span><strong id="vat">£0</strong></div>
+          <div class="tot-line" style="grid-column:1 / span 2">
+            <span class="big">Total</span><span class="big" id="total">£0</span>
+          </div>
+          <!-- REVERTED simple deposit block -->
+          <div style="grid-column:1 / span 2">
+            <label style="font-weight:700;color:var(--ink)">Deposit £</label>
+            <input id="deposit" type="number" step="0.01" min="0" value="0" class="money-input" />
+          </div>
+          <div style="grid-column:1 / span 2; margin-top:6px; font-weight:900; color:var(--gold); font-size:20px;">
+            Balance Due: <span id="balance">£0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes / Instructions -->
+    <section class="card">
+      <h2>Notes / Instructions</h2>
+      <textarea id="notes" placeholder="Write any installation notes or client instructions here..."></textarea>
+    </section>
+
+    <!-- Signature -->
+    <section class="card">
+      <h2>Signature</h2>
+      <p class="muted">Client can sign with their finger. Tap <strong>Clear</strong> to redo.</p>
+      <div class="sig-wrap">
+        <canvas id="sig" width="1200" height="480"></canvas>
+      </div>
+      <div class="right no-print" style="margin-top:8px">
+        <button class="btn dark" id="clearSig">Clear</button>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="card no-print" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="muted">Save/restore is local to this device.</div>
+      <div class="right">
+        <button class="btn ghost" id="btnSave">Save draft</button>
+        <button class="btn ghost" id="btnLoad">Load draft</button>
+      </div>
+    </section>
+
+    <footer class="no-print">© WARM UP UK HOMES</footer>
+  </main>
+</div>
+
+<script>
+/* ---------- Helpers ---------- */
+const itemsEl=document.getElementById('items');
+const fmt=n=>'£'+(Math.round((+n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:2});
+const get=id=>document.getElementById(id);
+const val=id=>get(id).value.trim();
+const set=(id,v)=>{ if(v!==undefined) get(id).value=v; };
+
+/* ---------- Rows ---------- */
+function rowTemplate(desc='',qty=1,unit=0){
+  const line=document.createElement('div'); line.className='row';
+  line.innerHTML=`
+    <input placeholder="e.g., Loft insulation 270mm (m²)" value="${desc}">
+    <input class="num qty"  type="number" step="1"   min="0" value="${qty}">
+    <input class="num unit" type="number" step="0.01" min="0" value="${unit}">
+    <input class="num sum"  value="0" readonly>
+    <button class="btn dark remove" title="Remove">×</button>`;
+  itemsEl.appendChild(line);
+  bindRow(line); calc();
+}
+function bindRow(line){
+  const qty=line.querySelector('.qty'), unit=line.querySelector('.unit'), remove=line.querySelector('.remove');
+  [qty,unit].forEach(el=>el.addEventListener('input',calc));
+  remove.addEventListener('click',()=>{ line.remove(); calc(); });
+}
+get('addRow').addEventListener('click',()=>rowTemplate());
+
+/* ---------- Totals / VAT / Deposit (reverted logic) ---------- */
+const subEl=get('sub'), vatEl=get('vat'), totalEl=get('total');
+const vatOn=get('vatOn'), depInput=get('deposit'), balanceEl=get('balance');
+
+function calc(){
+  let subtotal=0;
+  itemsEl.querySelectorAll('.row').forEach(r=>{
+    const q=+r.querySelector('.qty').value||0;
+    const u=+r.querySelector('.unit').value||0;
+    const s=q*u; r.querySelector('.sum').value=s.toFixed(2);
+    subtotal+=s;
+  });
+  const vat = vatOn.checked ? subtotal*0.20 : 0;
+  const total = subtotal + vat;
+  const deposit = Math.max(0, Math.min(+depInput.value||0, total));
+  const balance = Math.max(0, total - deposit);
+
+  subEl.textContent = (subtotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  vatEl.textContent = (vat).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  totalEl.textContent = (total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  balanceEl.textContent = fmt(balance).slice(1); // show as £X in outer element
+}
+vatOn.addEventListener('change',calc);
+depInput.addEventListener('input',calc);
+
+/* seed one line */
+rowTemplate('Loft insulation — supply & fit',1,1000);
+
+/* ---------- Signature pad (stable sizing) ---------- */
+const canvas=get('sig'), ctx=canvas.getContext('2d');
+ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.strokeStyle='#f5e6b7';
+let drawing=false,last=null;
+function pos(e){ const r=canvas.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:x*(canvas.width/r.width), y:y*(canvas.height/r.height)}; }
+function start(e){drawing=true; last=pos(e); e.preventDefault();}
+function move(e){ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); }
+function end(){drawing=false;}
+canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+get('clearSig').addEventListener('click',()=>ctx.clearRect(0,0,canvas.width,canvas.height));
+
+/* ---------- Save / Load draft ---------- */
+const LSKEY='wuuk_contract_draft';
+function gather(){
+  const rows=[...itemsEl.querySelectorAll('.row')].map(r=>({desc:r.children[0].value, qty:+r.children[1].value||0, unit:+r.children[2].value||0}));
+  return {
+    client:val('client'), phone:val('phone'), address:val('address'),
+    rep:val('rep'), jobType:val('jobType'), date:val('date'),
+    vatOn:vatOn.checked, deposit:+depInput.value||0,
+    notes: get('notes').value,
+    rows, signature:canvas.toDataURL('image/png')
+  };
+}
+function apply(d){
+  if(!d) return;
+  set('client',d.client); set('phone',d.phone); set('address',d.address);
+  set('rep',d.rep); set('jobType',d.jobType); set('date',d.date);
+  vatOn.checked=!!d.vatOn; depInput.value=d.deposit||0; get('notes').value=d.notes||'';
+  itemsEl.innerHTML=''; (d.rows||[]).forEach(r=>rowTemplate(r.desc,r.qty,r.unit));
+  if(d.signature){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0); img.src=d.signature; }
+  calc();
+}
+get('btnSave').addEventListener('click',()=>{ localStorage.setItem(LSKEY, JSON.stringify(gather())); alert('Draft saved.'); });
+get('btnLoad').addEventListener('click',()=>apply(JSON.parse(localStorage.getItem(LSKEY)||'null')));
+
+/* ---------- Print / PDF ---------- */
+get('btnPrint').addEventListener('click',()=>window.print());
+
+/* ---------- WhatsApp share ---------- */
+get('btnShare').addEventListener('click',()=>{
+  const t=get('total').textContent;
+  const d=get('deposit').value || 0;
+  const b=get('balance').textContent;
+  const notes=get('notes').value ? `\nNotes: ${get('notes').value}` : '';
+  const summary=`WARM UP UK HOMES – Contract
+Client: ${val('client')}
+Address: ${val('address')}
+Job: ${val('jobType')}
+Total: £${t}
+Deposit: £${Number(d).toLocaleString()}
+Balance due: £${b}
+Date: ${val('date') || new Date().toISOString().slice(0,10)}
+Rep: ${val('rep')}${notes}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(summary),'_blank');
+});
+
+/* ---------- Init ---------- */
+get('date').value=new Date().toISOString().slice(0,10);
+calc();
+</script>
+</body>
+</html>
