@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK Homes — Contract Builder</title>
+<link rel="icon" href="assets/warmupuk-logo.png.PNG">
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --panel:#121212;
+    --ink:#f3f3f3;
+    --muted:#bdbdbd;
+    --gold:#d4af37;
+    --line:#2a2a2a;
+    --ok:#00ff7b; /* neon green */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
+  .wrap{max-width:820px;margin:18px auto;padding:0 14px}
+  .card{background:linear-gradient(180deg,#1a1a1a, #111); border:1px solid #2a2a2a;border-radius:16px;padding:16px 18px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .hdr{display:flex;gap:14px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;object-fit:contain;background:#000;border:1px solid #333}
+  h1{margin:0;font-size:28px;letter-spacing:.5px}
+  .sub{color:var(--muted);margin-top:2px}
+  .btnrow{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  button,.ghost{appearance:none;border:0;padding:12px 16px;border-radius:12px;font-weight:700}
+  .primary{background:var(--gold);color:#201a00}
+  .ghost{background:#1a1a1a;color:#f1f1f1;border:1px solid #343434}
+  .section{margin-top:18px;border:1px dashed #3a3a3a;border-radius:14px;padding:14px 12px;background:var(--panel)}
+  .title{font-size:18px;color:var(--gold);font-weight:800;margin:4px 4px 10px}
+  label{display:block;font-size:14px;color:var(--muted);margin:10px 6px 6px}
+  input,textarea,select{
+    width:100%; background:#0f0f0f; color:#f3f3f3; border:1px solid #2b2b2b; 
+    border-radius:12px; padding:14px; font-size:16px; outline:none;
+  }
+  input:focus,textarea:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.15)}
+  .row{display:grid;gap:12px}
+  @media (min-width:640px){ .row.cols-2{grid-template-columns:1fr 1fr} .row.cols-3{grid-template-columns:1fr 1fr 1fr} }
+  .pill{display:flex;align-items:center;justify-content:space-between;background:#0f0f0f;border:1px solid #2b2b2b;border-radius:12px;padding:10px 12px}
+  .switch{--w:46px; --h:28px; position:relative;width:var(--w);height:var(--h);border-radius:99px;background:#333;transition:.2s;flex:0 0 auto}
+  .switch:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.on{background:var(--gold)}
+  .switch.on:after{left:calc(100% - 25px)}
+  .muted{color:var(--muted)}
+  .sum{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--gold);border-radius:14px;padding:14px 16px;font-weight:800;margin-top:12px}
+  .sumbig{font-size:22px}
+  /* Flashing discount boxes when enabled */
+  .flash{
+    border-color:var(--ok)!important;
+    box-shadow:0 0 0 2px rgba(0,255,123,.25), 0 0 18px rgba(0,255,123,.65);
+    animation:blink .9s infinite alternate;
+  }
+  @keyframes blink{
+    from{background:#0f0f0f}
+    to{background:rgba(0,255,123,.08)}
+  }
+  .footnote{color:#888;font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hdr">
+        <img class="logo" src="assets/warmupuk-logo.png.PNG" alt="Warm Up UK Homes logo" onerror="this.style.display='none'">
+        <div>
+          <h1>WARM UP UK HOMES</h1>
+          <div class="sub">Contract Builder • Black &amp; Gold Theme</div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" id="btnPrint">Print / Save PDF</button>
+        <button class="ghost" id="btnShareWa">Share via WhatsApp</button>
+        <button class="ghost" id="btnSavePhone">Save quote to phone</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="row cols-2">
+        <div>
+          <label>Contract Number</label>
+          <input id="contractNo" readonly placeholder="WUUK-YYYYMMDD-XXXX">
+        </div>
+        <div>
+          <label>Date</label>
+          <input id="date" type="date">
+        </div>
+      </div>
+
+      <div class="row cols-2" style="margin-top:8px">
+        <div>
+          <label>Client Name</label>
+          <input id="client" placeholder="Full name">
+        </div>
+        <div>
+          <label>Contact number (WhatsApp)</label>
+          <input id="phone" inputmode="tel" placeholder="+44… or 07…">
+        </div>
+      </div>
+
+      <label style="margin-top:10px">Client Address</label>
+      <input id="address" placeholder="Address, Postcode">
+
+      <div class="row cols-3" style="margin-top:12px">
+        <div>
+          <label>Deposit (£)</label>
+          <input id="deposit" type="number" min="0" step="0.01" value="0">
+        </div>
+        <div>
+          <label>Total Price (£)</label>
+          <input id="totalPrice" type="number" min="0" step="0.01" value="0">
+        </div>
+        <div>
+          <label class="muted">VAT (20%)</label>
+          <div class="pill">
+            <span>Apply VAT</span>
+            <div id="vatSwitch" class="switch" role="switch" aria-checked="false" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row cols-3" style="margin-top:12px">
+        <div>
+          <label class="muted">Discount</label>
+          <div class="pill">
+            <span>Enable Discount</span>
+            <div id="discSwitch" class="switch" role="switch" aria-checked="false" tabindex="0"></div>
+          </div>
+        </div>
+        <div>
+          <label>Discount Before (£)</label>
+          <input id="discBefore" type="number" min="0" step="0.01" value="0" disabled>
+        </div>
+        <div>
+          <label>Discount After (£)</label>
+          <input id="discAfter" type="number" min="0" step="0.01" value="0" disabled>
+        </div>
+      </div>
+
+      <div class="sum">
+        <div>VAT (20%): <span id="vatLabel" class="muted">Off</span></div>
+        <div class="sumbig">Final Today: £<span id="finalOut">0.00</span></div>
+      </div>
+
+      <label style="margin-top:12px">Notes / Special Instructions</label>
+      <textarea id="notes" rows="4" placeholder="Enter job notes or installation details"></textarea>
+
+      <div class="footnote">Store mode: values save automatically to this device (localStorage).</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => document.querySelectorAll(sel);
+
+  const fields = [
+    'client','phone','address','deposit','totalPrice','discBefore','discAfter','notes'
+  ];
+
+  // Generate contract number WUUK-YYYYMMDD-XXXX
+  function genContract(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const rand = Math.floor(Math.random()*9000+1000);
+    return `WUUK-${y}${m}${dd}-${rand}`;
+  }
+
+  // Set defaults
+  $('#contractNo').value = genContract();
+  $('#date').valueAsDate = new Date();
+
+  // Utility money
+  const money = n => (Math.round((+n + Number.EPSILON)*100)/100).toFixed(2);
+
+  // Switch helpers
+  function setSwitch(el, on){
+    el.classList.toggle('on', !!on);
+    el.setAttribute('aria-checked', !!on);
+  }
+  function getSwitch(el){ return el.classList.contains('on'); }
+  function toggleSwitch(el){ setSwitch(el, !getSwitch(el)); }
+
+  // Attach switch events (tap + keyboard)
+  ['vatSwitch','discSwitch'].forEach(id=>{
+    const el = $('#'+id);
+    el.addEventListener('click', ()=>{ toggleSwitch(el); changed(); });
+    el.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleSwitch(el); changed(); }});
+  });
+
+  // Load saved (store mode)
+  try{
+    const saved = JSON.parse(localStorage.getItem('wukh_contract')||'{}');
+    fields.forEach(k=>{ if(saved[k]!=null) $('#'+k).value = saved[k]; });
+    if(saved.vat) setSwitch($('#vatSwitch'), true);
+    if(saved.disc) setSwitch($('#discSwitch'), true);
+    // enable flashing if discount was on
+    discUI(getSwitch($('#discSwitch')));
+    changed();
+  }catch(e){}
+
+  // Calculation + UI
+  function discUI(enabled){
+    $('#discBefore').disabled = !enabled;
+    $('#discAfter').disabled  = !enabled;
+    $('#discBefore').classList.toggle('flash', enabled);
+    $('#discAfter').classList.toggle('flash', enabled);
+  }
+
+  function changed(){
+    // UI adjustments
+    discUI(getSwitch($('#discSwitch')));
+    $('#vatLabel').textContent = getSwitch($('#vatSwitch')) ? 'On' : 'Off';
+
+    // numbers
+    const total = +$('#totalPrice').value || 0;
+    const dep   = +$('#deposit').value || 0;
+    const dbef  = getSwitch($('#discSwitch')) ? (+$('#discBefore').value||0) : 0;
+    const daft  = getSwitch($('#discSwitch')) ? (+$('#discAfter').value||0)  : 0;
+
+    let net = total - dbef + daft;
+    if(getSwitch($('#vatSwitch'))) net *= 1.20; // apply VAT 20%
+    let final = net - dep;
+    if(final < 0) final = 0;
+
+    $('#finalOut').textContent = money(final);
+
+    // store mode (save silently)
+    const pack = {vat:getSwitch($('#vatSwitch')), disc:getSwitch($('#discSwitch'))};
+    fields.forEach(k => pack[k] = $('#'+k).value);
+    localStorage.setItem('wukh_contract', JSON.stringify(pack));
+  }
+
+  // Recalc on any input
+  document.addEventListener('input', (e)=>{
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) changed();
+  });
+  // also on switch click handled inside changed()
+
+  // Buttons
+  $('#btnPrint').addEventListener('click', ()=>{ window.print(); });
+
+  $('#btnShareWa').addEventListener('click', ()=>{
+    const msg = 
+`WARM UP UK HOMES
+Contract: ${$('#contractNo').value}
+Client: ${$('#client').value || '-'}
+Address: ${$('#address').value || '-'}
+Total Today: £${$('#finalOut').textContent}`;
+    const url = 'https://wa.me/?text='+encodeURIComponent(msg);
+    // iOS Safari prefers opening in same tab
+    window.location.href = url;
+  });
+
+  // Save quote to phone (download .txt AND keep in localStorage)
+  $('#btnSavePhone').addEventListener('click', ()=>{
+    const lines = [
+      'Warm Up UK Homes — Quote',
+      '--------------------------------',
+      'Contract: ' + $('#contractNo').value,
+      'Date: ' + $('#date').value,
+      'Client: ' + $('#client').value,
+      'Phone: ' + $('#phone').value,
+      'Address: ' + $('#address').value,
+      'Deposit: £' + money($('#deposit').value||0),
+      'Total Price: £' + money($('#totalPrice').value||0),
+      'Discount Before: £' + money($('#discBefore').value||0),
+      'Discount After: £' + money($('#discAfter').value||0),
+      'VAT: ' + (getSwitch($('#vatSwitch')) ? 'On (20%)' : 'Off'),
+      'Final Today: £' + $('#finalOut').textContent,
+      '',
+      'Notes:',
+      $('#notes').value
+    ].join('\n');
+
+    const blob = new Blob([lines], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = $('#contractNo').value.replace(/\s+/g,'_') + '_quote.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+
+    // also persist in localStorage (already done in changed())
+    alert('Saved! A text copy was downloaded and the quote is stored on this device.');
+  });
+
+  // Initial calc
+  changed();
+})();
+</script>
+</body>
+</html>
