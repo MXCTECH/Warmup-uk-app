@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WARM UP UK HOMES — Contract</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #121212;
+    --gold: #d4af37;
+    --radius: 16px;
+  }
+  body {
+    font-family: Inter, Arial, sans-serif;
+    background: var(--bg);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: linear-gradient(180deg, #1a1a1a, #121212);
+    border-bottom: 2px solid var(--gold);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin: 20px;
+  }
+  header img {
+    height: 80px;
+    width: auto;
+    display: block;
+    margin: 0 auto 10px;
+  }
+  header h1 {
+    text-align: center;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin: 0;
+  }
+  .company-info {
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 4px;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+  }
+  .section {
+    background: var(--panel);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin: 20px;
+  }
+  .gold {
+    color: var(--gold);
+  }
+  .btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="assets/wuuk-logo.png" alt="Warm Up UK Logo" />
+  <h1>WARM UP UK HOMES</h1>
+  <div class="company-info">
+    Fitzwilliam House, Middle Bank, Doncaster, England, DN4 5NG<br>
+    <strong>Tel:</strong> 07470 474 774 · <strong>Email:</strong> warmupuk@icloud.com
+  </div>
+
+  <div style="display:flex;gap:20px;justify-content:center;margin-top:15px;">
+    <div>
+      <label>Contract Number</label>
+      <input type="text" placeholder="WUUK-2025-XXXX">
+    </div>
+    <div>
+      <label>Date</label>
+      <input type="text" id="todayDate" readonly>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:15px;">
+    <button class="btn">Print / Save PDF</button>
+    <button class="btn">Share via WhatsApp</button>
+  </div>
+</header>
+
+<div class="section">
+  <h2 class="gold">Client & Job Details</h2>
+  <label>Client Name</label>
+  <input placeholder="Full Name">
+  <label>Contact Number</label>
+  <input placeholder="+44... or 07...">
+  <label>Property Address</label>
+  <input placeholder="Address, Postcode">
+  <label>Rep Name</label>
+  <input placeholder="Rep Name">
+  <label>Job Type</label>
+  <input placeholder="Loft Insulation">
+  <label>Deposit (£)</label>
+  <input type="number" value="0">
+  <label>Notes / Instructions</label>
+  <textarea rows="4" placeholder="Enter installation notes or client instructions..."></textarea>
+</div>
+
+<script>
+  // auto-fill today's date
+  const today = new Date();
+  document.getElementById("todayDate").value = today.toLocaleDateString("en-GB");
+</script>
+
+</body>
+</html>
