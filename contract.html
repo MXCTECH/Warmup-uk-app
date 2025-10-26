@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Warm Up UK Homes — Contract</title>
+<style>
+:root{
+  --bg:#0b0d12; --panel:#12151b; --ink:#e7e8ea; --muted:#8b9099;
+  --line:#232834; --gold:#d4af37; --gold-soft:#ffd766;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:18px}
+.panel{background:#12151b;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+header{position:sticky;top:0;z-index:10;margin-bottom:18px}
+.head{display:flex;align-items:center;gap:14px;padding:18px 20px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:48px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}
+.brand h1{margin:0;font-size:26px;font-weight:800;letter-spacing:3px}
+.actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.btn{border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+.btn.primary{border:1px solid #3a3220;background:linear-gradient(180deg,#efc857 0%,#d5ae3b 100%);color:#111}
+.btn.secondary{border:1px solid var(--line);background:transparent;color:var(--ink)}
+.card{margin:18px 0;padding:20px;border:1px solid var(--line);border-radius:14px;background:#12151b}
+.card h2{margin:0 0 14px;color:var(--gold);text-transform:uppercase;letter-spacing:3px;font-size:18px}
+label{display:block;margin:8px 0 6px;color:var(--muted);font-size:13px}
+input,select,textarea{width:100%;background:#0f1218;color:var(--ink);
+  border:1px solid #242a34;border-radius:12px;padding:14px;font-size:16px;outline:none}
+input.big{padding:18px 16px;font-size:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.row{grid-template-columns:1fr}}
+.table-head,.line{display:grid;grid-template-columns:2fr 80px 120px 140px 44px;gap:10px}
+.table-head{padding:10px;border:1px dashed #2a2e39;border-radius:12px;margin-bottom:8px}
+.line{margin-bottom:10px}
+.line input{height:44px}
+.kill{display:flex;align-items:center;justify-content:center;border-radius:10px;
+  border:1px solid #3a4250;background:#0f1218;cursor:pointer}
+.pill{display:inline-block;padding:12px 16px;border-radius:999px;
+  border:1px solid #2c2c2c;background:#0b0d12;font-weight:800;letter-spacing:.2px;user-select:none;cursor:pointer}
+#endPrice.flash{animation:flashGreen 800ms ease-out}
+@keyframes flashGreen{
+  0%{background:#0f6936;box-shadow:0 0 0 rgba(34,197,94,0)}
+  50%{background:#16a34a;box-shadow:0 0 24px rgba(34,197,94,.35)}
+  100%{background:#0b0d12;box-shadow:none}
+}
+#discPre,#discPost{width:100%;padding:12px 14px;border-radius:10px;
+  border:1px solid #333;background:#0f1218;color:#f7f7f7;font-size:16px}
+.totals .row-item{display:flex;justify-content:space-between;align-items:center;
+  border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
+.balance{font-size:22px;color:var(--gold);font-weight:800}
+
+/* Signature pad — stable and not moving */
+#sig{
+  width:100%;height:220px;background:#0f1218;border-radius:8px;display:block;
+  touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;
+}
+.sig-wrap{border:1px solid var(--line);border-radius:12px;padding:12px}
+
+/* Footer */
+footer{margin-top:24px;padding:16px 18px;text-align:center}
+footer img{height:34px}
+.office{color:var(--muted);font-size:14px}
+.small{font-size:12px;color:#8a8f97}
+hr.sep{border:0;border-top:1px solid var(--line);margin:22px 0}
+
+/* Print */
+@media print{
+  header .actions,#btnAdd,#clearSig,.kill{display:none!important}
+  body{background:#fff;color:#000}
+  .panel,.card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="panel head">
+    <div class="brand">
+      <img id="logoTop" alt="Warm Up UK Homes logo">
+      <h1>WARM UP UK HOMES</h1>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnPrint" type="button">Print / Save PDF</button>
+      <!-- Real anchor for iOS reliability -->
+      <a class="btn secondary" id="waLink" href="#" target="_blank" rel="noopener">Share via WhatsApp</a>
+    </div>
+  </header>
+
+  <!-- Meta -->
+  <section class="card">
+    <div class="row">
+      <div><label>Contract Number</label><input class="big" id="contractNo" readonly></div>
+      <div><label>Date</label><input class="big" id="date" type="date"></div>
+    </div>
+  </section>
+
+  <!-- Client -->
+  <section class="card">
+    <h2>Client & Job Details</h2>
+    <div class="row">
+      <div><label>Client name</label><input class="big" id="client" placeholder="Full name"></div>
+      <div><label>Contact number (WhatsApp)</label><input id="phone" placeholder="+44… or 07…"></div>
+      <div><label>Property address</label><input id="address" placeholder="Address, Postcode"></div>
+      <div><label>Rep</label><input id="rep" placeholder="Rep name"></div>
+      <div><label>Job type</label>
+        <select id="job">
+          <option>Loft Insulation</option><option>Underfloor Insulation</option>
+          <option>External Wall Insulation</option><option>Internal Wall Insulation</option>
+          <option>Roof Room Insulation</option>
+        </select>
+      </div>
+      <div><label>Date of install</label><input id="install" type="date"></div>
+    </div>
+  </section>
+
+  <!-- Products & Pricing -->
+  <section class="card">
+    <h2>Products & Pricing</h2>
+    <div class="table-head"><div>Description</div><div>Qty</div><div>Unit £</div><div>Line £</div><div></div></div>
+
+    <div id="lines">
+      <!-- One visible line so section never appears empty -->
+      <div class="line">
+        <input placeholder="Description" value="Loft insulation — standard">
+        <input inputmode="decimal" value="1">
+        <input inputmode="decimal" value="0">
+        <input value="0.00" readonly>
+        <button type="button" class="kill">✕</button>
+      </div>
+    </div>
+
+    <div style="margin:8px 0 14px">
+      <button class="btn secondary" id="btnAdd" type="button">+ Add line</button>
+    </div>
+
+    <!-- VAT (separate from discounts) -->
+    <label class="pill"><input id="vatOn" type="checkbox" checked> <span>Apply VAT (20%)</span></label>
+
+    <!-- Totals -->
+    <div class="totals">
+      <div class="row-item"><span>Subtotal</span><strong id="subtotal">£0.00</strong></div>
+      <div class="row-item"><span>VAT (20%)</span><strong id="vat">£0.00</strong></div>
+      <div class="row-item"><span>Total</span><strong id="total">£0.00</strong></div>
+
+      <!-- Discounts -->
+      <div class="row"><label><strong>Discount (before VAT)</strong> £</label><input id="discPre" value="0"></div>
+      <div class="row"><label><strong>Discount (after VAT)</strong> £</label><input id="discPost" value="0"></div>
+      <div class="row"><label><strong>End Price</strong> (tap to confirm)</label><div id="endPrice" class="pill">£0.00</div></div>
+
+      <div class="row-item">
+        <div style="flex:1;max-width:360px">
+          <label style="margin:0 0 6px">Deposit £</label>
+          <input id="deposit" value="0">
+        </div>
+        <div class="balance" id="balance">Balance Due: £0.00</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section class="card">
+    <h2>Notes / Instructions</h2>
+    <textarea id="notes" rows="5" placeholder="Write installation notes or client instructions here…"></textarea>
+  </section>
+
+  <!-- Signature -->
+  <section class="card">
+    <h2>Signature</h2>
+    <div class="sig-wrap"><canvas id="sig"></canvas></div>
+    <div style="margin-top:10px"><button class="btn secondary" id="clearSig" type="button">Clear</button></div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- Footer -->
+  <footer class="panel">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+      <img id="logoBottom" alt="Warm Up UK Homes">
+      <span class="office">
+        Fitzwilliam House, Middle Bank, Doncaster, England, DN4 5NG ·
+        Tel <a href="tel:07470474774" style="color:var(--gold)">07470 474 774</a> ·
+        Email <a href="mailto:warmupuk@icloud.com" style="color:var(--gold)">warmupuk@icloud.com</a>
+      </span>
+    </div>
+    <div class="small" style="margin-top:8px">© <span id="yr"></span> Warm Up UK Homes</div>
+  </footer>
+</div>
+
+<script>
+/* ========= LOGOS with automatic fallback (no uploads needed) ========= */
+const EMBED_LOGO = 'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48">
+    <rect width="100%" height="100%" fill="#0b0d12"/>
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+      font-family="Inter,Segoe UI,Arial" font-size="18" font-weight="800" fill="#d4af37">
+      WARM UP UK HOMES
+    </text>
+  </svg>`);
+function setLogo(imgEl){
+  imgEl.src = 'https://mxctech.github.io/Warmup-uk-app/assets/wuuk-logo.png';
+  imgEl.onerror = () => { imgEl.src = EMBED_LOGO; };
+}
+setLogo(document.getElementById('logoTop'));
+setLogo(document.getElementById('logoBottom'));
+
+/* ========= Helpers ========= */
+const toNum = v => (isNaN(v)?0:Number(v));
+const £ = n => '£' + (Number(n)||0).toFixed(2);
+
+/* ========= Auto date & contract number ========= */
+(function initMeta(){
+  const t = new Date();
+  const y=t.getFullYear(), m=String(t.getMonth()+1).padStart(2,'0'), d=String(t.getDate()).padStart(2,'0');
+  document.getElementById('date').value = `${y}-${m}-${d}`;
+  document.getElementById('install').value = `${y}-${m}-${d}`;
+  document.getElementById('yr').textContent = y;
+  const rand = Math.floor(1000 + Math.random()*9000);
+  document.getElementById('contractNo').value = `WUUK-${y}${m}${d}-${rand}`;
+})();
+
+/* ========= Products: reliable bindings ========= */
+const lines = document.getElementById('lines');
+const btnAdd = document.getElementById('btnAdd');
+function hookLine(line){
+  const [desc, qty, unit, lineTotal, kill] = line.querySelectorAll('input,button');
+  function recalc(){ lineTotal.value = (toNum(qty.value) * toNum(unit.value)).toFixed(2); computeTotals(); }
+  [desc, qty, unit].forEach(el => el.addEventListener('input', recalc));
+  kill.addEventListener('click', ()=>{ line.remove(); computeTotals(); });
+  recalc();
+}
+[...lines.children].forEach(hookLine);
+btnAdd.addEventListener('click', ()=>{
+  const l = document.createElement('div');
+  l.className = 'line';
+  l.innerHTML = `
+    <input placeholder="Description">
+    <input inputmode="decimal" value="1">
+    <input inputmode="decimal" value="0">
+    <input value="0.00" readonly>
+    <button type="button" class="kill">✕</button>`;
+  lines.appendChild(l);
+  hookLine(l);
+});
+
+/* ========= Totals / VAT / Discounts / Deposit ========= */
+const els = {
+  vatOn: document.getElementById('vatOn'),
+  deposit: document.getElementById('deposit'),
+  subtotal: document.getElementById('subtotal'),
+  vat: document.getElementById('vat'),
+  total: document.getElementById('total'),
+  discPre: document.getElementById('discPre'),
+  discPost: document.getElementById('discPost'),
+  endPrice: document.getElementById('endPrice'),
+  balance: document.getElementById('balance')
+};
+function computeTotals(){
+  const sub = [...document.querySelectorAll('#lines .line input:nth-child(4)')].reduce((a,i)=>a+toNum(i.value),0);
+  const pre = Math.max(0, toNum(els.discPre.value));
+  const post = Math.max(0, toNum(els.discPost.value));
+  const subAfterPre = Math.max(0, sub - pre);
+  const v = els.vatOn.checked ? subAfterPre * 0.20 : 0;
+  const t = subAfterPre + v;
+  const end = Math.max(0, t - post);
+  const dep = Math.max(0, toNum(els.deposit.value));
+  const bal = Math.max(0, end - dep);
+  els.subtotal.textContent = £(sub);
+  els.vat.textContent = £(v);
+  els.total.textContent = £(t);
+  els.endPrice.textContent = £(end);
+  els.balance.textContent = 'Balance Due: ' + £(bal);
+}
+['input','change'].forEach(ev=>{
+  els.vatOn.addEventListener(ev, computeTotals);
+  els.deposit.addEventListener(ev, computeTotals);
+  els.discPre.addEventListener(ev, computeTotals);
+  els.discPost.addEventListener(ev, computeTotals);
+});
+els.endPrice.addEventListener('click', ()=>{
+  els.endPrice.classList.remove('flash'); void els.endPrice.offsetWidth; els.endPrice.classList.add('flash');
+  computeTotals();
+});
+computeTotals();
+
+/* ========= Signature pad (fixed, iPhone-safe) ========= */
+(function signaturePad(){
+  const c = document.getElementById('sig');
+  const ctx = c.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+  function resize(){
+    const w = c.clientWidth, h = c.clientHeight;
+    c.width = Math.floor(w * DPR);
+    c.height = Math.floor(h * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.lineWidth = 2; ctx.lineCap='round'; ctx.strokeStyle = '#ffd766';
+  }
+  resize(); addEventListener('resize', resize);
+
+  let drawing=false, lastX=0, lastY=0;
+  function getPos(e){
+    const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e;
+    return {x:t.clientX - r.left, y:t.clientY - r.top};
+  }
+  function start(e){ drawing=true; const p=getPos(e); lastX=p.x; lastY=p.y; }
+  function move(e){
+    if(!drawing) return;
+    e.preventDefault();           /* stop page from scrolling while drawing */
+    const p=getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke();
+    lastX=p.x; lastY=p.y;
+  }
+  function end(){ drawing=false; }
+
+  // mouse
+  c.addEventListener('mousedown', start);
+  c.addEventListener('mousemove', move);
+  addEventListener('mouseup', end);
+  // touch
+  c.addEventListener('touchstart', start, {passive:true});
+  c.addEventListener('touchmove', move, {passive:false});
+  addEventListener('touchend', end);
+
+  document.getElementById('clearSig').addEventListener('click',()=>{
+    ctx.clearRect(0,0,c.width,c.height); resize();
+  });
+})();
+
+/* ========= Print & WhatsApp (reliable on iOS) ========= */
+document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
+(function setupWA(){
+  const a = document.getElementById('waLink');
+  function build(){
+    const msg = `Warm Up UK Homes — Contract
+Client: ${document.getElementById('client').value||''}
+Contract: ${document.getElementById('contractNo').value||''}
+End Price: ${document.getElementById('endPrice').textContent}`;
+    a.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  }
+  build();
+  // keep link up to date
+  ['input','change','click'].forEach(ev=>document.addEventListener(ev, build, true));
+})();
+</script>
+</body>
+</html>
