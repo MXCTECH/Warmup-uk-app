@@ -1,0 +1,169 @@
+<script>
+(function(){
+  // Safe helpers for iOS Safari
+  const $  = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+  const money = n => "£" + (Number(n||0).toFixed(2));
+
+  // Auto contract + date
+  function genId(){
+    const d=new Date(), p=n=>String(n).padStart(2,'0');
+    return `WUUK-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${Math.floor(1000+Math.random()*9000)}`;
+  }
+  const contract = $('#contractNo'); if (contract && !contract.value) contract.value = genId();
+  const date = $('#date'); if (date) date.valueAsDate = date.value ? new Date(date.value) : new Date();
+
+  // Build a row programmatically (for + Add line)
+  function makeRow(){
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `
+      <select class="prod" style="border-color:var(--orange)">
+        <option>Spray Foam Removal</option>
+        <option>Ceiling Level Insulation</option>
+        <option>Multifoil</option>
+      </select>
+      <input class="size" type="number" min="0" step="0.1" placeholder="0" style="border-color:var(--orange)">
+      <input class="unit" type="number" min="0" step="0.01" placeholder="0.00" style="border-color:var(--orange)">
+      <input class="total" type="text" value="£0.00" readonly style="border-color:var(--orange)">
+    `;
+    return row;
+  }
+
+  // Event delegation for live calc on any row
+  const linesWrap = $('#lines');
+  function recalcRow(row){
+    const size = Number($('.size',row)?.value || 0);
+    const unit = Number($('.unit',row)?.value || 0);
+    $('.total',row).value = money(size*unit);
+  }
+
+  function sumLines(){
+    return $$('.line',linesWrap).reduce((t,row)=>{
+      const size = Number($('.size',row)?.value || 0);
+      const unit = Number($('.unit',row)?.value || 0);
+      return t + size*unit;
+    },0);
+  }
+
+  function calcTotals(flash=false){
+    const sub = sumLines();
+    const vat = $('#vatOn')?.checked ? sub*0.20 : 0;
+    let discount = 0;
+    if ($('#discOn')?.checked){
+      const before = Number($('#discBefore')?.value || 0);
+      const after  = Number($('#discAfter')?.value  || 0);
+      discount = Math.max(0, before - after);
+    }
+    const deposit = Number($('#deposit')?.value || 0);
+    const final = Math.max(0, sub + vat - discount - deposit);
+
+    $('#subtotal').textContent = money(sub);
+    $('#vat').textContent       = money(vat);
+    $('#final').textContent     = money(final);
+
+    if (flash && $('#discOn')?.checked){
+      const card = $('#finalCard');
+      card?.classList.remove('flash'); void card?.offsetWidth;
+      card?.classList.add('flash');
+    }
+  }
+
+  // Hook inputs (delegated so it works for added rows)
+  document.addEventListener('input', e=>{
+    const t = e.target;
+    if (t.closest('#lines') && (t.classList.contains('size') || t.classList.contains('unit'))){
+      recalcRow(t.closest('.line'));
+      calcTotals();
+    } else if (['discBefore','discAfter','deposit'].includes(t.id)){
+      calcTotals();
+    }
+  });
+
+  // Toggles
+  $('#discOn')?.addEventListener('change', ()=>{
+    const on = $('#discOn').checked;
+    $('#discountBoxes').style.display = on ? 'grid' : 'none';
+    calcTotals(true);
+  });
+  $('#vatOn')?.addEventListener('change', ()=>calcTotals(true));
+
+  // Add line
+  $('#addLine')?.addEventListener('click', ()=>{
+    linesWrap.appendChild(makeRow());
+  });
+
+  // Signature pad (orange ink on black)
+  const canvas = $('#sig');
+  if (canvas){
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const ratio = Math.max(window.devicePixelRatio||1,1);
+    function resizeCanvas(){
+      const r = canvas.getBoundingClientRect();
+      canvas.width  = r.width  * ratio;
+      canvas.height = r.height * ratio;
+      ctx.reset?.();
+      ctx.scale(ratio, ratio);
+      ctx.strokeStyle = getComputedStyle(document.documentElement)
+                         .getPropertyValue('--orange') || '#ff8c1a';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+    }
+    resizeCanvas(); addEventListener('resize', resizeCanvas);
+
+    let drawing=false, last={x:0,y:0};
+    const pos=e=>{const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return {x:p.clientX-r.left,y:p.clientY-r.top}};
+    const down=e=>{drawing=true;last=pos(e);e.preventDefault();};
+    const move=e=>{ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); };
+    const up=()=>{drawing=false};
+
+    canvas.addEventListener('mousedown',down);
+    canvas.addEventListener('mousemove',move);
+    canvas.addEventListener('mouseup',up);
+    canvas.addEventListener('mouseleave',up);
+    canvas.addEventListener('touchstart',down,{passive:false});
+    canvas.addEventListener('touchmove',move,{passive:false});
+    canvas.addEventListener('touchend',up);
+
+    $('#clearSig')?.addEventListener('click', ()=>ctx.clearRect(0,0,canvas.width,canvas.height));
+  }
+
+  // Actions
+  $('#btnPrint')?.addEventListener('click', ()=>window.print());
+  $('#btnWhatsApp')?.addEventListener('click', ()=>{
+    const msg = [
+      'WARM UP UK HOMES',
+      `Contract: ${$('#contractNo')?.value||''}`,
+      `Client: ${$('#client')?.value||''}`,
+      `Address: ${$('#address')?.value||''}`,
+      `Total today: ${$('#final')?.textContent||''}`
+    ].join('\n');
+    if (navigator.share){ navigator.share({text:msg}).catch(()=>{}); }
+    else { window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank'); }
+  });
+  $('#btnSaveLocal')?.addEventListener('click', ()=>{
+    const data = {
+      id: $('#contractNo')?.value, date: $('#date')?.value,
+      client: $('#client')?.value, phone: $('#phone')?.value, address: $('#address')?.value,
+      lines: $$('.line', linesWrap).map(row=>({
+        product: $('.prod',row).value, size: $('.size',row).value,
+        unit: $('.unit',row).value, line: $('.total',row).value
+      })),
+      vatOn: $('#vatOn')?.checked, discountOn: $('#discOn')?.checked,
+      before: $('#discBefore')?.value, after: $('#discAfter')?.value,
+      deposit: $('#deposit')?.value,
+      subtotal: $('#subtotal')?.textContent, vat: $('#vat')?.textContent, final: $('#final')?.textContent
+    };
+    localStorage.setItem(`wuuk-${data.id}`, JSON.stringify(data));
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob), download: `WUUK-${data.id}.json`
+    });
+    document.body.appendChild(a); a.click(); a.remove();
+    alert('Quote saved (download + local storage).');
+  });
+
+  // First totals pass
+  calcTotals();
+})();
+</script>
