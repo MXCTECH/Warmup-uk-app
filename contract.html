@@ -19,14 +19,27 @@
   .wrap{max-width:1100px;margin:0 auto;padding:18px}
 
   /* HEADER */
-  header{
-    position:sticky;top:0;z-index:2;
-    background:linear-gradient(180deg,rgba(212,175,55,.16),rgba(212,175,55,.03)),#0e0e0e;
-    border:1px solid rgba(212,175,55,.5);
-    border-radius:var(--radius);
-    padding:16px 18px;
-    box-shadow:var(--shadow);
-    margin-bottom:16px
+  <header>
+  <div class="logo-section" style="display:flex;align-items:center;justify-content:center;flex-direction:column;margin-bottom:15px;">
+    <img src="11A155C8-468D-489E-816B-13E581F6F652.png" alt="Warm Up UK Logo" style="width:120px;height:auto;margin-bottom:10px;">
+    <h1 style="color:#fff;margin:0;">WARM UP UK HOMES</h1>
+    <p style="color:#d4af37;margin:2px 0 0;font-weight:500;">Fitzwilliam House, Middle Bank, Doncaster, England, DN4 5NG</p>
+    <p style="color:#d4af37;margin:0;">07470 474774 · warmupuk@icloud.com</p>
+    <p style="color:#aaa;margin-top:8px;font-size:14px;">Contract Number: <span id="contractNumber"></span> · Date: <span id="contractDate"></span></p>
+  </div>
+</header>
+
+<script>
+  // Auto-generate contract number and date
+  document.addEventListener("DOMContentLoaded", () => {
+    const num = Math.floor(Math.random() * 90000) + 10000;
+    document.getElementById("contractNumber").textContent = num;
+    const today = new Date();
+    document.getElementById("contractDate").textContent = today.toLocaleDateString('en-GB', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    });
+  });
+</script>
   }
   .brand{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .brand img{height:72px;width:auto;display:block;border-radius:12px}
