@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Warm Up UK – Contract</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0c0c0c;
+      --panel: #111;
+      --gold: #d4af37;
+      --text: #fff;
+      --muted: #aaa;
+      --error: #ff5b5b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #141414;
+      color: var(--text);
+      padding: 20px;
+    }
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #000;
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.3);
+    }
+    header {
+      background: radial-gradient(circle at top, rgba(212,175,55,.25), rgba(0,0,0,.9));
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid rgba(212,175,55,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .logo-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,175,55,.5);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 12px;
+    }
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.05;
+    }
+    .brand small {
+      display: block;
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      margin-top: 2px;
+    }
+    .contract-meta {
+      font-size: 12px;
+      text-align: right;
+      color: rgba(255,255,255,.7);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.4);
+      border-radius: 999px;
+      padding: 4px 10px 4px 10px;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    main {
+      padding: 20px 24px 26px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+      header { justify-content: flex-start; }
+      .contract-meta { text-align: left; }
+    }
+    .panel {
+      background: rgba(17,17,17,.6);
+      border: 1px solid rgba(212,175,55,0.1);
+      border-radius: 14px;
+      padding: 16px 16px 12px;
+      margin-bottom: 12px;
+    }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panel h2 span.icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(212,175,55,.12);
+      border: 1px solid rgba(212,175,55,.35);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      margin-bottom: 3px;
+      color: rgba(255,255,255,.7);
+    }
+    input, select, textarea {
+      width: 100%;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px;
+      padding: 7px 9px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(212,175,55,.65);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+    }
+    .line-items {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.03);
+      background: rgba(0,0,0,.3);
+    }
+    .line-items-header, .line-item {
+      display: grid;
+      grid-template-columns: 1.1fr .4fr .5fr .5fr auto;
+      gap: 6px;
+      align-items: center;
+    }
+    .line-items-header {
+      background: rgba(212,175,55,.08);
+      padding: 6px 7px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      color: rgba(255,255,255,.7);
+    }
+    .line-item {
+      padding: 6px 7px;
+      border-top: 1px solid rgba(255,255,255,.02);
+    }
+    .line-item input, .line-item select {
+      font-size: 12px;
+      padding: 5px 6px;
+    }
+    .line-item-total {
+      text-align: right;
+      font-weight: 600;
+      font-size: 12px;
+      padding-right: 4px;
+    }
+    .remove-btn {
+      background: rgba(255,0,0,.05);
+      border: 1px solid rgba(255,0,0,.12);
+      color: #f88;
+      border-radius: 99px;
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+    .add-btn {
+      margin-top: 7px;
+      background: rgba(212,175,55,.1);
+      border: 1px solid rgba(212,175,55,.25);
+      color: #fff;
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+    }
+    .totals {
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.03);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .vat-toggle {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .vat-toggle input { width: auto; }
+    .big-total {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .highlight {
+      color: var(--gold);
+    }
+    canvas {
+      width: 100%;
+      background: #fff;
+      border-radius: 10px;
+      display: block;
+    }
+    .wa-button {
+      display: block;
+      background: #25d366;
+      color: #000;
+      text-align: center;
+      font-weight: 700;
+      padding: 13px 10px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .secondary-btn {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 7px 10px;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .note {
+      font-size: 10.5px;
+      color: rgba(255,255,255,.4);
+      margin-top: 5px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo-circle">WU</div>
+        <div>
+          <h1>Warm Up UK <small>Contract &amp; Order Form</small></h1>
+          <small>Loft • Spray Foam Removal • Multifoil</small>
+        </div>
+      </div>
+      <div class="contract-meta">
+        <div class="badge">Contract</div>
+        <div>Contract No: <strong id="contractNo">WUU-<span id="contractNum"></span></strong></div>
+        <div>Date: <span id="today"></span></div>
+      </div>
+    </header>
+    <main>
+      <!-- LEFT -->
+      <div>
+        <div class="panel">
+          <h2><span class="icon">👤</span> Client / Property Details</h2>
+          <div class="grid-2">
+            <div>
+              <label>Client name</label>
+              <input id="clientName" placeholder="e.g. Mr Oliver Bates" />
+            </div>
+            <div>
+              <label>Contact number (for WhatsApp)</label>
+              <input id="clientPhone" placeholder="+447..." />
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top: 8px;">
+            <div>
+              <label>Address</label>
+              <input id="clientAddress" placeholder="Site / Install address" />
+            </div>
+            <div>
+              <label>Postcode</label>
+              <input id="clientPostcode" placeholder="e.g. SS8 9ET" />
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top: 8px;">
+            <div>
+              <label>Booking agent</label>
+              <input id="bookingAgent" placeholder="Name / ref" />
+            </div>
+            <div>
+              <label>Confirmer</label>
+              <input id="confirmer" placeholder="Name / ref" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="productsPanel">
+          <h2><span class="icon">📦</span> Products / Works</h2>
+          <div class="line-items">
+            <div class="line-items-header">
+              <div>Item</div>
+              <div>Qty</div>
+              <div>£/Unit</div>
+              <div>Type</div>
+              <div style="text-align:right;">Line Total</div>
+            </div>
+            <div id="lineItems"></div>
+          </div>
+          <button class="add-btn" id="addLineBtn">+ Add product / service</button>
+          <div class="totals">
+            <div class="row-between">
+              <span>Subtotal</span>
+              <span id="subtotal">£0.00</span>
+            </div>
+            <div class="row-between">
+              <span>Discount</span>
+              <span>
+                <input id="discountValue" type="number" step="0.01" placeholder="0" style="width:80px;display:inline-block;" />
+                <select id="discountType" style="width:70px;display:inline-block;">
+                  <option value="amount">£</option>
+                  <option value="percent">%</option>
+                </select>
+              </span>
+            </div>
+            <div class="row-between">
+              <label class="vat-toggle">
+                <input type="checkbox" id="vatToggle" checked />
+                Add VAT 20%
+              </label>
+              <span id="vatAmount">£0.00</span>
+            </div>
+            <div class="row-between">
+              <span>Deposit</span>
+              <input id="deposit" type="number" step="0.01" value="0" style="width:120px;text-align:right;" />
+            </div>
+            <div class="row-between">
+              <span class="big-total">Final total</span>
+              <span class="big-total highlight" id="finalTotal">£0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2><span class="icon">📝</span> Notes / Works to be done</h2>
+          <textarea id="notes" rows="4" placeholder="Access, boarding, vents, foam condition, waste removal, PAS 2030 requirements, etc."></textarea>
+          <p class="note">By signing, the client agrees to the scope of works, access requirements, and payment terms as explained by Warm Up UK.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div class="panel">
+          <h2><span class="icon">✍️</span> Signature</h2>
+          <canvas id="signature" width="400" height="180"></canvas>
+          <div class="grid-2" style="margin-top:6px;">
+            <button class="secondary-btn" id="clearSig">Clear signature</button>
+            <input id="signedBy" placeholder="Signed name" />
+          </div>
+          <p class="note">Client / homeowner must sign above. Use finger/stylus on iPad.</p>
+        </div>
+
+        <div class="panel">
+          <h2><span class="icon">📲</span> Send to WhatsApp</h2>
+          <button class="wa-button" id="sendWhatsApp">Send contract to WhatsApp</button>
+          <button class="secondary-btn" id="showJSON">Show data JSON (test)</button>
+          <p class="note" id="waError" style="display:none;color:var(--error);">Add a valid client number first.</p>
+          <p class="note">This uses the main WhatsApp link format to open the app with the full contract text, totals and address.</p>
+        </div>
+
+        <div class="panel">
+          <h2><span class="icon">⚙️</span> Internal / Installer</h2>
+          <div>
+            <label>Install date</label>
+            <input id="installDate" type="date" />
+          </div>
+          <div style="margin-top:6px;">
+            <label>Installer notes</label>
+            <textarea id="installerNotes" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ====== BASIC INIT ======
+    const today = new Date();
+    document.getElementById("today").textContent = today.toISOString().slice(0,10);
+    document.getElementById("contractNum").textContent = Math.floor(100000 + Math.random()*900000);
+
+    // ====== LINE ITEMS ======
+    const lineItemsContainer = document.getElementById("lineItems");
+    const addLineBtn = document.getElementById("addLineBtn");
+
+    const PRODUCT_OPTIONS = [
+      "Loft Insulation 270mm",
+      "Loft Insulation 400mm",
+      "Multifoil (TLX / YBS)",
+      "Spray Foam Removal",
+      "Cavity Wall Insulation",
+      "Loft Boarding",
+      "Ventilation / Soffit Vents",
+      "Waste Removal",
+      "Scaffolding",
+      "Other Item"
+    ];
+
+    function createLineItem(defaultName="Loft Insulation 270mm", qty=1, price=0) {
+      const row = document.createElement("div");
+      row.className = "line-item";
+
+      // item select
+      const select = document.createElement("select");
+      PRODUCT_OPTIONS.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        select.appendChild(opt);
+      });
+      select.value = defaultName;
+
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "number";
+      qtyInput.min = "0";
+      qtyInput.step = "0.01";
+      qtyInput.value = qty;
+
+      const priceInput = document.createElement("input");
+      priceInput.type = "number";
+      priceInput.min = "0";
+      priceInput.step = "0.01";
+      priceInput.value = price;
+
+      const typeSel = document.createElement("select");
+      ["m²","lm","item","job"].forEach(t => {
+        const o = document.createElement("option");
+        o.value = t;
+        o.textContent = t;
+        typeSel.appendChild(o);
+      });
+
+      const totalCell = document.createElement("div");
+      totalCell.className = "line-item-total";
+      totalCell.textContent = "£0.00";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-btn";
+      removeBtn.textContent = "✕";
+      removeBtn.addEventListener("click", () => {
+        row.remove();
+        calculateTotals();
+      });
+
+      row.appendChild(select);
+      row.appendChild(qtyInput);
+      row.appendChild(priceInput);
+      row.appendChild(typeSel);
+      row.appendChild(totalCell);
+      lineItemsContainer.appendChild(row);
+
+      // events
+      [select, qtyInput, priceInput, typeSel].forEach(el => {
+        el.addEventListener("input", calculateTotals);
+      });
+
+      calculateTotals();
+    }
+
+    addLineBtn.addEventListener("click", () => {
+      createLineItem("Other Item", 1, 0);
+    });
+
+    // Start with 2 rows
+    createLineItem("Loft Insulation 270mm", 1, 650);
+    createLineItem("Ventilation / Soffit Vents", 1, 120);
+
+    // ====== TOTALS ======
+    const subtotalEl = document.getElementById("subtotal");
+    const discountValueEl = document.getElementById("discountValue");
+    const discountTypeEl = document.getElementById("discountType");
+    const vatToggleEl = document.getElementById("vatToggle");
+    const vatAmountEl = document.getElementById("vatAmount");
+    const depositEl = document.getElementById("deposit");
+    const finalTotalEl = document.getElementById("finalTotal");
+
+    [discountValueEl, discountTypeEl, vatToggleEl, depositEl].forEach(el => {
+      el.addEventListener("input", calculateTotals);
+      el.addEventListener("change", calculateTotals);
+    });
+
+    function calculateTotals() {
+      let subtotal = 0;
+      const rows = lineItemsContainer.querySelectorAll(".line-item");
+      rows.forEach(row => {
+        const qty = parseFloat(row.children[1].value) || 0;
+        const price = parseFloat(row.children[2].value) || 0;
+        const line = qty * price;
+        row.children[4].textContent = "£" + line.toFixed(2);
+        subtotal += line;
+      });
+
+      subtotalEl.textContent = "£" + subtotal.toFixed(2);
+
+      // Discount
+      let discount = parseFloat(discountValueEl.value) || 0;
+      let discountedSubtotal = subtotal;
+      if (discount > 0) {
+        if (discountTypeEl.value === "percent") {
+          discount = subtotal * (discount / 100);
+        }
+        discountedSubtotal = Math.max(0, subtotal - discount);
+      }
+
+      // VAT
+      let vat = 0;
+      if (vatToggleEl.checked) {
+        vat = discountedSubtotal * 0.2;
+      }
+      vatAmountEl.textContent = "£" + vat.toFixed(2);
+
+      // Deposit
+      const deposit = parseFloat(depositEl.value) || 0;
+
+      const final = Math.max(0, discountedSubtotal + vat - deposit);
+      finalTotalEl.textContent = "£" + final.toFixed(2);
+
+      return {
+        subtotal,
+        discount,
+        discountedSubtotal,
+        vat,
+        deposit,
+        final
+      };
+    }
+
+    // ====== SIGNATURE PAD ======
+    const canvas = document.getElementById("signature");
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    let drawing = false;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return {x,y};
+    }
+
+    canvas.addEventListener("mousedown", e => {
+      drawing = true;
+      const {x,y} = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+    });
+    canvas.addEventListener("mousemove", e => {
+      if(!drawing) return;
+      const {x,y} = getPos(e);
+      ctx.lineTo(x,y);
+      ctx.stroke();
+    });
+    canvas.addEventListener("mouseup", () => drawing=false);
+    canvas.addEventListener("mouseleave", () => drawing=false);
+
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault();
+      drawing = true;
+      const {x,y} = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+    }, {passive:false});
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      if(!drawing) return;
+      const {x,y} = getPos(e);
+      ctx.lineTo(x,y);
+      ctx.stroke();
+    }, {passive:false});
+    canvas.addEventListener("touchend", e => {
+      e.preventDefault();
+      drawing = false;
+    });
+
+    document.getElementById("clearSig").addEventListener("click", () => {
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = "#000";
+    });
+
+    // ====== WHATSAPP ======
+    const waBtn = document.getElementById("sendWhatsApp");
+    const waError = document.getElementById("waError");
+
+    waBtn.addEventListener("click", () => {
+      const totals = calculateTotals();
+      const phoneRaw = document.getElementById("clientPhone").value.trim();
+      if (!phoneRaw) {
+        waError.style.display = "block";
+        return;
+      }
+      waError.style.display = "none";
+
+      const name = document.getElementById("clientName").value;
+      const addr = document.getElementById("clientAddress").value;
+      const pc = document.getElementById("clientPostcode").value;
+      const notes = document.getElementById("notes").value;
+      const contractNo = document.getElementById("contractNo").textContent;
+      const installDate = document.getElementById("installDate").value;
+      const installerNotes = document.getElementById("installerNotes").value;
+      const signedBy = document.getElementById("signedBy").value;
+
+      // build items text
+      const itemLines = [];
+      const rows = lineItemsContainer.querySelectorAll(".line-item");
+      rows.forEach(row => {
+        const item = row.children[0].value;
+        const qty = row.children[1].value;
+        const price = row.children[2].value;
+        const unit = row.children[3].value;
+        const total = row.children[4].textContent;
+        itemLines.push(`• ${item} (${qty} ${unit} @ £${parseFloat(price||0).toFixed(2)}) = ${total}`);
+      });
+
+      const msg =
+`Warm Up UK Contract
+Contract: ${contractNo}
+Date: ${new Date().toISOString().slice(0,10)}
+
+Client: ${name}
+Address: ${addr}
+Postcode: ${pc}
+Phone: ${phoneRaw}
+
+Items:
+${itemLines.join("\n")}
+
+Subtotal: £${totals.subtotal.toFixed(2)}
+Discount: £${totals.discount.toFixed(2)}
+VAT: £${totals.vat.toFixed(2)}
+Deposit: £${totals.deposit.toFixed(2)}
+TOTAL DUE: £${totals.final.toFixed(2)}
+
+Installer/date: ${installDate || "TBC"}
+Installer notes: ${installerNotes || "-"}
+
+Client notes:
+${notes || "-"}
+
+Signed by: ${signedBy || "Pending signature"}
+
+Warm Up UK
+`;
+
+      const encoded = encodeURIComponent(msg);
+      // normalise phone — user may type 07... we need 44
+      let phone = phoneRaw.replace(/\s|\+/g,"");
+      if (phone.startsWith("0")) {
+        phone = "44" + phone.slice(1);
+      }
+      const waLink = `https://wa.me/${phone}?text=${encoded}`;
+      window.location.href = waLink;
+    });
+
+    // ====== SHOW JSON (TEST) ======
+    document.getElementById("showJSON").addEventListener("click", () => {
+      const totals = calculateTotals();
+      const rows = [];
+      lineItemsContainer.querySelectorAll(".line-item").forEach(row => {
+        rows.push({
+          item: row.children[0].value,
+          qty: parseFloat(row.children[1].value) || 0,
+          price: parseFloat(row.children[2].value) || 0,
+          unit: row.children[3].value,
+          lineTotal: row.children[4].textContent
+        });
+      });
+      const data = {
+        contractNumber: document.getElementById("contractNo").textContent,
+        date: new Date().toISOString(),
+        client: {
+          name: document.getElementById("clientName").value,
+          phone: document.getElementById("clientPhone").value,
+          address: document.getElementById("clientAddress").value,
+          postcode: document.getElementById("clientPostcode").value
+        },
+        staff: {
+          bookingAgent: document.getElementById("bookingAgent").value,
+          confirmer: document.getElementById("confirmer").value
+        },
+        items: rows,
+        notes: document.getElementById("notes").value,
+        totals,
+        install: {
+          date: document.getElementById("installDate").value,
+          notes: document.getElementById("installerNotes").value
+        }
+      };
+      alert(JSON.stringify(data, null, 2));
+    });
+  </script>
+</body>
+</html>
