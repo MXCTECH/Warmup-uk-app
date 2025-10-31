@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK Homes – Contract</title>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:10px; }
+  h2 { display:flex; align-items:center; gap:10px; }
+  .logo-top { height:48px; }
+  .box { background:#fff; border:1px solid #ccc; padding:10px; margin-bottom:10px; }
+  input,select,textarea { width:100%; padding:5px; margin-bottom:6px; box-sizing:border-box; }
+  table { width:100%; border-collapse:collapse; }
+  th,td { border:1px solid #ddd; padding:4px; font-size:13px; }
+  th { background:#eee; }
+  button { padding:6px 10px; margin-top:5px; }
+  #sigCanvas,#waiverSigCanvas { background:#fff; border:1px solid #aaa; width:100%; touch-action:none; }
+  .row { display:flex; gap:6px; }
+  .row>div { flex:1; }
+  #waLinkBox,#pdfLinkBox { width:100%; font-size:12px; }
+</style>
+</head>
+
+<body>
+<h2>
+  <img class="logo-top" src="https://via.placeholder.com/180x50?text=Warm+Up+UK+Homes" alt="Warm Up UK Homes">
+  Warm Up UK Homes – Contract
+</h2>
+
+<!-- CLIENT -->
+<div class="box">
+  <div class="row">
+    <div><label>Client name</label><input id="clientName"></div>
+    <div><label>Client phone (WhatsApp)</label><input id="clientPhone" placeholder="07..."></div>
+  </div>
+  <div class="row">
+    <div><label>Address</label><input id="clientAddress"></div>
+    <div><label>Postcode</label><input id="clientPostcode"></div>
+  </div>
+  <div class="row">
+    <div><label>Booking agent</label><input id="bookingAgent"></div>
+    <div><label>Confirmer</label><input id="confirmer"></div>
+  </div>
+  <div class="row">
+    <div><label>Install date</label><input id="installDate" type="date"></div>
+    <div><label><input id="startWithin14" type="checkbox"> Start within 14 days</label></div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="box">
+  <h3>Products / Works</h3>
+  <table>
+    <thead><tr>
+      <th style="width:40%">Item</th><th style="width:10%">Qty</th>
+      <th style="width:15%">£/Unit</th><th style="width:15%">Unit</th>
+      <th style="width:15%">Line £</th><th style="width:5%"></th>
+    </tr></thead>
+    <tbody id="itemsBody"></tbody>
+  </table>
+  <button onclick="addRow()">+ Add row</button>
+
+  <div style="margin-top:10px">
+    <div class="row"><div>Subtotal:</div><div><input id="subtotal" readonly></div></div>
+    <div class="row"><div>Discount:</div>
+      <div class="row" style="gap:3px;">
+        <input id="discountVal" value="0" oninput="recalc()">
+        <select id="discountType" onchange="recalc()">
+          <option value="amount">£</option><option value="percent">%</option>
+        </select>
+      </div>
+    </div>
+    <div class="row"><div><label><input id="vatOn" type="checkbox" checked onchange="recalc()"> VAT 20%</label></div><div><input id="vatAmt" readonly></div></div>
+    <div class="row"><div>Deposit:</div><div><input id="deposit" value="0" oninput="recalc()"></div></div>
+    <div class="row"><div><b>FINAL TOTAL:</b></div><div><input id="finalTotal" readonly style="font-weight:bold;"></div></div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="box"><h3>Notes</h3><textarea id="notes" rows="4"></textarea></div>
+
+<!-- SIGNATURES -->
+<div class="box">
+  <h3>Main Signature (Client)</h3>
+  <canvas id="sigCanvas" width="300" height="140"></canvas>
+  <button onclick="clearSig()">Clear</button>
+  <input id="signedBy" placeholder="Signed name">
+</div>
+
+<div class="box">
+  <h3>14-Day Cancellation Waiver</h3>
+  <p style="font-size:12px">
+    By signing below you request that Warm Up UK Homes commence the works within the 14-day cooling-off period and acknowledge that your statutory right to cancel may be reduced or lost once works begin.
+  </p>
+  <canvas id="waiverSigCanvas" width="300" height="120"></canvas>
+  <button onclick="clearWaiverSig()">Clear waiver signature</button>
+  <input id="waiverSignedBy" placeholder="Waiver signed name">
+</div>
+
+<!-- PDF / WHATSAPP -->
+<div class="box">
+  <h3>PDF & WhatsApp</h3>
+  <button onclick="generatePDF()">Generate PDF</button>
+  <input id="pdfLinkBox" readonly placeholder="PDF link appears here after generation">
+  <button onclick="sendWA()">Send to WhatsApp (with PDF link)</button>
+  <input id="waLinkBox" readonly>
+  <p id="waError" style="color:red;display:none">Add a phone number.</p>
+</div>
+
+<script>
+/* ---------- PRODUCTS ---------- */
+function addRow(item="Spray foam removal",qty=1,price=0,unit="job"){
+  const tb=document.getElementById("itemsBody");const tr=document.createElement("tr");
+  const td1=document.createElement("td");
+  const sel=document.createElement("select");
+  ["Spray foam removal","Space wrap","Fibreglass","Loft hatch","Loft ladder","Loft boarding","Cavity wall"].forEach(p=>{
+    const o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);
+  });
+  sel.value=item;sel.onchange=recalc;td1.appendChild(sel);tr.appendChild(td1);
+
+  const td2=document.createElement("td");const q=document.createElement("input");
+  q.type="number";q.value=qty;q.min="0";q.step="0.01";q.oninput=recalc;td2.appendChild(q);tr.appendChild(td2);
+
+  const td3=document.createElement("td");const pr=document.createElement("input");
+  pr.type="number";pr.value=price;pr.min="0";pr.step="0.01";pr.oninput=recalc;td3.appendChild(pr);tr.appendChild(td3);
+
+  const td4=document.createElement("td");const u=document.createElement("select");
+  ["m²","lm","item","job"].forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;u.appendChild(o);});
+  u.value=unit;u.onchange=recalc;td4.appendChild(u);tr.appendChild(td4);
+
+  const td5=document.createElement("td");const lt=document.createElement("input");lt.readOnly=true;lt.value="0.00";td5.appendChild(lt);tr.appendChild(td5);
+
+  const td6=document.createElement("td");const del=document.createElement("button");del.textContent="X";del.onclick=()=>{tr.remove();recalc();};td6.appendChild(del);tr.appendChild(td6);
+
+  tb.appendChild(tr);recalc();
+}
+addRow();
+
+function recalc(){
+  const rows=document.getElementById("itemsBody").getElementsByTagName("tr");
+  let subtotal=0;
+  for(const r of rows){
+    const qty=parseFloat(r.cells[1].children[0].value)||0;
+    const price=parseFloat(r.cells[2].children[0].value)||0;
+    const line=qty*price;r.cells[4].children[0].value=line.toFixed(2);subtotal+=line;
+  }
+  document.getElementById("subtotal").value="£"+subtotal.toFixed(2);
+  let disc=parseFloat(document.getElementById("discountVal").value)||0;
+  const type=document.getElementById("discountType").value;let after=subtotal;
+  if(disc>0){if(type==="percent"){disc=subtotal*(disc/100);}after=Math.max(0,subtotal-disc);}
+  let vat=document.getElementById("vatOn").checked?after*0.2:0;
+  document.getElementById("vatAmt").value="£"+vat.toFixed(2);
+  const dep=parseFloat(document.getElementById("deposit").value)||0;
+  const final=Math.max(0,after+vat-dep);
+  document.getElementById("finalTotal").value="£"+final.toFixed(2);
+  return{subtotal,discount:disc,afterDisc:after,vat,deposit:dep,final};
+}
+
+/* ---------- SIGNATURES ---------- */
+function makeCanvasDrawable(cvs){
+  const ctx=cvs.getContext("2d");ctx.lineWidth=2;ctx.lineCap="round";let d=false;
+  function p(e){const r=cvs.getBoundingClientRect();if(e.touches){return{x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};}
+    return{x:e.clientX-r.left,y:e.clientY-r.top};}
+  cvs.addEventListener("mousedown",e=>{d=true;const m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y);});
+  cvs.addEventListener("mousemove",e=>{if(!d)return;const m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();});
+  ["mouseup","mouseleave"].forEach(ev=>cvs.addEventListener(ev,()=>d=false));
+  cvs.addEventListener("touchstart",e=>{e.preventDefault();d=true;const m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y);},{passive:false});
+  cvs.addEventListener("touchmove",e=>{e.preventDefault();if(!d)return;const m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();},{passive:false});
+  cvs.addEventListener("touchend",()=>d=false,{passive:false});
+  return ctx;
+}
+const sigCtx=makeCanvasDrawable(document.getElementById("sigCanvas"));
+const waiverCtx=makeCanvasDrawable(document.getElementById("waiverSigCanvas"));
+function clearSig(){sigCtx.clearRect(0,0,300,140);}
+function clearWaiverSig(){waiverCtx.clearRect(0,0,300,120);}
+
+/* ---------- PDF ---------- */
+async function generatePDF(){
+  if(!window.jspdf){alert("jsPDF not loaded");return;}
+  const{jsPDF}=window.jspdf;const doc=new jsPDF("p","mm","a4");
+  const totals=recalc();
+  const name=document.getElementById("clientName").value||"-";
+  const phone=document.getElementById("clientPhone").value||"-";
+  const addr=(document.getElementById("clientAddress").value||"-")+" "+(document.getElementById("clientPostcode").value||"");
+  const notes=document.getElementById("notes").value||"-";
+  const signedBy=document.getElementById("signedBy").value||"Pending";
+  const waiverSignedBy=document.getElementById("waiverSignedBy").value||"";
+  const start14=document.getElementById("startWithin14").checked;
+  const today=new Date().toISOString().slice(0,10);
+  const no="WUU-"+today.replace(/-/g,"")+"-"+Math.floor(Math.random()*999);
+
+  doc.setFillColor(0,0,0);doc.rect(0,0,210,20,"F");doc.setTextColor(255,255,255);
+  doc.setFontSize(14);doc.text("Warm Up UK Homes",10,13);
+  doc.setTextColor(0,0,0);doc.setFontSize(9);
+  doc.text("Contract No: "+no,150,10);
+  doc.text("Date: "+today,150,15);
+
+  doc.setFontSize(10);doc.text("Client: "+name,10,30);
+  doc.text("Phone: "+phone,10,35);
+  const a=doc.splitTextToSize("Address: "+addr,180);doc.text(a,10,40);
+
+  doc.text("Totals:",10,60);
+  doc.text("Subtotal £"+totals.subtotal.toFixed(2),10,65);
+  doc.text("Discount £"+totals.discount.toFixed(2),10,70);
+  doc.text("VAT £"+totals.vat.toFixed(2),10,75);
+  doc.text("Deposit £"+totals.deposit.toFixed(2),10,80);
+  doc.text("TOTAL £"+totals.final.toFixed(2),10,85);
+
+  const sig=document.getElementById("sigCanvas").toDataURL("image/png");
+  doc.text("Signature:",10,100);doc.addImage(sig,"PNG",30,90,60,30);
+  doc.text("Signed by: "+signedBy,10,125);
+
+  if(start14){
+    const w=document.getElementById("waiverSigCanvas").toDataURL("image/png");
+    doc.text("14-Day Waiver Signature:",10,140);doc.addImage(w,"PNG",60,130,60,25);
+    doc.text("Waiver signed by: "+waiverSignedBy,10,160);
+  }
+
+  doc.addPage();
+  doc.setFontSize(11);doc.text("Terms & Conditions – Warm Up UK Homes",10,15);
+  doc.setFontSize(8);
+  const tcs=[
+    "1. Cooling Off: You have 14 days to cancel unless you ask us to start sooner.",
+    "2. Access & Preparation: Provide safe access and clear loft areas.",
+    "3. Scope of Works: Limited to the items listed in this contract.",
+    "4. Payment Terms: Balance due on completion. Deposits non-refundable once materials allocated.",
+    "5. Warranty: Installed to manufacturer guidelines where practicable.",
+    "6. Existing Defects: We’re not liable for pre-existing issues.",
+    "7. PAS / Compliance: Customer to co-operate with inspection access.",
+    "8. Missed Appointments: Revisit charges may apply.",
+    "9. Ownership: Materials remain Warm Up UK Homes’ until paid in full.",
+    "10. Liability: Limited to value of works carried out.",
+    "11. Disputes: Raise in writing within 7 days of install."
+  ];
+  let y=25;for(const p of tcs){const lines=doc.splitTextToSize(p,180);doc.text(lines,10,y);y+=lines.length*4;}
+  const blob=doc.output("blob");const url=URL.createObjectURL(blob);
+  window.open(url,"_blank");document.getElementById("pdfLinkBox").value=url;window.latestPdfUrl=url;
+}
+
+/* ---------- WHATSAPP ---------- */
+function sendWA(){
+  const phoneRaw=document.getElementById("clientPhone").value.trim();
+  if(!phoneRaw){document.getElementById("waError").style.display="block";return;}
+  document.getElementById("waError").style.display="none";
+  const totals=recalc();
+  const name=document.getElementById("clientName").value||"-";
+  const addr=document.getElementById("clientAddress").value||"-";
+  const pc=document.getElementById("clientPostcode").value||"";
+  const pdfLink=window.latestPdfUrl?"\nPDF: "+window.latestPdfUrl:"";
+  let phone=phoneRaw.replace(/\s|\+/g,"");if(phone.startsWith("0"))phone="44"+phone.slice(1);
+  const msg=`Warm Up UK Homes Contract
+Client: ${name}
+Address: ${addr} ${pc}
+Total: £${totals.final.toFixed(2)}${pdfLink}`;
+  const link="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+  document.getElementById("waLinkBox").value=link;
+  window.open(link,"_blank");
+}
+</script>
+</body>
+</html>
