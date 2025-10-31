@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK Homes Limited – Contract</title>
+
+<!-- PDF + Signature Pad -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+<style>
+:root{--black:#000;--gold:#d4af37;--red:#b80000;}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:#f1f1f1}
+.page{max-width:900px;margin:auto;background:#fff;border:1px solid #ccc}
+header,footer{background:var(--black);color:var(--gold);text-align:center;
+  padding:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.inner{padding:15px}
+h2.section-title{margin:18px 0 9px;font-size:14px;text-transform:uppercase;color:#333}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.col{flex:1 1 180px;min-width:150px}
+label{display:block;font-size:11px;margin-bottom:3px;text-transform:uppercase;color:#555}
+input,select,textarea{width:100%;padding:6px;border:1px solid #ccc;border-radius:3px;font-size:12px}
+textarea{min-height:60px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+th,td{border:1px solid #ddd;padding:5px}
+th{background:#fafafa;text-transform:uppercase;font-size:11px}
+button{background:var(--black);color:#fff;border:none;padding:7px 13px;border-radius:3px;font-size:12px;cursor:pointer}
+button.secondary{background:#777}
+.btn-row{margin:12px 0;display:flex;gap:8px;flex-wrap:wrap}
+.totals-box{max-width:340px;margin-left:auto;border:1px solid #ccc;border-radius:4px;margin-top:10px}
+.totals-box div{display:flex;justify-content:space-between;padding:5px 8px;font-size:12px}
+.totals-box div:nth-child(odd){background:#fafafa}
+.totals-box .grand{background:var(--black);color:var(--gold);font-weight:700}
+.waiver{margin-top:15px;border:2px solid var(--red);background:#fff5f5;padding:9px 10px;border-radius:4px}
+.waiver-title{font-weight:700;color:var(--red);text-transform:uppercase;font-size:12px;margin-bottom:4px}
+.signature-area{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.sig-box{flex:1 1 220px}
+.sig-pad{border:1px solid #ccc;width:100%;height:90px;border-radius:4px}
+.sig-note{font-size:10px;color:#777;margin-top:3px}
+.terms{margin-top:15px;font-size:10.5px;line-height:1.35;border:1px solid #ddd;padding:8px;background:#fff}
+.whatsapp-panel{margin-top:15px;background:#25D366;color:#fff;text-align:center;font-weight:600;padding:9px 10px;border-radius:4px;cursor:pointer}
+@media(max-width:700px){
+  .page{border:none}
+  th,td{font-size:11px;padding:4px}
+  .totals-box{width:100%;margin-left:0}
+  .signature-area{flex-direction:column}
+  button{flex:1}
+}
+@media print{button,.whatsapp-panel{display:none!important}.page{border:none;margin:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="page" id="contractPage">
+  <header>WARM UP UK HOMES LIMITED</header>
+  <div class="inner">
+    <h2 class="section-title">Client Details</h2>
+    <div class="row">
+      <div class="col"><label>Name</label><input id="clientName" placeholder="Full name"></div>
+      <div class="col"><label>Address</label><input id="clientAddress"></div>
+      <div class="col"><label>Postcode</label><input id="clientPostcode"></div>
+      <div class="col"><label>Phone</label><input id="clientPhone"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Email</label><input id="clientEmail"></div>
+      <div class="col"><label>Survey Date</label><input type="date" id="surveyDate"></div>
+      <div class="col"><label>Booking Agent</label><input id="bookingAgent"></div>
+      <div class="col"><label>Confirmer</label><input id="confirmer"></div>
+    </div>
+
+    <h2 class="section-title">Products</h2>
+    <div class="table-wrap">
+    <table id="productsTable">
+      <thead><tr>
+        <th>Product</th><th>Size m²</th><th>Unit £</th><th>Qty</th><th>Total £</th><th>Del</th>
+      </tr></thead>
+      <tbody id="productsBody">
+        <tr>
+          <td><select class="productSelect">
+              <option value="">--select--</option>
+              <option>Spray Foam Removal</option>
+              <option>New Loft Insulation Install</option>
+              <option>Loft Top-Up (270 mm)</option>
+              <option>Loft Clearance / Preparation</option>
+              <option>Loft Boarding</option>
+              <option>Multifoil / TLX Silver / YBS SuperQuilt</option>
+              <option>Pitched Roof Insulation</option>
+              <option>Cavity Wall Extraction</option>
+              <option>VCL / Membrane / Vapour Barrier</option>
+          </select></td>
+          <td><input type="number" class="sizeInput" min="0" step="0.1"></td>
+          <td><input type="number" class="unitInput" value="0" min="0"></td>
+          <td><input type="number" class="qtyInput" value="1" min="1"></td>
+          <td><input type="text" class="lineTotal" value="0.00" readonly></td>
+          <td><button type="button" class="secondary delRow">X</button></td>
+        </tr>
+      </tbody>
+    </table></div>
+    <div class="btn-row"><button id="addProduct">+ Add Product</button></div>
+
+    <div class="totals-box">
+      <div><span>Sub Total</span><span id="subTotal">£0.00</span></div>
+      <div><span>Discount</span><input type="number" id="discount" value="0" style="width:70px;text-align:right"></div>
+      <div><span>VAT 20%</span><span id="vatAmount">£0.00</span></div>
+      <div><span>VAT On?</span><input type="checkbox" id="vatToggle" checked></div>
+      <div><span>Deposit</span><input type="number" id="deposit" value="0" style="width:70px;text-align:right"></div>
+      <div class="grand"><span>Total</span><span id="grandTotal">£0.00</span></div>
+    </div>
+
+    <h2 class="section-title">Notes</h2>
+    <textarea id="notes" placeholder="Access / prep / PAS notes..."></textarea>
+
+    <div class="waiver" id="waiverBox">
+      <div class="waiver-title">Customer Waiver / Variations</div>
+      <p style="font-size:11px;margin:4px 0">
+        I confirm the works described are correct and authorise Warm Up UK Homes Ltd to proceed.  
+        Additional clearance or non-standard lofts may incur extra cost.
+      </p>
+      <textarea id="waiverNotes" placeholder="Customer initials / notes"></textarea>
+      <div class="btn-row"><button id="expressBtn" style="background:var(--red)">+ EXPRESS FIT WAIVER</button></div>
+    </div>
+
+    <h2 class="section-title">Signatures</h2>
+    <div class="signature-area">
+      <div class="sig-box">
+        <canvas class="sig-pad" id="sigCustomer"></canvas>
+        <div class="sig-note">Customer Signature</div>
+        <button class="secondary" onclick="clearPad('sigCustomer')">Clear</button>
+      </div>
+      <div class="sig-box">
+        <canvas class="sig-pad" id="sigRep"></canvas>
+        <div class="sig-note">Rep Signature</div>
+        <button class="secondary" onclick="clearPad('sigRep')">Clear</button>
+      </div>
+    </div>
+
+    <div class="terms">
+      <strong>Terms &amp; Conditions (1 page)</strong><br>
+      Deposit on order, balance on completion. Materials remain property of Warm Up UK Homes Ltd until paid.  
+      Access required on agreed date. Cancellations within 48 hours may incur charges.
+    </div>
+
+    <div class="btn-row">
+      <button id="generatePdf">Generate PDF</button>
+      <button id="clearForm" class="secondary">Clear</button>
+    </div>
+    <div class="whatsapp-panel" id="whatsappSend">SEND TO WHATSAPP</div>
+  </div>
+  <footer>WARM UP UK HOMES LIMITED</footer>
+</div>
+
+<script>
+/* ===== Dynamic product rows ===== */
+function createRow(){
+  const tr=document.createElement('tr');
+  tr.innerHTML=document.querySelector('#productsBody tr').innerHTML;
+  return tr;
+}
+const bodyEl=document.getElementById('productsBody');
+document.getElementById('addProduct').onclick=()=>{bodyEl.appendChild(createRow());};
+bodyEl.addEventListener('input',recalc);
+bodyEl.addEventListener('click',e=>{
+  if(e.target.classList.contains('delRow')&&bodyEl.rows.length>1){e.target.closest('tr').remove();recalc();}
+});
+['discount','vatToggle','deposit'].forEach(id=>document.getElementById(id).addEventListener('input',recalc));
+function recalc(){
+  let sub=0;
+  bodyEl.querySelectorAll('tr').forEach(tr=>{
+    const u=parseFloat(tr.querySelector('.unitInput').value)||0;
+    const q=parseFloat(tr.querySelector('.qtyInput').value)||0;
+    const line=u*q;tr.querySelector('.lineTotal').value=line.toFixed(2);sub+=line;
+  });
+  const disc=parseFloat(discount.value)||0;
+  let base=sub-disc;if(base<0)base=0;
+  let vat=vatToggle.checked?base*0.2:0;
+  const dep=parseFloat(deposit.value)||0;
+  let tot=base+vat-dep;if(tot<0)tot=0;
+  subTotal.textContent='£'+sub.toFixed(2);
+  vatAmount.textContent='£'+vat.toFixed(2);
+  grandTotal.textContent='£'+tot.toFixed(2);
+}
+
+/* ===== Signature Pads ===== */
+const sigPads={};
+['sigCustomer','sigRep'].forEach(id=>{
+  const canvas=document.getElementById(id);
+  const pad=new SignaturePad(canvas,{backgroundColor:'#fff',penColor:'#000'});
+  sigPads[id]=pad;
+});
+function clearPad(id){sigPads[id].clear();}
+
+/* ===== Express Fit Waiver ===== */
+const expressBtn=document.getElementById('expressBtn');
+expressBtn.onclick=()=>{
+  const box=document.getElementById('waiverBox');
+  const notes=document.getElementById('waiverNotes');
+  if(!box.classList.contains('express')){
+    box.classList.add('express');
+    box.querySelector('.waiver-title').textContent='EXPRESS FIT WAIVER – ACCEPTED';
+    notes.value='Customer agreed to Express Fit Waiver.';
+    notes.readOnly=true;
+    expressBtn.textContent='✔ Express Fit Added';
+    expressBtn.style.background='#444';
+  }else{
+    box.classList.remove('express');
+    box.querySelector('.waiver-title').textContent='Customer Waiver / Variations';
+    notes.value='';
+    notes.readOnly=false;
+    expressBtn.textContent='+ EXPRESS FIT WAIVER';
+    expressBtn.style.background='var(--red)';
+  }
+};
+
+/* ===== PDF ===== */
+document.getElementById('generatePdf').onclick=()=>{
+  html2pdf().set({
+    margin:0.2,
+    filename:'Warm-Up-UK-Homes-Contract.pdf',
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'in',format:'a4'}
+  }).from(document.getElementById('contractPage')).save();
+};
+
+/* ===== Clear Form ===== */
+document.getElementById('clearForm').onclick=()=>{
+  document.querySelectorAll('input,textarea').forEach(e=>{
+    if(!['checkbox','date'].includes(e.type))e.value='';
+  });
+  bodyEl.innerHTML='';bodyEl.appendChild(createRow());recalc();
+  Object.values(sigPads).forEach(p=>p.clear());
+};
+
+/* ===== WhatsApp ===== */
+document.getElementById('whatsappSend').onclick=()=>{
+  const tel=(clientPhone.value||'').replace(/\s+/g,'');
+  const msg=`Warm Up UK Homes Contract%0AClient: ${clientName.value||''}%0ATotal: ${grandTotal.textContent}`;
+  const url=tel?`https://wa.me/${tel}?text=${msg}`:`https://wa.me/?text=${msg}`;
+  window.open(url,'_blank');
+};
+
+recalc();
+</script>
+</body>
+</html>
