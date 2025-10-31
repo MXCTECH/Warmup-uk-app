@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warm Up UK Homes Limited – Contract</title>
+
+<!-- libs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+<style>
+:root{
+  --black:#0f1114;
+  --gold:#d9b15a;
+  --red:#b80000;
+  --panel:#fff;
+}
+
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  margin:0;
+  background:#0b0d10;
+  overscroll-behavior-y:contain;
+  overflow-x:hidden;
+}
+
+.page{
+  max-width:900px;
+  margin:16px auto 24px;
+  background:var(--panel);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 12px 24px rgba(0,0,0,.35);
+  border:1px solid rgba(217,177,90,0.3);
+}
+
+/* header + logo (screen) */
+header{
+  background:linear-gradient(180deg,#0f1114 0%,#0f1114 60%,rgba(15,17,20,0) 100%);
+  color:var(--gold);
+  text-align:center;
+  padding:12px 10px 54px;
+  letter-spacing:.08em;
+  font-weight:600;
+  text-transform:uppercase;
+  position:relative;
+  z-index:1;
+}
+.logo-bar{
+  text-align:center;
+  margin-top:-46px;
+  position:relative;
+  z-index:2;
+}
+.logo-img{
+  height:200px;
+  max-width:380px;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));
+}
+.subheader{
+  text-align:center;
+  background:#fff;
+  padding:8px;
+  font-size:11.5px;
+  border-bottom:1px solid #eee;
+  line-height:1.3;
+}
+
+.inner{padding:14px 16px;}
+
+.section-title{
+  margin:16px 0 8px;
+  font-weight:700;
+  color:#0f1114;
+  text-transform:uppercase;
+  font-size:12px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.section-title::before{
+  content:'';
+  width:4px;
+  height:14px;
+  background:var(--gold);
+  border-radius:2px;
+}
+
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.col{flex:1 1 180px;min-width:150px}
+label{display:block;font-size:10.5px;margin-bottom:4px;text-transform:uppercase;color:#333}
+input,select,textarea{
+  width:100%;
+  padding:6px 8px;
+  border:1px solid #d7d9dc;
+  border-radius:7px;
+  background:#f2f4f6;
+  font-size:12.5px;
+}
+input:focus,textarea:focus,select:focus{
+  outline:none;
+  background:#fff;
+  border:1px solid rgba(217,177,90,.6);
+  box-shadow:0 0 0 2px rgba(217,177,90,.08);
+}
+textarea{min-height:65px}
+
+/* table */
+table{width:100%;border-collapse:collapse;margin-top:4px;font-size:12px}
+th,td{border:1px solid #eee;padding:5px}
+th{background:#f7f7f7;text-transform:uppercase;font-size:10.3px}
+
+/* buttons */
+button{
+  background:var(--black);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  padding:7px 12px;
+  font-size:12px;
+  cursor:pointer;
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  justify-content:center;
+}
+button.secondary{background:#ebedee;color:#222}
+.btn-row{margin:10px 0;display:flex;gap:8px;flex-wrap:wrap}
+
+/* totals + terms */
+.totals-terms-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.totals-box{
+  flex:0 0 240px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  font-size:10.5px;
+  background:#fff;
+}
+.totals-box div{display:flex;justify-content:space-between;align-items:center;padding:4px 6px}
+.totals-box div:nth-child(odd){background:#faf7f1}
+.totals-box input{width:70px;text-align:right}
+.totals-box .grand{background:var(--black);color:var(--gold);font-weight:700}
+
+.terms-inline{
+  flex:1 1 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:8px;
+  font-size:10.1px;
+  line-height:1.25;
+  background:#fff;
+}
+.terms-inline ol{margin:4px 0 0 16px;padding:0;font-size:10.1px}
+.terms-inline li{margin-bottom:2px}
+
+/* waiver */
+.waiver{
+  margin-top:8px;
+  border:1px solid rgba(184,0,0,0.35);
+  background:rgba(184,0,0,0.03);
+  padding:8px 9px 10px;
+  border-radius:9px;
+  page-break-inside:avoid;
+}
+.waiver-title{
+  color:var(--red);
+  font-weight:700;
+  text-transform:uppercase;
+  font-size:11px;
+  margin-bottom:4px;
+}
+#waiverNotes{
+  width:100%;
+  height:70px;          /* bigger so no scroll */
+  resize:vertical;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid rgba(184,0,0,0.25);
+  border-radius:6px;
+  font-size:11px;
+}
+@keyframes flashRed{
+  0%{box-shadow:0 0 0 0 rgba(184,0,0,0.15);}
+  50%{box-shadow:0 0 16px 4px rgba(184,0,0,0.6);}
+  100%{box-shadow:0 0 0 0 rgba(184,0,0,0.15);}
+}
+.waiver.flash{animation:flashRed 1s ease-in-out infinite alternate;}
+
+/* signatures */
+.signature-area{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.sig-box{
+  flex:1 1 260px;
+  background:#f7f8fa;
+  border:1px solid #eee;
+  border-radius:8px;
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.sig-pad{
+  border:1px dashed #999;
+  width:100%;
+  height:110px;
+  border-radius:7px;
+  background:#fff;
+  touch-action:none;
+}
+.sig-note{font-size:10px;color:#666}
+
+footer{
+  text-align:center;
+  background:#0f1114;
+  color:var(--gold);
+  padding:8px;
+  font-size:11px;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+/* mobile */
+@media(max-width:700px){
+  .page{border-radius:0;box-shadow:none;margin:0}
+  .totals-terms-row{flex-direction:column}
+  .totals-box,.terms-inline{width:100%;max-width:100%}
+  .signature-area{flex-direction:column}
+  button{flex:1}
+}
+
+/* PRINT – to keep waiver on page 1 for iPhone */
+@media print{
+  body{background:#fff!important}
+  .logo-bar{display:none!important;}
+  header{background:#000!important;color:#d9b15a!important;padding:6px 4px 3px!important;}
+  .subheader{padding:3px 8px 3px;font-size:9.8px;}
+  .inner{padding:6px 6px 8px!important;}
+  .totals-terms-row{margin-top:4px}
+  .totals-box{width:100%;max-width:100%;font-size:9.2px}
+  .totals-box div{padding:2px 4px}
+  .terms-inline{width:100%;font-size:9.1px;line-height:1.2;padding:4px 5px}
+  .waiver{font-size:9px;padding:4px 5px;max-height:85px;overflow:hidden;page-break-inside:avoid}
+  .signature-area, .signature-area + textarea{page-break-before:always;}
+  button{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="page" id="contractPage">
+  <header>WARM UP UK HOMES LIMITED</header>
+  <div class="logo-bar">
+    <img src="New logo .PNG" alt="Warm Up UK Homes" class="logo-img">
+  </div>
+  <div class="subheader">
+    Fitzwilliam House, Middle Bank, Doncaster, England, DN4 5NG · Tel 07470 474 774 · Email danielle@warmuphomes.co.uk
+  </div>
+
+  <div class="inner">
+    <!-- CLIENT DETAILS -->
+    <h2 class="section-title">Client details</h2>
+    <div class="row">
+      <div class="col"><label>Name</label><input id="clientName"></div>
+      <div class="col"><label>Address</label><input id="clientAddress"></div>
+      <div class="col"><label>Postcode</label><input id="clientPostcode"></div>
+      <div class="col"><label>Phone</label><input id="clientPhone"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Email</label><input id="clientEmail"></div>
+      <div class="col"><label>Survey Date</label><input type="date" id="surveyDate"></div>
+      <div class="col"><label>Install Date</label><input type="date" id="installDate"></div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <h2 class="section-title">Products / works</h2>
+    <table id="productsTable">
+      <thead>
+        <tr><th>Product</th><th>Size m²</th><th>£ / m²</th><th>Total £</th><th></th></tr>
+      </thead>
+      <tbody id="productsBody">
+        <tr>
+          <td>
+            <select class="productSelect">
+              <option value="">--select--</option>
+              <option>Spray Foam Removal</option>
+              <option>New Loft Insulation Install</option>
+              <option>Loft Top-Up (270 mm)</option>
+              <option>Loft Clearance / Preparation</option>
+              <option>Loft Boarding</option>
+              <option>Multifoil / TLX Silver / YBS SuperQuilt</option>
+              <option>Pitched Roof Insulation</option>
+              <option>Cavity Wall Extraction</option>
+              <option>VCL / Membrane / Vapour Barrier</option>
+            </select>
+          </td>
+          <td><input type="number" class="sizeInput" min="0" step="0.1"></td>
+          <td><input type="number" class="unitInput" min="0" step="0.01" value="0"></td>
+          <td><input type="text" class="lineTotal" value="0.00" readonly></td>
+          <td><button type="button" class="secondary delRow">X</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="btn-row">
+      <button type="button" id="addProduct">+ Add Product</button>
+    </div>
+
+    <!-- TOTALS + TERMS -->
+    <div class="totals-terms-row">
+      <div class="totals-box">
+        <div><span>Sub Total</span><span id="subTotal">£0.00</span></div>
+        <div><span>Discount</span><input type="number" id="discount" value="0"></div>
+        <div><span>VAT 20%</span><span id="vatAmount">£0.00</span></div>
+        <div><span>VAT On?</span><input type="checkbox" id="vatToggle" checked style="width:auto"></div>
+        <div><span>Deposit</span><input type="number" id="deposit" value="0"></div>
+        <div class="grand"><span>Total</span><span id="grandTotal">£0.00</span></div>
+      </div>
+      <div class="terms-inline">
+        <strong>Terms &amp; Conditions (summary)</strong>
+        <ol>
+          <li>Deposit on order, balance on completion unless agreed in writing.</li>
+          <li>Materials remain Warm Up UK Homes Ltd property until paid in full.</li>
+          <li>Client to provide safe, clear access to loft/roof on the install date.</li>
+          <li>Hidden / extra clearance / spray foam / non-standard prep may be chargeable.</li>
+          <li>Date changes inside 48 hrs can incur a lost-day / call-out fee.</li>
+          <li>Our install standards &amp; compliance requirements take priority.</li>
+          <li>Structural / damp / electrical issues are out of scope unless listed.</li>
+          <li>Client confirms authority to order and agrees to pay on completion.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- WAIVER -->
+    <div class="waiver" id="waiverBox">
+      <div class="waiver-title">Customer waiver / variations</div>
+      <p style="font-size:10px;margin:3px 0">
+        I confirm the above works and authorise Warm Up UK Homes Ltd to proceed.
+      </p>
+      <p style="font-size:10px;margin:3px 0">
+        Express installs: where I request works to start within the 14-day cancellation period, I accept the express start waiver below.
+      </p>
+      <textarea id="waiverNotes" placeholder="Initials / special agreement..."></textarea>
+      <div class="btn-row">
+        <button type="button" id="expressBtn" style="background:var(--red)">+ EXPRESS FIT WAIVER</button>
+      </div>
+    </div>
+
+    <!-- SIGNATURES -->
+    <h2 class="section-title">Sign-off &amp; signatures</h2>
+    <div class="signature-area">
+      <div class="sig-box">
+        <canvas class="sig-pad" id="sigCustomer"></canvas>
+        <div class="sig-note">Customer signature</div>
+        <input type="text" id="clientPrintedName" placeholder="Customer name (print)">
+        <button type="button" class="secondary" onclick="clearPad('sigCustomer')">Clear</button>
+      </div>
+      <div class="sig-box">
+        <canvas class="sig-pad" id="sigRep"></canvas>
+        <div class="sig-note">Warm Up rep signature</div>
+        <input type="text" id="repPrintedName" placeholder="Rep name (print)">
+        <button type="button" class="secondary" onclick="clearPad('sigRep')">Clear</button>
+      </div>
+    </div>
+
+    <h2 class="section-title">Notes</h2>
+    <textarea id="notes" placeholder="Access, parking, hatch, special instructions..."></textarea>
+
+    <div class="btn-row">
+      <button type="button" id="generatePdf">Generate PDF</button>
+      <button type="button" id="clearForm" class="secondary">Clear</button>
+    </div>
+  </div>
+
+  <footer>WARM UP UK HOMES LIMITED</footer>
+</div>
+
+<script>
+/* ========== PRODUCTS & TOTALS ========== */
+function createRow(){
+  const tr=document.createElement('tr');
+  tr.innerHTML=document.querySelector('#productsBody tr').innerHTML;
+  return tr;
+}
+
+const productsBody=document.getElementById('productsBody');
+
+document.getElementById('addProduct').addEventListener('click',()=>productsBody.appendChild(createRow()));
+
+productsBody.addEventListener('input',recalc);
+productsBody.addEventListener('click',e=>{
+  if(e.target.classList.contains('delRow') && productsBody.rows.length>1){
+    e.target.closest('tr').remove();
+    recalc();
+  }
+});
+
+['discount','vatToggle','deposit'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',recalc);
+});
+
+function recalc(){
+  let subtotal=0;
+  productsBody.querySelectorAll('tr').forEach(tr=>{
+    const size=parseFloat(tr.querySelector('.sizeInput').value)||0;
+    const rate=parseFloat(tr.querySelector('.unitInput').value)||0;
+    const line=size*rate;
+    tr.querySelector('.lineTotal').value=line.toFixed(2);
+    subtotal+=line;
+  });
+  document.getElementById('subTotal').textContent='£'+subtotal.toFixed(2);
+
+  const discount=parseFloat(document.getElementById('discount').value)||0;
+  let base=subtotal-discount; if(base<0) base=0;
+
+  const vatOn=document.getElementById('vatToggle').checked;
+  const vat=vatOn ? base*0.2 : 0;
+  document.getElementById('vatAmount').textContent='£'+vat.toFixed(2);
+
+  const deposit=parseFloat(document.getElementById('deposit').value)||0;
+  let total=base+vat-deposit; if(total<0) total=0;
+  document.getElementById('grandTotal').textContent='£'+total.toFixed(2);
+}
+recalc();
+
+/* ========== SIGNATURES ========== */
+const sigPads={};
+
+function initSigPad(id){
+  const canvas=document.getElementById(id);
+  const pad=new SignaturePad(canvas,{backgroundColor:'#fff',penColor:'#000'});
+  resizeSig(canvas,pad);
+  sigPads[id]=pad;
+}
+
+function resizeSig(canvas,pad){
+  const ratio=Math.max(window.devicePixelRatio||1,1);
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*ratio;
+  canvas.height=rect.height*ratio;
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  pad.clear();
+}
+
+initSigPad('sigCustomer');
+initSigPad('sigRep');
+
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>700){
+    Object.keys(sigPads).forEach(id=>{
+      resizeSig(document.getElementById(id),sigPads[id]);
+    });
+  }
+});
+
+function clearPad(id){
+  if(sigPads[id]) sigPads[id].clear();
+}
+
+/* ========== EXPRESS WAIVER ========== */
+document.getElementById('expressBtn').addEventListener('click',()=>{
+  const box=document.getElementById('waiverBox');
+  const notes=document.getElementById('waiverNotes');
+  const btn=document.getElementById('expressBtn');
+  const title=box.querySelector('.waiver-title');
+
+  if(!box.classList.contains('express')){
+    box.classList.add('express','flash');
+    title.textContent='EXPRESS FIT WAIVER – ACCEPTED';
+    notes.value='I/we request that Warm Up UK Homes Limited commence the agreed works and/or order materials immediately and within the 14-day cancellation period. I/we understand that by asking for an express start I/we may lose the right to cancel for work already carried out, labour time allocated, call-out day and materials ordered.';
+    notes.readOnly=true;
+    btn.textContent='✔ Express Fit Added';
+    btn.style.background='#444';
+    setTimeout(()=>box.classList.remove('flash'),6000);
+  }else{
+    box.classList.remove('express','flash');
+    title.textContent='Customer waiver / variations';
+    notes.value='';
+    notes.readOnly=false;
+    btn.textContent='+ EXPRESS FIT WAIVER';
+    btn.style.background='var(--red)';
+  }
+});
+
+/* ========== PDF ========== */
+document.getElementById('generatePdf').addEventListener('click',()=>{
+  // swap signatures to imgs so iPhone catches them
+  const sigData=['sigCustomer','sigRep'].map(id=>{
+    const canvas=document.getElementById(id);
+    const pad=sigPads[id];
+    let img=null;
+    if(pad && !pad.isEmpty()){
+      img=document.createElement('img');
+      img.src=canvas.toDataURL('image/png');
+      img.style.width='100%';
+      img.style.height='auto';
+      canvas.parentNode.insertBefore(img,canvas.nextSibling);
+      canvas.style.display='none';
+    }
+    return {canvas,img};
+  });
+
+  html2pdf().set({
+    margin:0.1,
+    filename:'Warm-Up-UK-Homes-Contract.pdf',
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'pt',format:'a4'}
+  }).from(document.getElementById('contractPage')).save().then(()=>{
+    // restore canvases
+    sigData.forEach(({canvas,img})=>{
+      if(img){img.remove();canvas.style.display='block';}
+    });
+  });
+});
+
+/* ========== CLEAR FORM ========== */
+document.getElementById('clearForm').addEventListener('click',()=>{
+  document.querySelectorAll('input,textarea').forEach(el=>{
+    if(!['checkbox','date'].includes(el.type)) el.value='';
+  });
+  document.getElementById('vatToggle').checked=true;
+
+  productsBody.innerHTML='';
+  productsBody.appendChild(createRow());
+  recalc();
+
+  Object.values(sigPads).forEach(p=>p.clear());
+});
+</script>
+</body>
+</html>
