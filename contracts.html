@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warm Up UK Contract</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    background-color: #fff;
+  }
+  .contract {
+    border: 2px solid black;
+    padding: 20px;
+    width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    color: gold;
+    background: black;
+    padding: 10px;
+  }
+  label {
+    font-weight: bold;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 6px;
+    margin: 4px 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .signature {
+    border: 1px dashed #333;
+    height: 80px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  #generatePDF {
+    background: black;
+    color: gold;
+    padding: 12px 20px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="contract" id="contract">
+  <h1>Warm Up UK Homes Limited</h1>
+  <label>Client Name:</label>
+  <input type="text" id="clientName" placeholder="Enter client name">
+
+  <label>Address:</label>
+  <textarea id="address" placeholder="Enter property address"></textarea>
+
+  <label>Product:</label>
+  <input type="text" id="product" placeholder="e.g., Loft Insulation">
+
+  <label>Total Cost (£):</label>
+  <input type="number" id="total" placeholder="Enter total amount">
+
+  <label>Notes:</label>
+  <textarea id="notes" placeholder="Add any additional notes"></textarea>
+
+  <h3>Client Signature:</h3>
+  <div class="signature" id="signatureBox"></div>
+</div>
+
+<button id="generatePDF">Generate PDF</button>
+
+<!-- Include html2canvas & jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+document.getElementById("generatePDF").addEventListener("click", () => {
+  // Before capturing, replace inputs with text so data is visible
+  const inputs = document.querySelectorAll("input, textarea");
+  inputs.forEach(input => {
+    const span = document.createElement("div");
+    span.textContent = input.value || input.placeholder;
+    span.style.border = "1px solid #ccc";
+    span.style.padding = "6px";
+    span.style.marginBottom = "10px";
+    span.style.minHeight = "24px";
+    input.parentNode.insertBefore(span, input);
+    input.style.display = "none";
+  });
+
+  html2canvas(document.getElementById("contract"), { scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF("p", "pt", "a4");
+    const imgWidth = 595.28;
+    const pageHeight = 841.89;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save("WarmUpUK_Contract.pdf");
+
+    // Restore the inputs after PDF is generated
+    inputs.forEach(input => {
+      input.style.display = "";
+      if (input.previousSibling && input.previousSibling.tagName === "DIV") {
+        input.previousSibling.remove();
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
