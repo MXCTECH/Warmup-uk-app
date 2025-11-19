@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  />
+  <title>Warm Up UK – App Dashboard</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <style>
+    :root {
+      --brand: #000000;
+      --accent: #d4af37;
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --border: #e0e0e0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+        sans-serif;
+      background: radial-gradient(circle at top, #fdf7e8 0, #f5f5f7 40%, #f5f5f7 100%);
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .shell {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+      padding: 18px 18px 24px 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .logo-wrap img {
+      height: 70px;
+      width: auto;
+      display: block;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .header-text h1 {
+      margin: 0 0 4px 0;
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      word-spacing: 0.15em;
+    }
+
+    .header-text h1 span {
+      color: var(--accent);
+    }
+
+    .header-text p {
+      margin: 0;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .meta {
+      font-size: 0.78rem;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 12px 0 8px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .tile {
+      position: relative;
+      padding: 14px 12px;
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 90px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        border-color 0.12s ease;
+    }
+
+    .tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.07), transparent);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+      border-color: rgba(212, 175, 55, 0.6);
+    }
+
+    .tile:hover::before {
+      opacity: 1;
+    }
+
+    .tile-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tile-sub {
+      font-size: 0.78rem;
+      opacity: 0.8;
+    }
+
+    .chip {
+      align-self: flex-start;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fafafa;
+    }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 0.78rem;
+      opacity: 0.75;
+      text-align: center;
+    }
+
+    .footer strong {
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .shell {
+        border-radius: 0;
+        box-shadow: none;
+        padding: 12px 10px 20px 10px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .logo-wrap img {
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <header>
+        <div class="logo-wrap">
+          <!-- Uses the logo already in this repo -->
+          <img src="Warm up Uk logo .JPG" alt="Warm Up UK logo" />
+        </div>
+        <div class="header-text">
+          <h1><span>WARM UP UK</span> – Field App</h1>
+          <p>Quick access dashboard for sales reps, surveyors & installers.</p>
+          <div class="meta">
+            321–323 Romford High Road, Essex, RM6 6AX ·
+            <strong>Tel:</strong> 01708 300670 ·
+            <strong>Email:</strong> hello@warmupuk.com
+          </div>
+        </div>
+      </header>
+
+      <div class="section-title">Core tools</div>
+      <div class="grid">
+        <a href="Order-form.html" class="tile">
+          <div>
+            <div class="tile-title">Order Form</div>
+            <div class="tile-sub">
+              Create new installation orders / sales proposals.
+            </div>
+          </div>
+          <div class="chip">Sales · Office</div>
+        </a>
+
+        <a href="contracts.html" class="tile">
+          <div>
+            <div class="tile-title">Customer Satisfaction / Contracts</div>
+            <div class="tile-sub">
+              Completed-works satisfaction form & signing.
+            </div>
+          </div>
+          <div class="chip">Install · Handover</div>
+        </a>
+
+        <a href="calendar.html" class="tile">
+          <div>
+            <div class="tile-title">Survey / Install Calendar</div>
+            <div class="tile-sub">
+              General calendar for office scheduling.
+            </div>
+          </div>
+          <div class="chip">Office</div>
+        </a>
+
+        <a href="sales-calendar.html" class="tile">
+          <div>
+            <div class="tile-title">Sales Rep Calendar</div>
+            <div class="tile-sub">
+              Leads assigned to individual reps with share links.
+            </div>
+          </div>
+          <div class="chip">Reps</div>
+        </a>
+
+        <a href="dashboard.html" class="tile">
+          <div>
+            <div class="tile-title">Dashboard</div>
+            <div class="tile-sub">
+              Overview area for stats or extra tools.
+            </div>
+          </div>
+          <div class="chip">Manager</div>
+        </a>
+      </div>
+
+      <div class="footer">
+        <strong>Tip:</strong> save this page to your home screen so reps can open
+        the dashboard like an app.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Basic service worker registration (won't break anything if sw.js missing)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("sw.js")
+          .catch(function (err) {
+            console.log("SW registration failed:", err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
