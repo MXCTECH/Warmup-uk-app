@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>WARM UP UK – Multifoil Energy Saving</title>
+
+<!-- PDF libs -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+  :root{ --brand:#000; --gold:#d4af37; --line:#e9e9ea; --bg:#f7f7f8; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:#111; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:1000px; margin:clamp(12px,2.2vw,24px) auto; padding:clamp(12px,2.2vw,24px); background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.04); }
+  .brand{ display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+  .brand img{ width:56px; height:56px; object-fit:cover; border-radius:8px; border:2px solid var(--gold); }
+  .brand h1{ margin:0; font-size:clamp(20px,3.2vw,28px); letter-spacing:.5px; }
+  .brand .gold{ color:var(--gold); font-weight:800 }
+  .sub{ margin:.25rem 0 1rem 0; color:#555; font-size:.95rem; }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
+  .card{ border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .card h2{ margin:0 0 .5rem 0; font-size:1.1rem; }
+  .muted{ color:#666; font-size:.92rem }
+  label{ display:block; font-size:.95rem; margin:.6rem 0 .25rem; }
+  input{ width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; font-size:1rem; background:#fff; }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:600px){ .row{ grid-template-columns:1fr; } }
+  .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .btn{ appearance:none; border:0; cursor:pointer; padding:12px 16px; border-radius:999px; background:var(--brand); color:#fff; font-weight:700; letter-spacing:.3px; }
+  .btn.gold{ background:var(--gold); color:#000; }
+  .btn.ghost{ background:#fff; color:#000; border:1px solid var(--line); }
+  .results{ background:#0c0c0c; color:#fff; border-radius:12px; padding:18px; border:1px solid #111; }
+  .results h2{ margin:0 0 .5rem 0; color:var(--gold); }
+  .kv{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  @media (max-width:600px){ .kv{ grid-template-columns:1fr; } }
+  .kv .item{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:12px; }
+  .big{ font-size:1.5rem; font-weight:800; }
+  .fine{ color:#bbb; font-size:.9rem; }
+  .hr{ height:1px; background:var(--line); margin:16px 0; }
+  .note{ margin-top:10px; font-size:.85rem; color:#666; }
+  .footer{ margin-top:20px; font-size:.9rem; color:#444; text-align:center; }
+  .footer strong{ color:#000; }
+</style>
+</head>
+<body>
+  <div class="wrap" id="capture">
+    <div class="brand">
+      <!-- use your current filename (spaces URL-encoded) -->
+      <img src="Warm%20up%20Uk%20logo%20.JPG" alt="WARM UP UK logo" />
+      <div>
+        <h1><span class="gold">WARM UP UK</span> Multifoil Energy Saving</h1>
+        <div class="sub">Enter the customer’s current annual bill and press Calculate.</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Inputs -->
+      <div class="card">
+        <h2>1) Inputs</h2>
+        <div class="row">
+          <div>
+            <label>Annual energy spend (£)</label>
+            <input type="number" id="annualSpend" inputmode="decimal" value="2400" min="0" step="1" />
+            <div class="muted">Total bill (gas + electric).</div>
+          </div>
+          <div>
+            <label>Heating share of spend (%)</label>
+            <input type="number" id="heatingShare" inputmode="decimal" value="60" min="0" max="100" step="1" />
+            <div class="muted">Typical home: 50–70%.</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label>Multifoil saving (%)</label>
+            <input type="number" id="foilPct" inputmode="decimal" value="8" min="0" max="100" step="0.5" />
+            <div class="muted">Edit if you want to model a different reduction.</div>
+          </div>
+          <div>
+            <label>Installed cost (£)</label>
+            <input type="number" id="foilCost" inputmode="decimal" value="2200" min="0" step="50" />
+            <div class="muted">Used for payback & ROI.</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label>Optional: Annual heating kWh (if known)</label>
+            <input type="number" id="heatingKwh" inputmode="decimal" placeholder="e.g. 12000" />
+          </div>
+          <div>
+            <label>Emission factor (kg CO₂/kWh)</label>
+            <input type="number" id="emissionFactor" inputmode="decimal" value="0.18" min="0" step="0.01" />
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="btn gold" id="calcBtn">Calculate</button>
+          <button class="btn ghost" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="note">
+          If kWh isn’t entered, kWh is estimated from the heating spend using a **10p/kWh** blended rate. You can change the % saving at any time.
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="card">
+        <h2>2) Results</h2>
+        <div class="results">
+          <h2>Estimated Savings</h2>
+          <div class="kv">
+            <div class="item">
+              <div class="fine">Heating spend (baseline)</div>
+              <div class="big" id="heatingSpendTxt">£0</div>
+              <div class="fine">from annual bill × heating share</div>
+            </div>
+            <div class="item">
+              <div class="fine">Annual saving</div>
+              <div class="big" id="annualSaving">£0</div>
+              <div class="fine" id="monthlySaving">£0 / month</div>
+            </div>
+            <div class="item">
+              <div class="fine">New annual bill after multifoil</div>
+              <div class="big" id="newBill">£0</div>
+              <div class="fine">bill – saving</div>
+            </div>
+            <div class="item">
+              <div class="fine">Payback period</div>
+              <div class="big" id="payback">—</div>
+              <div class="fine" id="roi">ROI: —</div>
+            </div>
+            <div class="item">
+              <div class="fine">CO₂ saved per year</div>
+              <div class="big" id="co2Saved">0 kg</div>
+              <div class="fine" id="kwhNote">based on reported/estimated kWh</div>
+            </div>
+            <div class="item">
+              <div class="fine">5-year saving (no inflation)</div>
+              <div class="big" id="fiveYearSaving">£0</div>
+              <div class="fine">simple linear total</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btns" style="margin-top:12px">
+          <button class="btn" id="whatsBtn">Share via WhatsApp</button>
+          <button class="btn gold" id="pdfBtn">Save as PDF</button>
+        </div>
+
+        <div class="note">
+          Address: <strong>321–323 Romford High Road, Essex, RM6 6AX</strong> • Reg No: <strong>16431384</strong> • Email: <strong>hello@warmupuk.com</strong><br/>
+          © <span id="year"></span> WARM UP UK — Insulation specialists.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>Tip:</strong> Type the customer’s annual bill and press <em>Calculate</em>. Tweak % saving or cost if needed.
+    </div>
+  </div>
+
+<script>
+  // --- Helpers (avoid exotic identifiers for Safari) ---
+  function toNumber(v, fallback) {
+    var n = parseFloat(v);
+    return isNaN(n) ? (fallback || 0) : n;
+  }
+  function money0(n) {
+    n = Math.round(n * 100) / 100;
+    return '£' + n.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+  function money2(n) {
+    n = Math.round(n * 100) / 100;
+    return '£' + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function numTxt(n) {
+    n = Math.round(n * 100) / 100;
+    return n.toLocaleString();
+  }
+
+  function compute() {
+    // inputs
+    var spend = toNumber(document.getElementById('annualSpend').value, 0);
+    var sharePct = toNumber(document.getElementById('heatingShare').value, 60);
+    var foilPct = toNumber(document.getElementById('foilPct').value, 8);
+    var foilCost = toNumber(document.getElementById('foilCost').value, 0);
+    var kwhInput = toNumber(document.getElementById('heatingKwh').value, 0);
+    var ef = toNumber(document.getElementById('emissionFactor').value, 0.18);
+
+    // baseline
+    var heatingSpend = spend * (Math.max(0, Math.min(100, sharePct)) / 100);
+    var r = Math.max(0, Math.min(100, foilPct)) / 100; // multifoil saving fraction
+
+    // savings
+    var annualSaving = heatingSpend * r;
+    var newBill = Math.max(0, spend - annualSaving);
+    var payback = (annualSaving > 0) ? (foilCost / annualSaving) : Infinity;
+    var roi = (annualSaving > 0 && foilCost > 0) ? (annualSaving / foilCost) * 100 : 0;
+
+    // kWh + CO2
+    var kwh = kwhInput;
+    var kwhNote = 'based on reported/estimated kWh';
+    if (!kwh || kwh <= 0) {
+      // estimate using blended 10p/kWh if not provided
+      var assumedRate = 0.10; // £/kWh
+      kwh = heatingSpend / assumedRate;
+      kwhNote = 'estimated from heating spend at 10p/kWh';
+    }
+    var kwhSaved = kwh * r;
+    var co2Saved = kwhSaved * ef;
+
+    // update UI
+    document.getElementById('heatingSpendTxt').textContent = money0(heatingSpend);
+    document.getElementById('annualSaving').textContent = money0(annualSaving);
+    document.getElementById('monthlySaving').textContent = money2(annualSaving / 12) + ' / month';
+    document.getElementById('fiveYearSaving').textContent = money0(annualSaving * 5);
+    document.getElementById('newBill').textContent = money0(newBill);
+    document.getElementById('co2Saved').textContent = numTxt(co2Saved) + ' kg';
+    document.getElementById('kwhNote').textContent = kwhNote;
+    document.getElementById('payback').textContent = (annualSaving > 0 && isFinite(payback)) ? (Math.round(payback * 10) / 10) + ' years' : '—';
+    document.getElementById('roi').textContent = (annualSaving > 0 && foilCost > 0) ? ('ROI: ' + (Math.round(roi * 10) / 10) + '% / yr') : 'ROI: —';
+
+    return { annualSaving: annualSaving, newBill: newBill, co2Saved: co2Saved };
+  }
+
+  function resetAll() {
+    document.getElementById('annualSpend').value = 2400;
+    document.getElementById('heatingShare').value = 60;
+    document.getElementById('foilPct').value = 8;
+    document.getElementById('foilCost').value = 2200;
+    document.getElementById('heatingKwh').value = '';
+    document.getElementById('emissionFactor').value = 0.18;
+    compute();
+  }
+
+  // events
+  document.getElementById('calcBtn').addEventListener('click', compute);
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+  ['annualSpend','heatingShare','foilPct','foilCost','heatingKwh','emissionFactor'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener('change', compute);
+    el.addEventListener('input', compute);
+  });
+
+  // WhatsApp
+  document.getElementById('whatsBtn').addEventListener('click', function(){
+    var r = compute();
+    var msg = 'WARM UP UK – Multifoil Energy Saving%0A' +
+              'Annual saving: £' + Math.round(r.annualSaving) + '%0A' +
+              'New bill after install: £' + Math.round(r.newBill) + '%0A' +
+              'CO₂ saved/yr: ' + Math.round(r.co2Saved) + ' kg%0A%0A' +
+              'Want me to send a quote?';
+    window.open('https://wa.me/?text=' + msg, '_blank');
+  });
+
+  // PDF
+  document.getElementById('pdfBtn').addEventListener('click', async function(){
+    var node = document.getElementById('capture');
+    var jsPDF = window.jspdf.jsPDF;
+    var canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    var imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+    var pdf = new jsPDF({orientation:'p', unit:'pt', format:'a4'});
+    var pageWidth = pdf.internal.pageSize.getWidth();
+    var pageHeight = pdf.internal.pageSize.getHeight();
+    var ratio = canvas.width / canvas.height;
+    var pdfW = pageWidth - 40;
+    var pdfH = pdfW / ratio;
+    var x = 20, y = 20;
+
+    if (pdfH <= pageHeight - 40){
+      pdf.addImage(imgData, 'JPEG', x, y, pdfW, pdfH);
+    } else {
+      var remaining = pdfH, position = 0;
+      var pageHpx = (pageHeight - 40) * ratio;
+      while (remaining > 0){
+        var pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pageHpx, canvas.height - position);
+        var ctx = pageCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, position, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
+        var pageImg = pageCanvas.toDataURL('image/jpeg', 0.92);
+        var h = (pageCanvas.height / canvas.width) * pdfW;
+        if (position > 0) pdf.addPage();
+        pdf.addImage(pageImg, 'JPEG', x, y, pdfW, h);
+        position += pageCanvas.height;
+        remaining -= h;
+      }
+    }
+    pdf.save('WARM-UP-UK_Multifoil_Saving.pdf');
+  });
+
+  // init
+  document.getElementById('year').textContent = new Date().getFullYear();
+  compute();
+</script>
+</body>
+</html>
