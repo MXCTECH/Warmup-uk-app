@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Warm Up UK – Condensation Risk Assessment (Diagnostics)</title>
+<style>
+  :root{ --brand:#000; --accent:#d4af37; --line:#ececec; --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626; --bg:#f7f7f8 }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111}
+  .app{max-width:980px;margin:20px auto 60px;padding:0 12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:16px;margin-bottom:14px}
+  .brandbar{display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(180deg,#000, #111);color:#fff;border-radius:14px;border:1px solid #111}
+  .brandbar img{height:48px;width:auto;object-fit:contain;background:#fff;border-radius:8px;padding:6px}
+  .title{font-weight:800;letter-spacing:.04em}
+  label{font-size:12px;color:#374151;display:block;margin-bottom:6px}
+  input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;background:#fff;font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:780px){.grid{grid-template-columns:1fr}}
+  .btnbar{display:flex;gap:10px;flex-wrap:wrap}
+  button{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:#000;color:#fff}
+  .btn-gold{background:linear-gradient(180deg,#f7df8a 0%, #d4af37 60%, #b78e14 100%);color:#111;border:1px solid #b68e13}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:700;border:1px solid #e5e7eb;background:#fff}
+  .pill.ok{color:var(--ok);border-color:#bbf7d0}.pill.warn{color:var(--warn);border-color:#fde68a}.pill.bad{color:var(--bad);border-color:#fecaca}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  @media (max-width:640px){.kpi{grid-template-columns:1fr}}
+  .kpi .item{padding:10px;border:1px solid #eee;border-radius:12px;background:#fafafa}
+  .badge{font-size:12px;color:#374151}.big{font-size:20px;font-weight:800}
+  .status{background:#111;color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.4}
+  .status b{color:#f7df8a}
+  .error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+  .ok{background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brandbar card">
+    <img src="warmupuklogo.jpg" alt="Warm Up UK" onerror="this.style.display='none'">
+    <div>
+      <div class="title">WARM UP UK — Condensation Risk Assessment (Diagnostics)</div>
+      <div style="opacity:.8;font-size:12px">If anything fails, you’ll see it below with the fix.</div>
+    </div>
+  </div>
+
+  <!-- Live status -->
+  <div class="card">
+    <div id="status" class="status">Booting…</div>
+  </div>
+
+  <!-- Inputs (trimmed for brevity but fully functional) -->
+  <div class="card">
+    <div class="grid">
+      <div><label>Client name</label><input id="clientName" placeholder="Mr John Smith"></div>
+      <div><label>Assessor</label><input id="assessor" placeholder="Rep name"></div>
+      <div>
+        <label>Roof type</label>
+        <select id="roofType">
+          <option>Pitched roof – ventilated</option>
+          <option>Pitched roof – limited ventilation</option>
+          <option>Pitched roof – no eaves ventilation</option>
+          <option>Flat roof – cold deck</option>
+          <option>Flat roof – warm deck</option>
+        </select>
+      </div>
+      <div>
+        <label>Ventilation</label>
+        <select id="ventilation">
+          <option>Clear eaves + cross ventilation</option>
+          <option>Partial / restricted vents</option>
+          <option>No known ventilation</option>
+        </select>
+      </div>
+      <div>
+        <label>System</label>
+        <select id="systemType">
+          <option value="multifoil">Multifoil</option>
+          <option value="fibreglass">Fibreglass</option>
+        </select>
+      </div>
+      <div>
+        <label>VCL</label>
+        <select id="vcl">
+          <option value="present">Present & continuous</option>
+          <option value="partial">Partial</option>
+          <option value="absent">Absent</option>
+        </select>
+      </div>
+    </div>
+    <div class="btnbar" style="margin-top:12px">
+      <button class="btn-gold" id="btnAssess">Run Assessment</button>
+      <button id="btnPDF" class="btn-gold" title="Requires jsPDF + html2canvas">Download PDF</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="card" id="resultCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <div id="riskPill" class="pill">Pending…</div>
+      <div class="badge">PAS-style screen (not full Glaser)</div>
+    </div>
+    <div class="kpi" style="margin-top:10px">
+      <div class="item"><div class="badge">Drivers</div><div id="drivers" class="big">–</div></div>
+      <div class="item"><div class="badge">Mitigations</div><div id="mitigations" class="big">–</div></div>
+      <div class="item"><div class="badge">Verdict</div><div id="verdict" class="big">–</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- error surfacing ---------- */
+(function(){
+  const status = document.getElementById('status');
+  const log = (msg, ok=false)=>{ status.className = 'status ' + (ok?'ok':'error'); status.innerHTML = msg; };
+
+  // Show runtime JS errors on the page
+  window.addEventListener('error', (e)=>{
+    log('<b>Runtime error:</b> ' + (e.message||e.error), false);
+  });
+  window.addEventListener('unhandledrejection', (e)=>{
+    log('<b>Promise error:</b> ' + (e.reason && e.reason.message ? e.reason.message : e.reason), false);
+  });
+
+  // Boot banner
+  status.className = 'status ok';
+  status.innerHTML = '<b>Boot OK:</b> HTML loaded. Now loading PDF libraries…';
+
+  // Try loading CDNs with fallback
+  function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.defer=true;s.onload=res;s.onerror=()=>rej(new Error('Failed '+src));document.head.appendChild(s);});}
+
+  (async ()=>{
+    try{
+      // Try jsDelivr first
+      await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+      status.className='status ok';
+      status.innerHTML = '<b>Libraries:</b> Loaded from jsDelivr.';
+    }catch(err1){
+      try{
+        await loadScript('https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js');
+        await loadScript('https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js');
+        status.className='status ok';
+        status.innerHTML = '<b>Libraries:</b> jsDelivr blocked, loaded from unpkg.';
+      }catch(err2){
+        status.className='status error';
+        status.innerHTML = '<b>Libraries failed to load:</b> Both CDNs were blocked.<br>PDF will be disabled. (Often a content blocker on mobile.)';
+      }
+    }
+
+    // Minimal assessment logic (same verdict bands as full build)
+    function assess(){
+      const ventilation = document.getElementById('ventilation').value;
+      const systemType = document.getElementById('systemType').value;
+      const vcl = document.getElementById('vcl').value;
+
+      let score = 50, drivers=[], migs=[];
+      if(ventilation==='Clear eaves + cross ventilation'){ score-=12; migs.push('Good cross-ventilation'); }
+      if(ventilation==='Partial / restricted vents'){ score+=8; drivers.push('Restricted eaves ventilation'); }
+      if(ventilation==='No known ventilation'){ score+=16; drivers.push('No known ventilation'); }
+
+      if(systemType==='multifoil'){ score-=10; migs.push('Multifoil with taped laps reduces vapour ingress'); }
+      else { score+=6; drivers.push('Fibreglass relies on ceiling VCL + airflow'); }
+
+      if(vcl==='present'){ score-=14; migs.push('Continuous VCL'); }
+      if(vcl==='partial'){ score+=6; drivers.push('Uncertain VCL continuity'); }
+      if(vcl==='absent'){ score+=14; drivers.push('No VCL specified'); }
+
+      score=Math.max(0,Math.min(100,score));
+      let verdict='Low risk', pill='pill ok';
+      if(score>=65){ verdict='High risk'; pill='pill bad'; }
+      else if(score>=45){ verdict='Moderate risk'; pill='pill warn'; }
+
+      document.getElementById('riskPill').className=pill;
+      document.getElementById('riskPill').textContent=`${verdict} (${score}/100)`;
+      document.getElementById('drivers').textContent=drivers.length?drivers.join(' • '):'None';
+      document.getElementById('mitigations').textContent=migs.length?migs.join(' • '):'None';
+      document.getElementById('verdict').textContent=verdict;
+      document.getElementById('resultCard').style.display='block';
+    }
+
+    document.getElementById('btnAssess').addEventListener('click', assess);
+
+    document.getElementById('btnPDF').addEventListener('click', async ()=>{
+      if(!window.jspdf || !window.html2canvas){
+        status.className='status error';
+        status.innerHTML='<b>PDF disabled:</b> PDF libraries not loaded (CDN blocked).';
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:'pt',format:'a4'});
+      doc.setFontSize(14); doc.text('Warm Up UK — Condensation Risk Assessment', 28, 40);
+      doc.setFontSize(10); doc.text('Summary exported (diagnostic build).', 28, 60);
+      doc.save('WarmUpUK_Condensation_Risk_Assessment.pdf');
+      status.className='status ok';
+      status.innerHTML='<b>PDF created:</b> Downloaded.';
+    });
+
+  })();
+})();
+</script>
+</body>
+</html>
