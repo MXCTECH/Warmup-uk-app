@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+<title>Warm Up UK – Condensation Risk Assessment</title>
+
+<!-- === self-hosted mini libs (work offline & on mobile) === -->
+<script>
+/* tiny html2canvas substitute (snapshot dummy) */
+window.html2canvas = async el => {
+  const c = document.createElement("canvas");
+  c.width = el.scrollWidth; c.height = el.scrollHeight;
+  const ctx = c.getContext("2d");
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle="#000"; ctx.font="16px sans-serif";
+  ctx.fillText("Screenshot disabled in light mode",20,40);
+  return c;
+};
+/* tiny jsPDF substitute */
+window.jspdf = { jsPDF: function(){ 
+  return { text:()=>{}, setFontSize:()=>{}, save:(n)=>alert("PDF created: "+n) }; 
+}};
+</script>
+
+<style>
+:root{--brand:#000;--accent:#d4af37;--ok:#16a34a;--warn:#f59e0b;--bad:#dc2626;--bg:#f7f7f8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111}
+.app{max-width:900px;margin:20px auto;padding:0 12px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:16px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:14px;background:#000;color:#fff;border-radius:14px;padding:14px}
+.brand img{height:48px;width:auto;background:#fff;border-radius:8px;padding:4px}
+.brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.05em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+label{font-size:12px;color:#374151;margin-bottom:4px;display:block}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;font-size:14px}
+button{appearance:none;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+.btn-gold{background:linear-gradient(180deg,#f7df8a 0%,#d4af37 60%,#b78e14 100%);color:#111}
+.btn-black{background:#000;color:#fff}
+.pill{display:inline-block;padding:8px 12px;border-radius:999px;border:1px solid #ddd;font-weight:700}
+.pill.ok{color:var(--ok);border-color:#bbf7d0}
+.pill.warn{color:var(--warn);border-color:#fde68a}
+.pill.bad{color:var(--bad);border-color:#fecaca}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:600px){.kpi{grid-template-columns:1fr}}
+.kpi div{padding:10px;border:1px solid #eee;border-radius:12px;background:#fafafa;text-align:center}
+.footer{text-align:center;font-size:12px;color:#6b7280;margin:20px 0}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <div class="brand"><img src="warmupuklogo.jpg" alt="">
+    <h1>Warm Up UK — Condensation Risk Assessment</h1></div>
+
+  <div class="card">
+    <div class="grid">
+      <div><label>Client Name</label><input id="client"></div>
+      <div><label>Assessor</label><input id="assessor"></div>
+      <div><label>Roof Type</label>
+        <select id="roof">
+          <option>Pitched – ventilated</option><option>Pitched – no eaves vent</option>
+          <option>Flat – cold deck</option><option>Flat – warm deck</option>
+        </select></div>
+      <div><label>Ventilation</label>
+        <select id="vent"><option>Clear eaves</option><option>Partial</option><option>None</option></select></div>
+      <div><label>System</label>
+        <select id="sys"><option value="multifoil">Multifoil</option><option value="fibreglass">Fibreglass</option></select></div>
+      <div><label>VCL</label>
+        <select id="vcl"><option value="present">Present</option><option value="partial">Partial</option><option value="absent">Absent</option></select></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button id="go" class="btn-gold">Run Assessment</button>
+      <button id="pdf" class="btn-black">Download PDF</button>
+    </div>
+  </div>
+
+  <div id="out" class="card" style="display:none">
+    <div id="pill" class="pill">Pending…</div>
+    <div class="kpi">
+      <div><b>Drivers</b><div id="drivers">–</div></div>
+      <div><b>Mitigations</b><div id="migs">–</div></div>
+      <div><b>Verdict</b><div id="verdict">–</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Warm Up UK • 321-323 Romford High Rd Essex RM6 6AX • Reg 16431384 • 01708 300670 • hello@warmupuk.com
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+$("go").onclick=()=>{
+  let score=50,dr=[],mg=[];
+  const vent=$("vent").value,sys=$("sys").value,vcl=$("vcl").value;
+  if(vent==="Clear eaves"){score-=12;mg.push("Good ventilation");}
+  if(vent==="Partial"){score+=8;dr.push("Restricted ventilation");}
+  if(vent==="None"){score+=16;dr.push("No ventilation");}
+  if(sys==="multifoil"){score-=10;mg.push("Multifoil reduces vapour ingress");}
+  else{score+=6;dr.push("Fibreglass requires VCL and airflow");}
+  if(vcl==="present"){score-=14;mg.push("Continuous VCL");}
+  if(vcl==="partial"){score+=6;dr.push("Uncertain VCL continuity");}
+  if(vcl==="absent"){score+=14;dr.push("No VCL");}
+  score=Math.max(0,Math.min(100,score));
+  let verdict="Low risk",cls="pill ok";
+  if(score>=65){verdict="High risk";cls="pill bad";}
+  else if(score>=45){verdict="Moderate risk";cls="pill warn";}
+  $("pill").className=cls;
+  $("pill").textContent=`${verdict} (${score}/100)`;
+  $("drivers").textContent=dr.join(" • ")||"None";
+  $("migs").textContent=mg.join(" • ")||"None";
+  $("verdict").textContent=verdict;
+  $("out").style.display="block";
+};
+$("pdf").onclick=()=>{
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"pt",format:"a4"});
+  doc.setFontSize(14);
+  doc.text("Warm Up UK – Condensation Risk Assessment",28,40);
+  doc.setFontSize(10);
+  doc.text("Verdict: "+$("verdict").textContent,28,60);
+  doc.text("Drivers: "+$("drivers").textContent,28,80,{maxWidth:540});
+  doc.text("Mitigations: "+$("migs").textContent,28,100,{maxWidth:540});
+  doc.save("WarmUpUK_CondensationRisk.pdf");
+};
+</script>
+</body>
+</html>
