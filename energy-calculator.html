@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum=1, viewport-fit=cover" />
+<title>Warm Up UK — Energy Saving Calculator + Animated EPC</title>
+
+<!-- PDF libs -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0e0f12;
+    --card:#ffffff;
+    --ink:#0b0b0c;
+    --muted:#6b7280;
+    --gold:#d4af37;
+    --line:#e5e7eb;
+    --chip:#111;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:#111; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:980px; margin:18px auto 28px; padding:0 14px}
+
+  header{display:flex; align-items:center; gap:12px; color:#fff; margin-bottom:12px}
+  header img{height:54px; width:auto; object-fit:contain}
+  header h1{font-size:20px; margin:0; letter-spacing:.3px}
+  header .sub{font-size:12px; color:#d4d6db}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .grid{display:grid; gap:12px; grid-template-columns:1fr}
+  @media(min-width:900px){ .grid{grid-template-columns: 1.2fr .8fr} }
+
+  label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
+  input[type="number"], select{
+    width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; font-size:16px; outline:none;
+  }
+  input[type="number"]:focus, select:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.22)}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+  @media(max-width:599px){ .row, .row3{grid-template-columns:1fr} }
+
+  .slider{display:flex; align-items:center; gap:10px}
+  input[type="range"]{width:100%}
+  .pill{background:#111; color:#fff; border:1px solid #2b2f36; border-radius:999px; padding:6px 10px; font-size:12px; display:inline-block}
+
+  .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  button{border:0; border-radius:10px; padding:12px 16px; font-size:16px; cursor:pointer}
+  .primary{background:var(--gold); color:#111; font-weight:800}
+  .ghost{background:#111; color:#fff}
+  .light{background:#f3f4f6; color:#111}
+
+  /* Results panel (restored) */
+  .blk{background:#0b0b0c; color:#f7f7f7; border-radius:14px; padding:12px; border:1px solid #1a1d22}
+  .blk h2{margin:0 0 8px; font-size:15px; color:var(--gold)}
+  .kpis{display:grid; gap:10px; grid-template-columns:1fr 1fr}
+  .kpi{background:#121316; border:1px solid #1e2228; border-radius:12px; padding:12px}
+  .kpi .title{font-size:12px; color:#9aa1ad}
+  .kpi .value{font-size:22px; font-weight:800; margin-top:6px}
+  .fine{font-size:11px; color:#9aa1ad; margin-top:8px}
+
+  /* EPC block */
+  .epc{background:#0b0c10; color:#fff; border-radius:14px; padding:14px; position:relative; overflow:hidden; border:1px solid #1a1d22}
+  .epc h3{margin:0 0 8px; font-size:14px}
+  .summary-line{
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; flex-wrap:wrap
+  }
+  .badge{padding:6px 10px; border-radius:999px; border:2px solid #2b2f36; font-weight:800; font-size:13px; display:flex; align-items:center; gap:8px}
+  .badge.before{background:#111; color:#fff; border-color:var(--gold)}
+  .badge.after{background:var(--gold); color:#111; border-color:#111}
+  .arrow{font-weight:900; letter-spacing:.5px}
+  .bands{display:grid; gap:6px}
+  .band{position:relative; border-radius:8px; padding:12px; font-weight:800; display:flex; align-items:center; justify-content:space-between; opacity:.96}
+  .band .code{font-size:14px}
+  .band .range{font-size:11px; opacity:.85}
+  .A{background:#00a651}
+  .B{background:#5fc35f}
+  .C{background:#a7d96c}
+  .D{background:#ffd24d; color:#111}
+  .E{background:#fdae61; color:#111}
+  .F{background:#f46d43}
+  .G{background:#d73027}
+  .glow{box-shadow:0 0 0 rgba(255,255,255,0); transition:box-shadow .35s}
+  .glow.active{box-shadow:0 0 22px rgba(255,255,255,.34)}
+  /* Markers anchored left & right to avoid overlap on phones */
+  .pin{
+    position:absolute; top:50%; transform:translateY(-50%);
+    padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800;
+    box-shadow:0 6px 16px rgba(0,0,0,.35); transition:top .8s cubic-bezier(.2,.7,.2,1)
+  }
+  .pin.before{left:8px; background:#fff; color:#111; border:2px solid var(--gold)}
+  .pin.after{right:8px; background:var(--gold); color:#111; border:2px solid #111}
+  .legend{display:flex; gap:10px; margin-top:10px; font-size:11px; color:#d1d5db}
+  .dot{width:10px; height:10px; border-radius:50%}
+  .dot.before{background:#fff; border:2px solid var(--gold)}
+  .dot.after{background:var(--gold); border:2px solid #111}
+  .dashed{
+    position:relative; height:1px; background:linear-gradient(90deg, rgba(255,255,255,.0) 0 20%, rgba(255,255,255,.35) 20% 40%, rgba(255,255,255,.0) 40% 60%, rgba(255,255,255,.35) 60% 80%, rgba(255,255,255,.0) 80% 100%);
+    margin:6px 0 8px;
+    animation: flow 1.4s linear infinite;
+    opacity:.7
+  }
+  @keyframes flow{0%{background-position:0 0}100%{background-position:40px 0}}
+  .pdf-area{padding:6px}
+
+  /* Footer address */
+  .footer{color:#d8d9de; text-align:center; font-size:12px; margin-top:14px}
+  .footer b{color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="warmupuklogo.jpg" alt="Warm Up UK logo" />
+    <div>
+      <h1>Energy Saving Calculator</h1>
+      <div class="sub">Animated EPC improvement from Multifoil insulation</div>
+    </div>
+  </header>
+
+  <!-- Everything below is inside the PDF capture area -->
+  <div class="card pdf-area" id="capture">
+    <div class="grid">
+
+      <!-- Inputs + Results -->
+      <div>
+        <div class="row">
+          <div>
+            <label>Current annual energy spend (£)</label>
+            <input id="bill" type="number" inputmode="decimal" placeholder="e.g. 2500" min="0">
+          </div>
+          <div>
+            <label>Current EPC band</label>
+            <select id="band">
+              <option value="G">G (1–20)</option>
+              <option value="F">F (21–38)</option>
+              <option value="E">E (39–54)</option>
+              <option value="D" selected>D (55–68)</option>
+              <option value="C">C (69–80)</option>
+              <option value="B">B (81–91)</option>
+              <option value="A">A (92–100)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row3" style="margin-top:8px">
+          <div>
+            <label>Heating share of bill (%)</label>
+            <input id="heatShare" type="number" inputmode="decimal" value="60" min="0" max="100">
+          </div>
+          <div>
+            <label>Assumed Multifoil saving (%)</label>
+            <div class="slider">
+              <input id="savingPct" type="range" min="5" max="40" step="1" value="18" />
+              <span class="pill"><span id="savingPctVal">18</span>%</span>
+            </div>
+          </div>
+          <div>
+            <label>Installed cost (£) — for payback</label>
+            <input id="cost" type="number" inputmode="decimal" placeholder="e.g. 3500" min="0">
+          </div>
+        </div>
+
+        <details style="margin-top:6px">
+          <summary style="cursor:pointer; font-size:12px; color:#555">Advanced assumptions (optional)</summary>
+          <div class="row">
+            <div>
+              <label>Average unit rate (￡/kWh)</label>
+              <input id="ppkwh" type="number" inputmode="decimal" value="0.30" step="0.01" min="0">
+            </div>
+            <div>
+              <label>CO₂ factor (kg/kWh)</label>
+              <input id="co2factor" type="number" inputmode="decimal" value="0.20" step="0.01" min="0">
+            </div>
+          </div>
+        </details>
+
+        <div class="actions">
+          <button class="primary" id="calc">Calculate</button>
+          <button class="ghost" id="reset">Reset</button>
+          <button class="ghost" id="pdf">Download PDF</button>
+          <button class="light" id="wa">Share via WhatsApp</button>
+        </div>
+
+        <!-- Restored results block -->
+        <div class="blk" id="results" hidden>
+          <h2>Estimated Savings</h2>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="title">Heating spend (baseline)</div>
+              <div class="value" id="baseline">£0</div>
+              <div class="fine" id="baselineNote">from annual bill × heating share</div>
+            </div>
+            <div class="kpi">
+              <div class="title">Annual saving</div>
+              <div class="value" id="saving">£0</div>
+              <div class="fine" id="savingPerMonth">£0 / month</div>
+            </div>
+            <div class="kpi">
+              <div class="title">New annual bill after multifoil</div>
+              <div class="value" id="newBill">£0</div>
+              <div class="fine">bill – saving</div>
+            </div>
+            <div class="kpi">
+              <div class="title">Payback period</div>
+              <div class="value" id="payback">—</div>
+              <div class="fine" id="roi">ROI: —</div>
+            </div>
+            <div class="kpi">
+              <div class="title">CO₂ saved per year</div>
+              <div class="value" id="co2">0 kg</div>
+              <div class="fine" id="co2Note">from estimated kWh</div>
+            </div>
+            <div class="kpi">
+              <div class="title">5-year saving (no inflation)</div>
+              <div class="value" id="fiveYear">£0</div>
+              <div class="fine">simple linear total</div>
+            </div>
+          </div>
+          <div class="fine">Savings are indicative. The % saving applies to the heating share and varies by property, usage and installation quality.</div>
+        </div>
+      </div>
+
+      <!-- EPC chart (clear Before/After) -->
+      <div>
+        <div class="epc">
+          <div class="summary-line">
+            <span class="badge before">Before: <span id="beforeBadge">D</span></span>
+            <span class="arrow">→</span>
+            <span class="badge after">After: <span id="afterBadge">D</span></span>
+          </div>
+          <div class="dashed" aria-hidden="true"></div>
+          <h3>EPC Rating (A best — G worst)</h3>
+          <div class="bands" id="bands">
+            <div class="band A glow"><span class="code">A</span><span class="range">92–100</span><div class="pin before" id="pinA_before">Before</div><div class="pin after" id="pinA_after">After</div></div>
+            <div class="band B glow"><span class="code">B</span><span class="range">81–91</span><div class="pin before" id="pinB_before">Before</div><div class="pin after" id="pinB_after">After</div></div>
+            <div class="band C glow"><span class="code">C</span><span class="range">69–80</span><div class="pin before" id="pinC_before">Before</div><div class="pin after" id="pinC_after">After</div></div>
+            <div class="band D glow"><span class="code">D</span><span class="range">55–68</span><div class="pin before" id="pinD_before">Before</div><div class="pin after" id="pinD_after">After</div></div>
+            <div class="band E glow"><span class="code">E</span><span class="range">39–54</span><div class="pin before" id="pinE_before">Before</div><div class="pin after" id="pinE_after">After</div></div>
+            <div class="band F glow"><span class="code">F</span><span class="range">21–38</span><div class="pin before" id="pinF_before">Before</div><div class="pin after" id="pinF_after">After</div></div>
+            <div class="band G glow"><span class="code">G</span><span class="range">1–20</span><div class="pin before" id="pinG_before">Before</div><div class="pin after" id="pinG_after">After</div></div>
+          </div>
+          <div class="legend">
+            <div class="dot before"></div> Before
+            <div class="dot after"></div> After
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branded footer -->
+  <div class="footer">
+    Address: <b>321–323 Romford High Road, Essex, RM6 6AX</b> · Reg No: <b>16431384</b> · Email: <b>hello@warmupuk.com</b><br>
+    © WARM UP UK — Insulation specialists.
+  </div>
+</div>
+
+<script>
+(function(){
+  const £ = (n) => (isFinite(n)? n.toLocaleString('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}) : '£0');
+  const toMon = (n)=> (isFinite(n)? (n/12).toLocaleString('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}) : '£0');
+  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n||0));
+
+  const bill = document.getElementById('bill');
+  const band = document.getElementById('band');
+  const heatShare = document.getElementById('heatShare');
+  const savingPct = document.getElementById('savingPct');
+  const savingPctVal = document.getElementById('savingPctVal');
+  const cost = document.getElementById('cost');
+  const ppkwh = document.getElementById('ppkwh');
+  const co2factor = document.getElementById('co2factor');
+
+  const results = document.getElementById('results');
+  const baseline = document.getElementById('baseline');
+  const baselineNote = document.getElementById('baselineNote');
+  const saving = document.getElementById('saving');
+  const savingPerMonth = document.getElementById('savingPerMonth');
+  const newBill = document.getElementById('newBill');
+  const payback = document.getElementById('payback');
+  const roi = document.getElementById('roi');
+  const co2 = document.getElementById('co2');
+  const co2Note = document.getElementById('co2Note');
+  const fiveYear = document.getElementById('fiveYear');
+
+  const beforeBadge = document.getElementById('beforeBadge');
+  const afterBadge  = document.getElementById('afterBadge');
+
+  const pinsBefore = {
+    A: document.getElementById('pinA_before'),
+    B: document.getElementById('pinB_before'),
+    C: document.getElementById('pinC_before'),
+    D: document.getElementById('pinD_before'),
+    E: document.getElementById('pinE_before'),
+    F: document.getElementById('pinF_before'),
+    G: document.getElementById('pinG_before'),
+  };
+  const pinsAfter = {
+    A: document.getElementById('pinA_after'),
+    B: document.getElementById('pinB_after'),
+    C: document.getElementById('pinC_after'),
+    D: document.getElementById('pinD_after'),
+    E: document.getElementById('pinE_after'),
+    F: document.getElementById('pinF_after'),
+    G: document.getElementById('pinG_after'),
+  };
+  const bands = document.getElementById('bands');
+
+  const bandOrder = ['A','B','C','D','E','F','G'];
+
+  savingPct.addEventListener('input', ()=> savingPctVal.textContent = savingPct.value);
+
+  function stepsFromSaving(p){
+    if (p < 8) return 0;
+    if (p < 20) return 1;
+    if (p < 30) return 2;
+    if (p < 40) return 3;
+    return 4;
+  }
+  function applySteps(current, steps){
+    const idx = bandOrder.indexOf(current);
+    return bandOrder[Math.max(0, idx - steps)];
+  }
+
+  function showPins(before, after){
+    // hide all pins
+    Object.values(pinsBefore).forEach(el=>{el.style.display='none';});
+    Object.values(pinsAfter).forEach(el=>{el.style.display='none';});
+    // show the two we need
+    pinsBefore[before].style.display='block';
+    pinsAfter[after].style.display='block';
+    // animate glow along the path
+    bands.querySelectorAll('.band').forEach(b=>b.classList.remove('active'));
+    const start = bandOrder.indexOf(after);
+    const end = bandOrder.indexOf(before);
+    for (let i=start;i<=end;i++){
+      const node = bands.querySelector('.band.'+bandOrder[i]);
+      setTimeout(()=>node.classList.add('active'), (i-start)*120);
+    }
+  }
+
+  function calc(){
+    const bill£ = clamp(parseFloat(bill.value),0,1e9);
+    const share = clamp(parseFloat(heatShare.value)/100,0,1);
+    const pct = clamp(parseFloat(savingPct.value),0,100);
+    const install = clamp(parseFloat(cost.value),0,1e9);
+    const unit = clamp(parseFloat(ppkwh.value),0,100);
+    const kg = clamp(parseFloat(co2factor.value),0,10);
+
+    // financials
+    const heatSpend = bill£ * share;
+    const annualSaving = heatSpend * (pct/100);
+    const newAnnualBill = Math.max(0, bill£ - annualSaving);
+    const pyback = annualSaving>0 && install>0 ? (install/annualSaving) : null;
+    const roiPct = annualSaving>0 && install>0 ? (annualSaving/install*100) : null;
+
+    baseline.textContent = £(heatSpend);
+    baselineNote.textContent = `from annual bill × heating share (${Math.round(share*100)}%)`;
+    saving.textContent = £(annualSaving);
+    savingPerMonth.textContent = `${toMon(annualSaving)} / month`;
+    newBill.textContent = £(newAnnualBill);
+    payback.textContent = pyback ? `${pyback.toFixed(1)} years` : '—';
+    roi.textContent = roiPct ? `ROI: ${roiPct.toFixed(1)}% / yr` : 'ROI: —';
+    fiveYear.textContent = £(annualSaving*5);
+
+    // CO2 estimate via kWh → assume heating kWh = heatSpend / unit rate
+    const kwh = unit>0 ? (heatSpend / unit) : 0;
+    const kwhSaved = kwh * (pct/100);
+    const co2Saved = kwhSaved * kg;
+    co2.textContent = `${Math.round(co2Saved).toLocaleString()} kg`;
+    co2Note.textContent = `estimated from heating spend at ${unit.toFixed(2)}£/kWh`;
+
+    results.hidden = false;
+
+    // EPC mapping & animation
+    const before = band.value;
+    const after = applySteps(before, stepsFromSaving(pct));
+    beforeBadge.textContent = before;
+    afterBadge.textContent = after;
+    showPins(before, after);
+  }
+
+  document.getElementById('calc').addEventListener('click', calc);
+
+  document.getElementById('reset').addEventListener('click', ()=>{
+    bill.value=''; heatShare.value=60; savingPct.value=18; savingPctVal.textContent='18';
+    cost.value=''; ppkwh.value=0.30; co2factor.value=0.20; band.value='D';
+    results.hidden=true;
+    beforeBadge.textContent=band.value; afterBadge.textContent=band.value;
+    showPins(band.value, band.value);
+  });
+
+  // Pins initial state
+  window.addEventListener('load', ()=>{ showPins(band.value, band.value); });
+
+  // PDF
+  document.getElementById('pdf').addEventListener('click', async ()=>{
+    const node = document.getElementById('capture');
+    await new Promise(r=>setTimeout(r,250));
+    const canvas = await html2canvas(node,{scale:2, backgroundColor:'#ffffff'});
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:'p', unit:'pt', format:'a4'});
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 24;
+    const imgW = pageW - margin*2;
+    const ratio = canvas.height/canvas.width;
+    const imgH = imgW*ratio;
+    if(imgH > pageH - margin*2){
+      const h = pageH - margin*2;
+      const w = h/ratio;
+      pdf.addImage(imgData, 'PNG', (pageW-w)/2, margin, w, h);
+    }else{
+      pdf.addImage(imgData, 'PNG', margin, margin, imgW, imgH);
+    }
+    pdf.save('WarmUpUK_Energy_Savings_EPC.pdf');
+  });
+
+  // WhatsApp share (simple text summary)
+  document.getElementById('wa').addEventListener('click', ()=>{
+    const b = band.value;
+    const pct = parseFloat(savingPct.value);
+    const steps = stepsFromSaving(pct);
+    const after = applySteps(b, steps);
+    const bill£ = parseFloat(bill.value||0);
+    const share = (parseFloat(heatShare.value||60)/100);
+    const annualSaving = bill£*share*(pct/100);
+    const txt = `Warm Up UK — Multifoil estimate:
+Annual bill: £${Math.round(bill£)}
+Heating share: ${Math.round(share*100)}%
+Saving slider: ${pct}%
+Estimated annual saving: £${Math.round(annualSaving)}
+EPC: ${b} → ${after}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(txt)}`;
+    window.open(url, '_blank');
+  });
+
+})();
+</script>
+</body>
+</html>
