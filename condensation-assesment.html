@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>WARM UP UK – Condensation Risk Assessment (PAS 2035)</title>
+
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+  :root{
+    --brand:#000;
+    --gold:#d4af37;
+    --line:#e9e9ea;
+    --bg:#f7f7f8;
+    --ok:#147d14;
+    --warn:#d1a000;
+    --risk:#c72222;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:#111; -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:1100px;
+    margin: clamp(12px,2.2vw,24px) auto;
+    padding: clamp(12px,2.2vw,24px);
+    background:#fff; border:1px solid var(--line);
+    border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.04);
+  }
+
+  .brand{ display:flex; align-items:center; gap:14px; margin-bottom:10px }
+  .brand img{ width:56px; height:56px; object-fit:cover; border-radius:8px; border:2px solid var(--gold) }
+  .brand h1{ margin:0; font-size: clamp(20px,3.2vw,28px); letter-spacing:.5px }
+  .brand .gold{ color:var(--gold); font-weight:800 }
+  .sub{ margin:.25rem 0 1rem 0; color:#555; font-size:.95rem }
+
+  .grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:18px }
+  @media (max-width:980px){ .grid{ grid-template-columns:1fr } }
+
+  .card{ border:1px solid var(--line); border-radius:12px; padding:16px }
+  .card h2{ margin:0 0 .5rem 0; font-size:1.1rem }
+  .muted{ color:#666; font-size:.92rem }
+
+  label{ display:block; font-size:.95rem; margin:.6rem 0 .25rem }
+  input, select, textarea{
+    width:100%; padding:12px; border:1px solid var(--line);
+    border-radius:10px; font-size:1rem; background:#fff;
+  }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px }
+  @media (max-width:600px){ .row{ grid-template-columns:1fr } }
+
+  table{ width:100%; border-collapse: collapse; margin-top:8px; font-size:.95rem }
+  th, td{ border:1px solid var(--line); padding:8px; text-align:left }
+  th{ background:#fafafa; font-weight:600 }
+
+  .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px }
+  .btn{
+    appearance:none; border:0; cursor:pointer; padding:12px 16px; border-radius:999px;
+    background:var(--brand); color:#fff; font-weight:700; letter-spacing:.3px;
+  }
+  .btn.gold{ background:var(--gold); color:#000 }
+  .btn.ghost{ background:#fff; color:#000; border:1px solid var(--line) }
+
+  .badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; font-size:.9rem }
+  .ok{ background:#e7f5e7; color:#0d5e0d; border:1px solid #b8e0b8 }
+  .warn{ background:#fff6db; color:#7a5b00; border:1px solid #eedc9a }
+  .risk{ background:#ffe7e7; color:#7e0f0f; border:1px solid #f2b1b1 }
+
+  .results{
+    background:#0c0c0c; color:#fff; border-radius:12px; padding:18px; border:1px solid #111;
+  }
+  .results h3{ margin:.2rem 0 .6rem 0; color:var(--gold) }
+  .kv{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px }
+  @media (max-width:600px){ .kv{ grid-template-columns:1fr } }
+  .kv .item{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:12px }
+  .big{ font-size:1.35rem; font-weight:800 }
+  .fine{ color:#bbb; font-size:.9rem }
+
+  .footer{ margin-top:20px; font-size:.9rem; color:#444; text-align:center }
+  .footer strong{ color:#000 }
+
+  #capture{ background:#fff } /* for clean PDFs */
+</style>
+</head>
+<body>
+<div class="wrap" id="capture">
+  <div class="brand">
+    <img src="Warm%20up%20Uk%20logo%20.JPG" alt="WARM UP UK logo" />
+    <div>
+      <h1><span class="gold">WARM UP UK</span> Condensation Risk Assessment</h1>
+      <div class="sub">Condensation Risk Assessment — <strong>PAS 2035 Compliant Evaluation</strong></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: Inputs + Layers + Chart -->
+    <div class="card">
+      <h2>1) Conditions & Build-Up</h2>
+      <div class="row">
+        <div>
+          <label>Indoor temperature (°C)</label>
+          <input type="number" id="Tin" value="20" step="0.1" />
+        </div>
+        <div>
+          <label>Outdoor temperature (°C)</label>
+          <input type="number" id="Tout" value="0" step="0.1" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Indoor relative humidity (%)</label>
+          <input type="number" id="RH" value="60" step="1" min="0" max="100" />
+        </div>
+        <div>
+          <label>Preset</label>
+          <select id="preset">
+            <option value="multifoil" selected>Roof build-up — Multifoil on rafters</option>
+            <option value="fibreglass">Roof build-up — Fibreglass on ceiling joists</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Roof construction notes</label>
+      <textarea id="notes" rows="2" placeholder="E.g. vented loft space, breathable membrane, VCL under plasterboard, etc."></textarea>
+
+      <div class="btns" style="margin-top:10px">
+        <button class="btn gold" id="applyPreset">Apply preset</button>
+        <button class="btn ghost" id="addRow">Add layer</button>
+        <button class="btn ghost" id="removeRow">Remove last layer</button>
+      </div>
+
+      <table id="layers">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Layer</th>
+            <th>Thickness (mm)</th>
+            <th>λ (W/m·K)</th>
+            <th>μ (vapour resistivity)</th>
+            <th>Side</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div style="margin-top:12px">
+        <canvas id="chart" height="260" aria-label="Dew-point chart"></canvas>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results + Actions -->
+    <div class="card">
+      <h2>2) Results</h2>
+      <div class="results">
+        <h3>Key indicators</h3>
+        <div class="kv">
+          <div class="item">
+            <div class="fine">Internal vapour pressure</div>
+            <div class="big" id="vpInTxt">—</div>
+            <div class="fine">Pa</div>
+          </div>
+          <div class="item">
+            <div class="fine">External vapour pressure</div>
+            <div class="big" id="vpOutTxt">—</div>
+            <div class="fine">Pa</div>
+          </div>
+          <div class="item">
+            <div class="fine">Worst interface margin</div>
+            <div class="big" id="marginTxt">—</div>
+            <div class="fine">vp - vpsat (Pa)</div>
+          </div>
+          <div class="item">
+            <div class="fine">Risk level</div>
+            <div class="big" id="riskBadge">—</div>
+            <div class="fine">Glaser (steady-state)</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top:14px">Recommendation</h3>
+        <div id="recText" class="fine">—</div>
+      </div>
+
+      <div class="btns" style="margin-top:12px">
+        <button class="btn" id="calcBtn">Calculate</button>
+        <button class="btn gold" id="pdfBtn">Save as PDF</button>
+        <button class="btn ghost" id="waBtn">Share via WhatsApp</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        This tool applies a steady-state **Glaser method** approximation aligned with PAS 2035 style checks.
+        For full compliance, specialist hygrothermal (e.g. EN 15026) may be required for complex build-ups.
+      </div>
+
+      <div class="footer">
+        Address: <strong>321–323 Romford High Road, Essex, RM6 6AX</strong> • Reg No: <strong>16431384</strong> • Email: <strong>hello@warmupuk.com</strong><br/>
+        © <span id="year"></span> WARM UP UK — Insulation specialists.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== Utilities ===================== */
+function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
+function num(v, f){ const n = parseFloat(v); return isNaN(n) ? (f||0) : n; }
+function fmtPa(n){ return Math.round(n).toLocaleString(); }
+function badge(text, cls){ return '<span class="badge '+cls+'">'+text+'</span>'; }
+
+// Magnus-type saturation vapour pressure (Pa) over water
+// T in °C. Using Tetens (approx): 610.78 * exp(17.2694*T/(T+237.29))
+function satVP(Tc){
+  const A=610.78, B=17.2694, C=237.29;
+  return A * Math.exp(B * Tc / (Tc + C));
+}
+
+// Dew point from T (°C) and RH (%)
+function dewPoint(Tc, RH){
+  const rh = clamp(RH, 0, 100) / 100;
+  const vp = rh * satVP(Tc);
+  // invert Tetens
+  const A=610.78, B=17.2694, C=237.29;
+  const ln = Math.log(vp/A);
+  return (C * ln) / (B - ln);
+}
+
+/* ===================== Presets ===================== */
+const PRESETS = {
+  multifoil: [
+    // name, thickness mm, lambda W/mK, mu (vapour resistivity), side
+    // Side: "int" (room side), "ext" (outside side). Order matters: interior -> exterior.
+    {name:"Plasterboard + skim", t:12.5, lam:0.25, mu:10, side:"int"},
+    {name:"VCL (continuous)", t:0.2, lam:0.3, mu:100000, side:"int"},
+    {name:"Multifoil (YBS/TLX equiv.)", t:30, lam:0.035, mu:20000, side:"mid"},
+    {name:"Ventilated air space", t:50, lam:0.18, mu:1, side:"mid"},
+    {name:"Rafter + timber fraction", t:150, lam:0.12, mu:50, side:"mid"},
+    {name:"Breathable membrane", t:1, lam:0.3, mu:5, side:"ext"},
+    {name:"Roof tiles", t:15, lam:1.0, mu:20, side:"ext"}
+  ],
+  fibreglass: [
+    {name:"Plasterboard + skim", t:12.5, lam:0.25, mu:10, side:"int"},
+    {name:"VCL (polyethylene)", t:0.2, lam:0.3, mu:100000, side:"int"},
+    {name:"Fibreglass loft roll", t:270, lam:0.040, mu:1, side:"mid"},
+    {name:"Loft deck / plaster skim", t:18, lam:0.18, mu:15, side:"mid"},
+    {name:"Ceiling joists (timber)", t:150, lam:0.12, mu:50, side:"mid"},
+    {name:"Cold loft air (vented)", t:100, lam:0.18, mu:1, side:"ext"},
+    {name:"Roof tiles", t:15, lam:1.0, mu:20, side:"ext"}
+  ]
+};
+
+/* ===================== DOM ===================== */
+const tbody = document.querySelector('#layers tbody');
+const presetSel = document.getElementById('preset');
+const applyPresetBtn = document.getElementById('applyPreset');
+const addRowBtn = document.getElementById('addRow');
+const removeRowBtn = document.getElementById('removeRow');
+const calcBtn = document.getElementById('calcBtn');
+
+const TinEl = document.getElementById('Tin');
+const ToutEl = document.getElementById('Tout');
+const RHEl = document.getElementById('RH');
+
+const vpInTxt = document.getElementById('vpInTxt');
+const vpOutTxt = document.getElementById('vpOutTxt');
+const marginTxt = document.getElementById('marginTxt');
+const riskBadge = document.getElementById('riskBadge');
+const recText = document.getElementById('recText');
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ===================== Table helpers ===================== */
+function rowHTML(i, layer){
+  return `<tr>
+    <td>${i+1}</td>
+    <td><input value="${layer?.name||''}" /></td>
+    <td><input type="number" step="0.1" value="${layer?.t??10}" /></td>
+    <td><input type="number" step="0.001" value="${layer?.lam??0.2}" /></td>
+    <td><input type="number" step="1" value="${layer?.mu??10}" /></td>
+    <td>
+      <select>
+        <option value="int" ${layer?.side==='int'?'selected':''}>int</option>
+        <option value="mid" ${layer?.side==='mid'?'selected':''}>mid</option>
+        <option value="ext" ${layer?.side==='ext'?'selected':''}>ext</option>
+      </select>
+    </td>
+  </tr>`;
+}
+function loadPreset(name){
+  tbody.innerHTML = '';
+  (PRESETS[name]||[]).forEach((L,i)=> tbody.insertAdjacentHTML('beforeend', rowHTML(i,L)));
+}
+function addRow(){
+  tbody.insertAdjacentHTML('beforeend', rowHTML(tbody.children.length, {name:"Custom layer", t:10, lam:0.2, mu:10, side:"mid"}));
+}
+function removeRow(){
+  if (tbody.children.length>0) tbody.lastElementChild.remove();
+}
+applyPresetBtn.addEventListener('click', ()=>{ loadPreset(presetSel.value); computeAndDraw(); });
+addRowBtn.addEventListener('click', ()=>{ addRow(); computeAndDraw(); });
+removeRowBtn.addEventListener('click', ()=>{ removeRow(); computeAndDraw(); });
+
+/* ===================== Core Glaser method ===================== */
+// We compute temperature profile by thermal resistance fractions.
+// We compute vapour pressure profile by vapour resistance fractions using μ * thickness proxy.
+// Interfaces include interior (0) and each layer boundary up to exterior (N).
+
+function readLayers(){
+  const rows = [...tbody.querySelectorAll('tr')];
+  return rows.map(r=>{
+    const cells = r.querySelectorAll('td');
+    return {
+      name: cells[1].querySelector('input').value.trim() || ('Layer '+cells[0].textContent.trim()),
+      t_mm: num(cells[2].querySelector('input').value, 10),
+      lam: num(cells[3].querySelector('input').value, 0.2),
+      mu:  num(cells[4].querySelector('input').value, 10),
+      side: cells[5].querySelector('select').value
+    };
+  });
+}
+
+function seriesProfile(values){ // cumulative -> fractions
+  const total = values.reduce((a,b)=>a+b,0);
+  if (total<=0) return values.map(_=>0);
+  let run=0;
+  return values.map(v=> (run+=v)/total );
+}
+
+function compute(){
+  const Tin  = num(TinEl.value, 20);
+  const Tout = num(ToutEl.value, 0);
+  const RH   = clamp(num(RHEl.value, 60), 0, 100);
+
+  const L = readLayers();
+  if (L.length===0) return null;
+
+  // thermal resistances R = thickness(m)/lambda
+  const Rlayers = L.map(x => (x.t_mm/1000) / Math.max(0.001, x.lam));
+  // crude vapour resistances using μ * thickness (m) -> proportional to sd (m)
+  const Vlayers = L.map(x => (x.mu) * (x.t_mm/1000));
+
+  // boundary surface resistances (optional): add small internal/external Rsi/Rse
+  const Rsi = 0.13, Rse = 0.04; // typical
+  const Rseries = [Rsi, ...Rlayers, Rse];
+  const Rfrac = seriesProfile(Rseries); // length = layers+2
+
+  // vapour "sd" series with small air films (proxy)
+  const Vsi = 0.05, Vse = 0.05;
+  const Vseries = [Vsi, ...Vlayers, Vse];
+  const Vfrac = seriesProfile(Vseries);
+
+  // temperature at interfaces (°C)
+  const Tif = Rfrac.map(f => Tin + (Tout - Tin)*f);
+
+  // vapour pressures at inside/outside
+  const vp_in  = (RH/100) * satVP(Tin);
+  // assume ext RH ~80% (editable later if needed)
+  const RH_out = 80;
+  const vp_out = (RH_out/100) * satVP(Tout);
+
+  // linear vp through vapour resistance
+  const Vpt = Vfrac.map(f => vp_in + (vp_out - vp_in)*f);
+
+  // saturation vp at each interface from interface temperature
+  const Vpsat = Tif.map(t => satVP(t));
+
+  // margins and risk
+  const margins = Vpt.map((vp,i)=> vp - Vpsat[i]); // if >0 => risk
+  const worst = Math.max(...margins);
+  let risk = 'Safe', cls='ok', rec='No interstitial condensation predicted under steady-state assumptions.';
+  if (worst > 50){ risk='Condensation risk'; cls='risk';
+    rec = 'Risk of interstitial condensation. Consider a higher-performance VCL, improved airtightness, or adjusting the build-up (e.g. relocate VCL warm side). Ensure adequate ventilation to outside.';
+  } else if (worst > 0){ risk='Marginal'; cls='warn';
+    rec = 'Marginal risk at one or more interfaces. Improve vapour control continuity, tape overlaps, and verify ventilation paths.';
+  }
+
+  return {
+    Tin, Tout, RH, L, Rseries, Vseries, Tif, Vpt, Vpsat, margins, worst, risk, cls, rec,
+    vp_in, vp_out
+  };
+}
+
+/* ===================== Chart ===================== */
+let chart;
+function drawChart(Tif, Vpt, Vpsat, L){
+  const ctx = document.getElementById('chart');
+  const depth = interfaceDepths(L); // mm from inside
+  // Datasets: Temperature profile (red), Dew-point (from Vpsat inverted), Vapour pressure vs Saturation (blue/grey)
+  // For clarity, we plot two Y-axes: left = temperature (°C), right = vapour pressure (Pa)
+
+  const data = {
+    labels: depth.map(d => d+' mm'),
+    datasets: [
+      {
+        label:'Temperature (°C)',
+        data: Tif,
+        borderColor:'red', backgroundColor:'rgba(255,0,0,0.15)', tension:0.2, yAxisID:'yT'
+      },
+      {
+        label:'Saturation VP (Pa)',
+        data: Vpsat,
+        borderColor:'grey', backgroundColor:'rgba(128,128,128,0.12)', tension:0.2, yAxisID:'yP'
+      },
+      {
+        label:'Vapour Pressure (Pa)',
+        data: Vpt,
+        borderColor:'blue', backgroundColor:'rgba(0,128,255,0.12)', tension:0.2, yAxisID:'yP'
+      }
+    ]
+  };
+  const options = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{ position:'top' },
+      tooltip:{ mode:'index', intersect:false }
+    },
+    interaction:{ mode:'nearest', axis:'x', intersect:false },
+    scales:{
+      yT:{ type:'linear', position:'left', title:{display:true, text:'Temperature (°C)'} },
+      yP:{ type:'linear', position:'right', title:{display:true, text:'Vapour Pressure (Pa)'}, grid:{ drawOnChartArea:false } },
+      x:{ title:{display:true, text:'Depth from inside (mm)'} }
+    }
+  };
+
+  if (chart){ chart.destroy(); }
+  chart = new Chart(ctx, { type:'line', data, options });
+}
+
+function interfaceDepths(L){
+  // start at inside surface 0 mm, then cumulate each layer thickness, include exterior film as final interface
+  const d = [0];
+  for (const lay of L){ d.push(d[d.length-1] + lay.t_mm); }
+  d.push(d[d.length-1] + 1); // small exterior film marker
+  return d;
+}
+
+/* ===================== Actions ===================== */
+function computeAndDraw(){
+  const res = compute();
+  if (!res) return;
+
+  const { Tif, Vpt, Vpsat, L, vp_in, vp_out, worst, risk, cls, rec } = res;
+
+  vpInTxt.textContent = fmtPa(vp_in);
+  vpOutTxt.textContent = fmtPa(vp_out);
+  marginTxt.textContent = fmtPa(worst);
+  riskBadge.innerHTML = badge(risk, cls);
+  recText.textContent = rec;
+
+  drawChart(Tif, Vpt, Vpsat, L);
+}
+
+calcBtn.addEventListener('click', computeAndDraw);
+['Tin','Tout','RH'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', computeAndDraw);
+});
+tbody.addEventListener('input', computeAndDraw);
+presetSel.addEventListener('change', ()=>{/* wait for Apply */});
+
+/* ===================== WhatsApp & PDF ===================== */
+document.getElementById('waBtn').addEventListener('click', ()=>{
+  const res = compute(); if (!res) return;
+  const { risk, worst, Tin, Tout, RH } = res;
+  const msg =
+`WARM UP UK — PAS 2035 Condensation Check
+Risk level: ${risk}
+Worst interface margin: ${Math.round(worst)} Pa
+Conditions: ${Tin}°C inside, ${Tout}°C outside, RH ${RH}%
+
+Want me to send the full report?`;
+  const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+});
+
+document.getElementById('pdfBtn').addEventListener('click', async ()=>{
+  // Ensure chart is fully visible
+  window.scrollTo(0,0);
+  const node = document.getElementById('capture');
+  const { jsPDF } = window.jspdf;
+
+  // render at full page size for iOS Safari
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    windowWidth: document.documentElement.scrollWidth,
+    windowHeight: document.documentElement.scrollHeight
+  });
+  const imgData = canvas.toDataURL('image/jpeg', 0.92);
+  const pdf = new jsPDF({ orientation:'p', unit:'pt', format:'a4' });
+
+  const pdfW = pdf.internal.pageSize.getWidth();
+  const pdfH = pdf.internal.pageSize.getHeight();
+
+  const props = pdf.getImageProperties(imgData);
+  const imgW = pdfW; // fit to width
+  const imgH = props.height * (imgW/props.width);
+
+  let heightLeft = imgH;
+  let position = 0;
+
+  pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+  heightLeft -= pdfH;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgH;
+    pdf.addPage();
+    pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+    heightLeft -= pdfH;
+  }
+
+  // Add PAS 2035 note footer on last page
+  pdf.setFontSize(10);
+  pdf.setTextColor(80);
+  const footer = 'Condensation risk analysis performed in accordance with PAS 2035 methodology. ' +
+                 'Address: 321–323 Romford High Road, Essex, RM6 6AX | Reg: 16431384 | hello@warmupuk.com';
+  const margin = 28;
+  const lines = pdf.splitTextToSize(footer, pdfW - margin*2);
+  pdf.text(lines, margin, pdfH - margin);
+
+  pdf.save('WARM-UP-UK_PAS2035_Condensation_Assessment.pdf');
+});
+
+/* ===================== Init ===================== */
+loadPreset('multifoil');
+computeAndDraw();
+</script>
+</body>
+</html>
