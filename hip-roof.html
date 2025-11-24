@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Warm Up UK — Hip Roof Measurer + EPC Gain</title>
+<style>
+  :root{
+    --brand:#000; --gold:#d4af37; --line:#e5e7eb; --bg:#f7f7f8;
+    --ok:#16a34a; --muted:#6b7280;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:#111;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .app{max-width:980px;margin:20px auto 64px;padding:0 12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:16px;margin-bottom:14px}
+  .brand{
+    display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;
+    background:linear-gradient(180deg,#000 0%,#111 100%);color:#fff;border:1px solid #111
+  }
+  .brand img{height:56px;width:auto;background:#fff;border-radius:8px;padding:6px}
+  .brand .t1{font-weight:800;letter-spacing:.06em}
+  .brand .t2{opacity:.85;font-size:12px}
+
+  label{font-size:12px;color:#374151;display:block;margin-bottom:6px}
+  input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;background:#fff;font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:780px){.grid{grid-template-columns:1fr}}
+  .btnbar{display:flex;gap:10px;flex-wrap:wrap}
+  button{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+  .btn-gold{background:linear-gradient(180deg,#f7df8a 0%, #d4af37 60%, #b78e14 100%);color:#111;border:1px solid #b68e13}
+  .btn-black{background:#000;color:#fff}
+  .muted{color:var(--muted);font-size:12px}
+  .hr{height:1px;background:#eee;margin:14px 0}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media (max-width:720px){.kpis{grid-template-columns:1fr}}
+  .kpi{padding:12px;border:1px solid #eee;border-radius:12px;background:#fafafa}
+  .kpi .h{font-size:12px;color:#374151}
+  .kpi .v{font-size:20px;font-weight:800}
+  .ok{color:var(--ok);font-weight:700}
+
+  /* EPC-style badge */
+  .epc{
+    border:1px solid #eee;border-radius:12px;padding:12px;background:#fafafa;
+    display:grid;grid-template-columns:1fr;gap:8px
+  }
+  .epc .bar{
+    position:relative;height:14px;border-radius:999px;overflow:hidden;
+    background:linear-gradient(90deg,#e11d48 0%,#f59e0b 35%,#eab308 55%,#84cc16 80%,#22c55e 100%);
+  }
+  .epc .thumb{
+    position:absolute;top:-4px;width:2px;height:22px;background:#111;border-left:2px solid #fff;border-right:2px solid #fff;
+    transform:translateX(-1px)
+  }
+  .epc .row{display:flex;align-items:center;justify-content:space-between}
+  .epc .pct{font-size:22px;font-weight:900}
+  .epc small{color:#475569}
+
+  /* Diagram */
+  svg{width:100%;max-width:520px;height:auto;display:block;margin:auto}
+
+  /* Print */
+  @media print{
+    body{background:#fff}
+    .brand{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+    .btnbar{display:none}
+    a{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="brand card">
+    <img src="warmupuklogo.jpg" alt="Warm Up UK" onerror="this.style.display='none'">
+    <div>
+      <div class="t1">WARM UP UK — HIP ROOF MEASURER</div>
+      <div class="t2">Fast area for quotes • EPC-style heat-loss reduction • Works offline • Print / Share</div>
+    </div>
+  </div>
+
+  <!-- Inputs -->
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label>Building length (external walls) — metres</label>
+        <input id="len" type="number" step="0.01" placeholder="e.g., 10.2">
+      </div>
+      <div>
+        <label>Building width (external walls) — metres</label>
+        <input id="wid" type="number" step="0.01" placeholder="e.g., 6.5">
+      </div>
+      <div>
+        <label>Eaves overhang (each side) — mm</label>
+        <input id="oh" type="number" step="1" placeholder="e.g., 300">
+      </div>
+      <div>
+        <label>Roof pitch</label>
+        <select id="pitchMode">
+          <option value="deg">Degrees (°)</option>
+          <option value="rise">Rise per metre (mm/m)</option>
+          <option value="percent">Pitch (%)</option>
+        </select>
+      </div>
+      <div>
+        <label>Pitch value</label>
+        <input id="pitchVal" type="number" step="0.1" placeholder="e.g., 35">
+      </div>
+      <div>
+        <label>Insulation system (for EPC estimate)</label>
+        <select id="system">
+          <option value="multifoil" selected>Multifoil @ rafters</option>
+          <option value="fibreglass">Fibreglass @ ceiling</option>
+        </select>
+      </div>
+      <div>
+        <label>Waste allowance</label>
+        <select id="waste">
+          <option value="0">None</option>
+          <option value="0.05">+5%</option>
+          <option value="0.1" selected>+10% (recommended)</option>
+          <option value="0.15">+15%</option>
+        </select>
+      </div>
+      <div>
+        <label>Optional: current EPC band (guess)</label>
+        <select id="epcBand">
+          <option value="E">E</option><option value="D" selected>D</option>
+          <option value="C">C</option><option value="B">B</option><option value="A">A</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="btnbar">
+      <button class="btn-gold" id="calc">Calculate Area</button>
+      <button class="btn-black" id="printBtn">Print / Share</button>
+      <button class="btn-black" id="waBtn">Share via WhatsApp</button>
+    </div>
+    <div class="muted" style="margin-top:8px">
+      Tip: Measure external wall length & width; overhang is fascia/soffit projection (e.g., 300 mm). If you only know rise per metre, pick “mm/m”.
+    </div>
+  </div>
+
+  <!-- Visual -->
+  <div class="card">
+    <svg viewBox="0 0 520 320" id="diagram" aria-label="Hip roof diagram">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f7df8a"/>
+          <stop offset="1" stop-color="#d4af37"/>
+        </linearGradient>
+      </defs>
+      <!-- plan rectangle with overhang -->
+      <rect x="40" y="60" width="440" height="180" fill="#fafafa" stroke="#ddd" />
+      <rect x="20" y="40" width="480" height="220" fill="none" stroke="#000" stroke-dasharray="6 6"/>
+      <!-- labels -->
+      <text x="260" y="36" text-anchor="middle" font-size="12">Plan inc. overhang</text>
+      <text x="260" y="260" text-anchor="middle" font-size="12">External walls footprint</text>
+      <line x1="20" y1="280" x2="500" y2="280" stroke="#333"/>
+      <text x="260" y="298" text-anchor="middle" font-size="12">Length</text>
+      <line x1="10" y1="40" x2="10" y2="260" stroke="#333"/>
+      <text x="10" y="20" text-anchor="start" font-size="12" transform="rotate(-90,10,20)">Width</text>
+      <!-- pitch badge -->
+      <rect x="340" y="14" width="160" height="26" rx="8" fill="url(#g)" stroke="#b68e13"/>
+      <text id="pitchBadge" x="420" y="31" text-anchor="middle" font-size="12" font-weight="700">Pitch: –</text>
+    </svg>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="results" style="display:none">
+    <div class="kpis">
+      <div class="kpi"><div class="h">Plan area incl. overhang</div><div class="v" id="planA">–</div></div>
+      <div class="kpi"><div class="h">Slope factor (1 / cos θ)</div><div class="v" id="sf">–</div></div>
+      <div class="kpi"><div class="h">Roof surface area</div><div class="v" id="area">–</div></div>
+      <div class="kpi"><div class="h">Waste allowance</div><div class="v" id="wasteV">–</div></div>
+      <div class="kpi"><div class="h">Order area (with waste)</div><div class="v ok" id="orderA">–</div></div>
+      <div class="kpi"><div class="h">Multifoil rolls (≈10.8 m² eff.)</div><div class="v" id="rolls">–</div></div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- EPC-style improvement -->
+    <div class="epc">
+      <div class="row">
+        <div><b>EPC-style improvement (roof heat-loss component)</b></div>
+        <div class="pct" id="pctTxt">–%</div>
+      </div>
+      <div class="bar" id="epcBar">
+        <div class="thumb" id="epcThumb" style="left: 50%"></div>
+      </div>
+      <small id="epcNote">
+        Estimated reduction is indicative only and depends on existing build-up, ventilation and workmanship.
+      </small>
+    </div>
+  </div>
+
+  <div class="muted" style="text-align:center;margin-top:8px">
+    Warm Up UK • 321–323 Romford High Road, Essex, RM6 6AX • Reg 16431384 • 01708 300670 • hello@warmupuk.com
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+function toRadians(deg){ return deg * Math.PI / 180; }
+function pitchToDegrees(mode, val){
+  if(!val || val<=0) return null;
+  if(mode === 'deg') return val;
+  if(mode === 'rise'){ const rise_m = val / 1000; return Math.atan(rise_m) * 180/Math.PI; }
+  if(mode === 'percent'){ const ratio = val/100; return Math.atan(ratio) * 180/Math.PI; }
+  return null;
+}
+function fmt(n){ return (isFinite(n)? (Math.round(n*100)/100).toFixed(2) : '–'); }
+
+// Map EPC band (rough) to a 0–1 base position (for marker)
+const bandPos = { A:0.88, B:0.78, C:0.65, D:0.5, E:0.35 };
+
+function calc(){
+  const L = parseFloat($('len').value);
+  const W = parseFloat($('wid').value);
+  const over_mm = parseFloat($('oh').value);
+  const pitchMode = $('pitchMode').value;
+  const pitchInput = parseFloat($('pitchVal').value);
+  const waste = parseFloat($('waste').value);
+  const system = $('system').value; // multifoil or fibreglass
+  const band = $('epcBand').value;
+
+  if(!(L>0 && W>0 && over_mm>=0 && pitchInput>0)){
+    alert('Please fill Length, Width, Overhang and Pitch.'); return;
+  }
+  const theta_deg = pitchToDegrees(pitchMode, pitchInput);
+  if(!theta_deg || theta_deg<=0){ alert('Pitch value invalid.'); return; }
+
+  const over_m = over_mm / 1000;
+  const Lp = L + 2*over_m;
+  const Wp = W + 2*over_m;
+  const planArea = Lp * Wp;
+
+  const theta = toRadians(theta_deg);
+  const slopeFactor = 1 / Math.cos(theta);
+  const roofArea = planArea * slopeFactor;
+  const orderArea = roofArea * (1 + waste);
+
+  const effRoll = 10.8;
+  const rolls = Math.ceil(orderArea / effRoll);
+
+  $('results').style.display = 'block';
+  $('planA').textContent = fmt(planArea) + ' m²';
+  $('sf').textContent = fmt(slopeFactor);
+  $('area').textContent = fmt(roofArea) + ' m²';
+  $('wasteV').textContent = (waste*100).toFixed(0) + '%';
+  $('orderA').textContent = fmt(orderArea) + ' m²';
+  $('rolls').textContent = rolls + ' roll' + (rolls===1?'':'s');
+  $('pitchBadge').textContent = 'Pitch: ' + fmt(theta_deg) + '°';
+
+  // ---------- EPC-style improvement ----------
+  // Simple, honest ranges (illustrative):
+  // Multifoil @ rafters: ~25–35% roof heat-loss reduction (use midpoint 30%)
+  // Fibreglass @ ceiling: ~15–25% roof heat-loss reduction (use midpoint 20%)
+  const pct = (system === 'multifoil') ? 0.30 : 0.20;
+  $('pctTxt').textContent = Math.round(pct*100) + '%';
+
+  // Move marker: start from current band position, push right by pct of remaining to the green end
+  const base = bandPos[band] ?? 0.5; // default D
+  const newPos = Math.min(0.98, base + (1 - base) * pct); // keep inside bar
+  const bar = $('epcBar');
+  const thumb = $('epcThumb');
+  const barWidth = bar.clientWidth || 300;
+  thumb.style.left = (newPos * barWidth) + 'px';
+
+  // Note text
+  $('epcNote').textContent =
+    (system==='multifoil'
+      ? 'Multifoil at rafters adds airtight, reflective layer — indicative ~30% roof heat-loss reduction.'
+      : 'Fibreglass at ceiling cuts conduction — indicative ~20% roof heat-loss reduction.'
+    ) + ' Actual results vary with ventilation, VCL continuity and existing build-up.';
+}
+
+// Actions
+$('calc').addEventListener('click', calc);
+$('printBtn').addEventListener('click', ()=> window.print());
+$('waBtn').addEventListener('click', ()=>{
+  const L = $('len').value || '–'; const W = $('wid').value || '–';
+  const over = $('oh').value || '–'; const pitch = $('pitchVal').value || '–';
+  const system = $('system').value === 'multifoil' ? 'Multifoil @ rafters' : 'Fibreglass @ ceiling';
+  const plan = $('planA').textContent || '–';
+  const area = $('area').textContent || '–';
+  const orderA = $('orderA').textContent || '–';
+  const pct = $('pctTxt').textContent || '–%';
+
+  const msg = encodeURIComponent(
+`Warm Up UK — Hip Roof Quote
+Size: ${L}m × ${W}m, overhang ${over}mm
+Pitch: ${pitch}°
+System: ${system}
+
+Roof area: ${area}
+Order area (with waste): ${orderA}
+Estimated heat-loss reduction: ${pct}`
+  );
+  window.open('https://wa.me/?text=' + msg, '_blank');
+});
+
+// Sensible defaults
+(function preset(){
+  $('oh').value = 300;
+  $('pitchMode').value = 'deg';
+  $('pitchVal').value = 35;
+  $('system').value = 'multifoil';
+  $('epcBand').value = 'D';
+})();
+</script>
+</body>
+</html>
